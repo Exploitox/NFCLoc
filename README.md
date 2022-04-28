@@ -1,4 +1,4 @@
-![Logo](https://github.com/mclear/Sesame/blob/master/UI/NFCLoc.UI.View/Icon.png)
+![Logo](https://github.com/mclear/Sesame/blob/master/UI/NFCRing.UI.View/Icon.png)
 
 NFC Fence provides NFC based login and logout functionality for the Microsoft Windows Operating System.  
 
