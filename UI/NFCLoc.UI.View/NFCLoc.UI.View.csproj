@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{4219B31E-1DBD-45E3-AA46-C7D6A1C9A57C}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>NFCRing.UI.View</RootNamespace>
-    <AssemblyName>NFCRing.UI.View</AssemblyName>
+    <RootNamespace>NFCLoc.UI.View</RootNamespace>
+    <AssemblyName>NFCLoc.UI.View</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -260,14 +260,14 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NFCRing.UI.ViewModel\NFCRing.UI.ViewModel.csproj">
+    <ProjectReference Include="..\NFCLoc.UI.ViewModel\NFCLoc.UI.ViewModel.csproj">
       <Project>{3c759847-3550-47f4-91d2-45b98c620780}</Project>
-      <Name>NFCRing.UI.ViewModel</Name>
+      <Name>NFCLoc.UI.ViewModel</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\nfcring_logo_1x.png" />
-    <Resource Include="Assets\nfcring_logo_2x.png" />
+    <Resource Include="Assets\NFCLoc_logo_1x.png" />
+    <Resource Include="Assets\NFCLoc_logo_2x.png" />
     <Resource Include="Assets\nfc_reader_1x.png" />
     <Resource Include="Assets\nfc_reader_2x.png" />
   </ItemGroup>
@@ -304,7 +304,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\nfcring_logo_12.png" />
+    <Resource Include="Assets\NFCLoc_logo_12.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\Edit_128.png" />

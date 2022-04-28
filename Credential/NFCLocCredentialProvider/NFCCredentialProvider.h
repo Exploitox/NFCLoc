@@ -75,7 +75,7 @@ public:
 		DWORD dwIndex, 
 		__out ICredentialProviderCredential** ppcpc);
 
-	friend HRESULT NFCRingCredentialProvider_CreateInstance(REFIID riid, __deref_out void** ppv);
+	friend HRESULT NFCLocCredentialProvider_CreateInstance(REFIID riid, __deref_out void** ppv);
 
 public:
 	void OnNFCStatusChanged();

@@ -300,9 +300,9 @@ HRESULT NFCCredentialProvider::GetCredentialAt(
 
 
 // Boilerplate code to create our provider.
-HRESULT NFCRingCredentialProvider_CreateInstance(REFIID riid, void** ppv)
+HRESULT NFCLocCredentialProvider_CreateInstance(REFIID riid, void** ppv)
 {
-	MAZ_LOG(LogMessageType::Information, "NFCCredentialProvider::NFCRingCredentialProvider_CreateInstance");
+	MAZ_LOG(LogMessageType::Information, "NFCCredentialProvider::NFCLocCredentialProvider_CreateInstance");
 
 	HRESULT hr;
 

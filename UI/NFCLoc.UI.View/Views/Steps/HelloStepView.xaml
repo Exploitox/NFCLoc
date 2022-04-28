@@ -1,9 +1,9 @@
-﻿<UserControl x:Class="NFCRing.UI.View.Views.HelloStepView"
+﻿<UserControl x:Class="NFCLoc.UI.View.Views.HelloStepView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:viewModels="clr-namespace:NFCRing.UI.ViewModel.ViewModels;assembly=NFCRing.UI.ViewModel"
+             xmlns:viewModels="clr-namespace:NFCLoc.UI.ViewModel.ViewModels;assembly=NFCLoc.UI.ViewModel"
              mc:Ignorable="d"
              d:DesignWidth="800"
              d:DesignHeight="600"
@@ -46,7 +46,7 @@
         <TextBlock Grid.Row="4"
                    HorizontalAlignment="Center"
                    FontSize="{StaticResource NormalFontSize}">
-            <Hyperlink Command="{Binding NavigateCommand}">http://nfcring.com/privacy</Hyperlink>
+            <Hyperlink Command="{Binding NavigateCommand}">http://NFCLoc.com/privacy</Hyperlink>
         </TextBlock>
     </Grid>
 </UserControl>

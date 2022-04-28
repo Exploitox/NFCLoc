@@ -1,0 +1,115 @@
+﻿<Page x:Class="NFCLoc.UI.Pages.MyTags"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:NFCLoc.UI.Pages"
+      xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI" 
+      xmlns:controls="clr-namespace:NFCLoc.UI.View.Controls"
+      mc:Ignorable="d" 
+      d:DesignHeight="516" d:DesignWidth="441"
+      Title="My Tags">
+
+    <ListBox Grid.Column="2"
+                     x:Name="ItemsListBox"
+                     ItemsSource="{Binding Items}"
+                     Margin="{StaticResource ContentMarginLeft}"
+                     BorderThickness="0">
+        <ListBox.ItemContainerStyle>
+            <Style TargetType="ListBoxItem">
+                <Style.Setters>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <Grid d:DataContext="{d:DesignInstance viewModels:RingItemViewModel}" Margin="0,10,0,0" Focusable="False">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+
+                                        <!-- image -->
+                                        <ContentControl>
+                                            <ContentControl.Template>
+                                                <ControlTemplate>
+                                                    <Border x:Name="ImageBorder" Margin="0,5,10,0" BorderBrush="Blue">
+                                                        <Image Height="32" Width="32">
+                                                            <Image.Style>
+                                                                <Style TargetType="{x:Type Image}">
+                                                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                                                    <Setter Property="Source" Value="{Binding Image}" />
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding Image}" Value="{x:Null}">
+                                                                            <Setter Property="Source" Value="/NFCLoc.UI.View;component/Assets/DoubleCircle_36.png" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Image.Style>
+                                                            <Image.InputBindings>
+                                                                <MouseBinding MouseAction="LeftClick"
+                                                                                      Command="{Binding ElementName=ItemsListBox, Path=DataContext.SelectImageCommand}"
+                                                                                      CommandParameter="{Binding Token}"/>
+                                                            </Image.InputBindings>
+                                                        </Image>
+                                                    </Border>
+
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="ImageBorder" Property="Cursor" Value="Hand" />
+                                                        </Trigger>
+                                                        <EventTrigger SourceName="ImageBorder" RoutedEvent="Border.MouseEnter">
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Duration="0:0:0.4" Storyboard.TargetName="ImageBorder" Storyboard.TargetProperty="Opacity" To="0.5" />
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </EventTrigger>
+                                                        <EventTrigger SourceName="ImageBorder" RoutedEvent="Border.MouseLeave">
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Duration="0:0:0.4" Storyboard.TargetName="ImageBorder" Storyboard.TargetProperty="Opacity" To="1" />
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </EventTrigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </ContentControl.Template>
+                                        </ContentControl>
+
+                                        <!-- name -->
+                                        <!--<controls:SkypeTextEditControl Text="{Binding Name, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                                               OkCommand="{Binding ElementName=ItemsListBox, Path=DataContext.SaveNameCommand}"
+                                                                               CancelCommand="{Binding ElementName=ItemsListBox, Path=DataContext.CancelEditNameCommand}"
+                                                                               CommandParameter="{Binding Token}"/>-->
+                                    </StackPanel>
+
+                                    <!-- token -->
+                                    <StackPanel Grid.Row="1"
+                                                        Margin="{StaticResource ContentMarginLightTop}"
+                                                        Orientation="Horizontal"
+                                                        Visibility="Collapsed">
+                                        <TextBlock Text="Token: " FontSize="{StaticResource SmallFontSize}"/>
+                                        <TextBlock Text="{Binding Token}" FontSize="{StaticResource SmallFontSize}"/>
+                                    </StackPanel>
+
+                                    <!-- remove button -->
+                                    <Button Grid.Row="2"
+                                                    Content="Remove"
+                                                    Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ListBox}, Path=DataContext.RemoveCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    HorizontalAlignment="Left"
+                                                    Margin="{StaticResource ContentMarginLightTop}"
+                                                    Style="{StaticResource ButtonStyle}"/>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style.Setters>
+            </Style>
+        </ListBox.ItemContainerStyle>
+    </ListBox>
+</Page>

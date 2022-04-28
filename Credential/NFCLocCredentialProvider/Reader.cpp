@@ -279,7 +279,7 @@ HRESULT Reader::GetLogin(
 				if (SUCCEEDED(hr))
 				{
 					pcpcs->ulAuthenticationPackage = ulAuthPackage;
-					pcpcs->clsidCredentialProvider = CLSID_NFCRingProvider;
+					pcpcs->clsidCredentialProvider = CLSID_NFCLOCProvider;
 
 					// At this point the credential has created the serialized credential used for logon
 					// By setting this to CPGSR_RETURN_CREDENTIAL_FINISHED we are letting logonUI know

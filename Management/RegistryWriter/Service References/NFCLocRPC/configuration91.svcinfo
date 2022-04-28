@@ -127,10 +127,10 @@
     </bindingConfiguration>
   </bindingConfigurations>
   <endpoints>
-    <endpoint name="WSHttpBinding_IRPC" contract="NFCRingRPC.IRPC" bindingType="wsHttpBinding" address="http://localhost:8000/NFCRing/RPCService" bindingConfiguration="WSHttpBinding_IRPC">
+    <endpoint name="WSHttpBinding_IRPC" contract="NFCLocRPC.IRPC" bindingType="wsHttpBinding" address="http://localhost:8000/NFCLoc/RPCService" bindingConfiguration="WSHttpBinding_IRPC">
       <properties>
         <property path="/address" isComplexType="false" isExplicitlyDefined="true" clrType="System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>http://localhost:8000/NFCRing/RPCService</serializedValue>
+          <serializedValue>http://localhost:8000/NFCLoc/RPCService</serializedValue>
         </property>
         <property path="/behaviorConfiguration" isComplexType="false" isExplicitlyDefined="false" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />
@@ -142,7 +142,7 @@
           <serializedValue>WSHttpBinding_IRPC</serializedValue>
         </property>
         <property path="/contract" isComplexType="false" isExplicitlyDefined="true" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>NFCRingRPC.IRPC</serializedValue>
+          <serializedValue>NFCLocRPC.IRPC</serializedValue>
         </property>
         <property path="/headers" isComplexType="true" isExplicitlyDefined="false" clrType="System.ServiceModel.Configuration.AddressHeaderCollectionElement, System.ServiceModel, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue>System.ServiceModel.Configuration.AddressHeaderCollectionElement</serializedValue>

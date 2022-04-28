@@ -7,8 +7,8 @@
     <ProjectGuid>{3C759847-3550-47F4-91D2-45B98C620780}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NFCRing.UI.ViewModel</RootNamespace>
-    <AssemblyName>NFCRing.UI.ViewModel</AssemblyName>
+    <RootNamespace>NFCLoc.UI.ViewModel</RootNamespace>
+    <AssemblyName>NFCLoc.UI.ViewModel</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -113,9 +113,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Service\NFCRingServiceCommon\NFCRing.Service.Common.csproj">
+    <ProjectReference Include="..\..\Service\NFCLocServiceCommon\NFCLoc.Service.Common.csproj">
       <Project>{79abafa4-54d9-4333-b34c-e4044a3346ab}</Project>
-      <Name>NFCRing.Service.Common</Name>
+      <Name>NFCLoc.Service.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

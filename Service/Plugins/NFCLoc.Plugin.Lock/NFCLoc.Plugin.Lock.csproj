@@ -7,8 +7,8 @@
     <ProjectGuid>{438C01C1-236E-449C-A086-823AE14C839F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NFCRing.Plugin.Lock</RootNamespace>
-    <AssemblyName>NFCRing.Plugin.Lock</AssemblyName>
+    <RootNamespace>NFCLoc.Plugin.Lock</RootNamespace>
+    <AssemblyName>NFCLoc.Plugin.Lock</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
@@ -68,13 +68,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\NFCRingServiceCommon\NFCRing.Service.Common.csproj">
+    <ProjectReference Include="..\..\NFCLocServiceCommon\NFCLoc.Service.Common.csproj">
       <Project>{79abafa4-54d9-4333-b34c-e4044a3346ab}</Project>
-      <Name>NFCRing.Service.Common</Name>
+      <Name>NFCLoc.Service.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\NFCRingServiceCore\NFCRing.Service.Core.csproj">
+    <ProjectReference Include="..\..\NFCLocServiceCore\NFCLoc.Service.Core.csproj">
       <Project>{2b5956fc-b173-4744-8d1a-d839899e8a98}</Project>
-      <Name>NFCRing.Service.Core</Name>
+      <Name>NFCLoc.Service.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

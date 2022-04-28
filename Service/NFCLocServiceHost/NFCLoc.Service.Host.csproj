@@ -7,8 +7,8 @@
     <ProjectGuid>{379FBAB4-4421-4995-8229-9641F6D08671}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NFCRing.Service.Host</RootNamespace>
-    <AssemblyName>NFCRingServiceHost</AssemblyName>
+    <RootNamespace>NFCLoc.Service.Host</RootNamespace>
+    <AssemblyName>NFCLocServiceHost</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
@@ -70,11 +70,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NFCRingServiceHost.cs">
+    <Compile Include="NFCLocServiceHost.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="NFCRingServiceHost.Designer.cs">
-      <DependentUpon>NFCRingServiceHost.cs</DependentUpon>
+    <Compile Include="NFCLocServiceHost.Designer.cs">
+      <DependentUpon>NFCLocServiceHost.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="ProjectInstaller.cs">
@@ -95,13 +95,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NFCRingServiceCommon\NFCRing.Service.Common.csproj">
+    <ProjectReference Include="..\NFCLocServiceCommon\NFCLoc.Service.Common.csproj">
       <Project>{79abafa4-54d9-4333-b34c-e4044a3346ab}</Project>
-      <Name>NFCRing.Service.Common</Name>
+      <Name>NFCLoc.Service.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NFCRingServiceCore\NFCRing.Service.Core.csproj">
+    <ProjectReference Include="..\NFCLocServiceCore\NFCLoc.Service.Core.csproj">
       <Project>{2b5956fc-b173-4744-8d1a-d839899e8a98}</Project>
-      <Name>NFCRing.Service.Core</Name>
+      <Name>NFCLoc.Service.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,4 +1,4 @@
-![Logo](https://github.com/mclear/Sesame/blob/master/UI/NFCRing.UI.View/Icon.png)
+![Logo](https://github.com/mclear/Sesame/blob/master/UI/NFCLoc.UI.View/Icon.png)
 
 NFC Fence provides NFC based login and logout functionality for the Microsoft Windows Operating System.  
 
@@ -38,14 +38,14 @@ There are three separate parts to this, if any fails then you will need to check
 
 ### Registering the credential provider
 
-1. Copy ``\Sesame\bin\Release\Credential\NFCRingCredentialProvider.dll`` to ``C:\Windows\System32``.
+1. Copy ``\Sesame\bin\Release\Credential\NFCLocCredentialProvider.dll`` to ``C:\Windows\System32``.
 
 1. Run ``\Sesame\bin\Release\Credential\Register.reg``. You may need to run it as Administrator. Allow the UAC prompt if it pops up. If unsuccessful, run "regedit.exe" as administrator and select "File -> Import" and browse to "Register.reg"
 
 
 ### Registering a token
 
-1. Run ``\Sesame\bin\Release\UI\NFCRing.UI.View.exe``.
+1. Run ``\Sesame\bin\Release\UI\NFCLoc.UI.View.exe``.
 
 1. Start by selecting "Add new NFC Ring" and follow the wizard steps.
 

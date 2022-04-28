@@ -1,9 +1,9 @@
-﻿<UserControl x:Class="NFCRing.UI.View.Controls.SkypeTextEditControl"
+﻿<UserControl x:Class="NFCLoc.UI.View.Controls.SkypeTextEditControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:controls="clr-namespace:NFCRing.UI.View.Controls"
+             xmlns:controls="clr-namespace:NFCLoc.UI.View.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
@@ -52,7 +52,7 @@
                         <controls:SkypeButtonControl x:Name="OkImage"
                                                      Visibility="Hidden"
                                                      Margin="6,0,0,0"
-                                                     ImageSource="/NFCRing.UI.View;component/Assets/Ok_blue_128.png"
+                                                     ImageSource="/NFCLoc.UI.View;component/Assets/Ok_blue_128.png"
                                                      MouseLeftButtonUp="CommandButton_OnMouseLeftButtonUp">
                             <controls:SkypeButtonControl.InputBindings>
                                 <MouseBinding MouseAction="LeftClick"
@@ -65,7 +65,7 @@
                         <controls:SkypeButtonControl x:Name="CancelImage"
                                                      Visibility="Hidden"
                                                      Margin="6,0,0,0"
-                                                     ImageSource="/NFCRing.UI.View;component/Assets/Cancel_blue_128.png"
+                                                     ImageSource="/NFCLoc.UI.View;component/Assets/Cancel_blue_128.png"
                                                      MouseLeftButtonUp="CommandButton_OnMouseLeftButtonUp">
                             <controls:SkypeButtonControl.InputBindings>
                                 <MouseBinding MouseAction="LeftClick"

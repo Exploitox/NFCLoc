@@ -7,8 +7,8 @@
     <ProjectGuid>{79ABAFA4-54D9-4333-B34C-E4044A3346AB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NFCRing.Service.Common</RootNamespace>
-    <AssemblyName>NFCRingServiceCommon</AssemblyName>
+    <RootNamespace>NFCLoc.Service.Common</RootNamespace>
+    <AssemblyName>NFCLocServiceCommon</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
@@ -65,7 +65,7 @@
     <Compile Include="Config.cs" />
     <Compile Include="Crypto.cs" />
     <Compile Include="Enums.cs" />
-    <Compile Include="INFCRingServicePlugin.cs" />
+    <Compile Include="INFCLocServicePlugin.cs" />
     <Compile Include="NetworkMessage.cs" />
     <Compile Include="PendingRegistration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -16,7 +16,7 @@ static LONG g_cRef = 0;   // global dll reference count
 
 // IClassFactory ///////////////////////////////////////////////////////////////////////
 
-extern HRESULT NFCRingCredentialProvider_CreateInstance(REFIID riid, void** ppv);
+extern HRESULT NFCLocCredentialProvider_CreateInstance(REFIID riid, void** ppv);
 
 HINSTANCE g_hinst = NULL;   // global dll hinstance
 
@@ -70,7 +70,7 @@ public:
 		HRESULT hr;
 		if (!pUnkOuter)
 		{
-			hr = NFCRingCredentialProvider_CreateInstance(riid, ppv);
+			hr = NFCLocCredentialProvider_CreateInstance(riid, ppv);
 		}
 		else
 		{
@@ -105,7 +105,7 @@ private:
 HRESULT CClassFactory_CreateInstance(REFCLSID rclsid, REFIID riid, void** ppv)
 {
 	HRESULT hr;
-	if (CLSID_NFCRingProvider == rclsid)
+	if (CLSID_NFCLOCProvider == rclsid)
 	{
 		CClassFactory* pcf = new CClassFactory;
 		if (pcf)

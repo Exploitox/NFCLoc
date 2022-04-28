@@ -136,8 +136,8 @@
   </wsp:Policy>
   <wsdl:types>
     <xsd:schema targetNamespace="http://tempuri.org/Imports">
-      <xsd:import schemaLocation="http://localhost:8000/NFCRing/RPCService?xsd=xsd0" namespace="http://tempuri.org/" />
-      <xsd:import schemaLocation="http://localhost:8000/NFCRing/RPCService?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://localhost:8000/NFCLoc/RPCService?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://localhost:8000/NFCLoc/RPCService?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="IRPC_CredProtect_InputMessage">
@@ -169,9 +169,9 @@
   </wsdl:binding>
   <wsdl:service name="RPCService">
     <wsdl:port name="WSHttpBinding_IRPC" binding="tns:WSHttpBinding_IRPC">
-      <soap12:address location="http://localhost:8000/NFCRing/RPCService" />
+      <soap12:address location="http://localhost:8000/NFCLoc/RPCService" />
       <wsa10:EndpointReference>
-        <wsa10:Address>http://localhost:8000/NFCRing/RPCService</wsa10:Address>
+        <wsa10:Address>http://localhost:8000/NFCLoc/RPCService</wsa10:Address>
         <Identity xmlns="http://schemas.xmlsoap.org/ws/2006/02/addressingidentity">
           <Spn>host/Mazez</Spn>
         </Identity>

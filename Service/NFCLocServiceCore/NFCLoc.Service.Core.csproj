@@ -7,8 +7,8 @@
     <ProjectGuid>{2B5956FC-B173-4744-8D1A-D839899E8A98}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NFCRing.Service.Core</RootNamespace>
-    <AssemblyName>NFCRingServiceCore</AssemblyName>
+    <RootNamespace>NFCLoc.Service.Core</RootNamespace>
+    <AssemblyName>NFCLocServiceCore</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
@@ -76,9 +76,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NFCRingServiceCommon\NFCRing.Service.Common.csproj">
+    <ProjectReference Include="..\NFCLocServiceCommon\NFCLoc.Service.Common.csproj">
       <Project>{79abafa4-54d9-4333-b34c-e4044a3346ab}</Project>
-      <Name>NFCRing.Service.Common</Name>
+      <Name>NFCLoc.Service.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
