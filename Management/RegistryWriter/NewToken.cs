@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using NFCRing.Service.Common;
+using NFCLoc.Service.Common;
 using Newtonsoft.Json;
 using System.Reflection;
 

@@ -14,7 +14,7 @@ using System.IO;
 using System.Reflection;
 using System.Net.Sockets;
 using System.Net;
-using NFCRing.Service.Common;
+using NFCLoc.Service.Common;
 using Newtonsoft.Json;
 
 namespace CredentialRegistration
@@ -178,7 +178,7 @@ namespace CredentialRegistration
             //    Console.WriteLine("Round Trip: {0}", roundtrip);
             //}
 
-            //using (NFCRingRPC.RPCClient client = new NFCRingRPC.RPCClient())
+            //using (NFCLocRPC.RPCClient client = new NFCLocRPC.RPCClient())
             //{
             //    textBox2.Text = client.CredProtect(textBox2.Text);
             //}
