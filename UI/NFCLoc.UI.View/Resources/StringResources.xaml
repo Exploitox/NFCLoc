@@ -1,0 +1,36 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <system:String x:Key="close">Close</system:String>
+    <system:String x:Key="about">About</system:String>
+    <system:String x:Key="wait">Please wait...</system:String>   
+ 
+    <!-- Login -->
+    <system:String x:Key="login_manageNFC">Manage NFC Cards</system:String>
+    <system:String x:Key="login_addNFC">Add new NFC Ring</system:String>
+    <system:String x:Key="login_availableReaders">Available NFC Readers:</system:String>
+
+    <!-- About -->
+    <system:String x:Key="about_abouttext">About NFCLoc</system:String>
+    <system:String x:Key="about_text">NFCLoc provides NFC based login and logout functionality for the Microsoft Windows Operating System. The NFCLoc can be used to make payments, access control, unlock &amp; control mobile devices, transfer information, link people and much more.</system:String>
+    
+    <!-- FinishedStepView -->
+    <system:String x:Key="fsv_header">Finished!</system:String>
+    <system:String x:Key="fsv_h2">You can now use your card to lock and unlock your computer. Just tap your card on the reader!</system:String>
+    <system:String x:Key="fsv_h3">You can also add more rings for other users or revoke access on the next screen.</system:String>
+    
+    <!-- HelloStepView -->
+    <system:String x:Key="hsv_header">Windows Login Setup</system:String>
+    <system:String x:Key="hsv_t1">Let's set up your card to lock and unlock your computer with an NFC Card. You will need a compatible NFC Reader installed and your ring.</system:String>
+    <system:String x:Key="hsv_t2">During the process you will be asked to enter your login credentials. These credentials are stored in your computer in a secure form and never transmitted over internet. To learn more about our privacy policy, please follow the link below.</system:String>
+    
+    <!-- LoginStepView -->
+    <system:String x:Key="lsv_header">Enter your Windows Login credentials</system:String>
+    <system:String x:Key="lsv_UserName">User Name</system:String>
+    <system:String x:Key="lsv_Password">Password</system:String>
+
+    <system:String x:Key="PRSV_header">Place then remove your NFC Card on the reader</system:String>
+    <system:String x:Key="RRSV_header">Place the card on the reader again for confirmation</system:String>
+    <system:String x:Key="SRSV_header">Card successfully registered</system:String>
+</ResourceDictionary>

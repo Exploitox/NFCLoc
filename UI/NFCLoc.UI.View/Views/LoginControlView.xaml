@@ -40,7 +40,7 @@
                                 <Image Source="/NFCLoc.UI.View;component/Assets/Plus_36.png"
                                        Height="16"
                                        Width="16"/>
-                                <TextBlock Text="Add new NFC Ring"
+                                <TextBlock Text="{DynamicResource login_addNFC}"
                                            VerticalAlignment="Center"
                                            FontSize="{StaticResource SmallFontSize}"
                                            Margin="{StaticResource ContentMarginLightLeft}"/>
@@ -83,7 +83,7 @@
 
                     <!-- name -->
                     <TextBlock Grid.Column="2"
-                               Text="Manage NFC Rings"
+                               Text="{DynamicResource login_manageNFC}"
                                TextTrimming="WordEllipsis"
                                VerticalAlignment="Center"
                                FontSize="{StaticResource SmallFontSize}"/>
@@ -107,7 +107,7 @@
                            Source="/NFCLoc.UI.View;component/Assets/abouticon_32.png"
                            Height="16" Width="16"
                            Margin="{StaticResource ContentMarginSmallLeftRight}"/>
-                                <TextBlock Text="About"
+                                <TextBlock Text="{DynamicResource about}"
                                            HorizontalAlignment="Left"
                                            VerticalAlignment="Center"
                                            FontSize="{StaticResource SmallFontSize}"
@@ -122,7 +122,6 @@
             <Border Grid.Column="1" VerticalAlignment="Stretch" Width="2" Background="{StaticResource BorderBrush}"/>
 
             <!-- selected item data -->
-            <Label Grid.Column="2">selected item data</Label>
             <ListBox Grid.Column="2"
                      x:Name="ItemsListBox"
                      ItemsSource="{Binding Items}"
@@ -256,7 +255,7 @@
                 <ComboBox DockPanel.Dock="Right" SelectedIndex="0" IsSynchronizedWithCurrentItem="True" Width="Auto" VerticalAlignment="Center" ItemsSource="{Binding DevicesList}" DisplayMemberPath="DeviceName">
 
                 </ComboBox>
-                <TextBlock Text="Available NFC Readers:" DockPanel.Dock="Right"
+                <TextBlock Text="{DynamicResource login_availableReaders}" DockPanel.Dock="Right"
                                FontSize="{StaticResource SmallFontSize}" 
                                VerticalAlignment="Center" 
                                HorizontalAlignment="Right"></TextBlock>

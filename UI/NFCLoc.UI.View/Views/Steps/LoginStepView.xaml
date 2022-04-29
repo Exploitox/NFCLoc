@@ -17,7 +17,7 @@
 
         <!-- step text -->
         <TextBlock Grid.Row="0"
-                   Text="Enter your Windows Login credentials"
+                   Text="{DynamicResource lsv_header}"
                    HorizontalAlignment="Center"
                    FontSize="{StaticResource MediumFontSize}"
                    Margin="{StaticResource ContentMargin}"/>
@@ -35,7 +35,7 @@
             
             <!-- user name -->
             <StackPanel Grid.Column="1">
-                <TextBlock Text="User Name"
+                <TextBlock Text="{DynamicResource lsv_UserName}"
                            FontSize="{StaticResource NormalFontSize}"
                            Margin="{StaticResource LabelMarginBottom}"/>
                 <TextBox Style="{StaticResource TextBoxStyle}"
@@ -46,7 +46,7 @@
             
             <!-- password -->
             <StackPanel Grid.Row="1" Grid.Column="1" Margin="{StaticResource ContentMarginTop}">
-                <TextBlock Text="Password" FontSize="{StaticResource NormalFontSize}" Margin="{StaticResource LabelMarginBottom}"/>
+                <TextBlock Text="{DynamicResource lsv_Password}" FontSize="{StaticResource NormalFontSize}" Margin="{StaticResource LabelMarginBottom}"/>
                 
                 <Grid>
                     <!-- password text -->

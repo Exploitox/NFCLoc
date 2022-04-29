@@ -20,14 +20,14 @@
 
         <!-- step text -->
         <TextBlock Grid.Row="1"
-                   Text="Windows Login Setup"
+                   Text="{DynamicResource hsv_header}"
                    HorizontalAlignment="Center"
                    FontSize="{StaticResource BigFontSize}"
                    Margin="{StaticResource ContentMargin}"/>
         
         <!-- text 1 -->
         <TextBlock Grid.Row="2"
-                   Text="Let's set up your ring to lock and unlock your computer with an NFC Ring. You will need a compatible NFC Reader installed and your ring."
+                   Text="{DynamicResource hsv_t1}"
                    HorizontalAlignment="Center"
                    TextAlignment="Center"
                    FontSize="{StaticResource NormalFontSize}"
@@ -35,7 +35,7 @@
         
         <!-- text 2 -->
         <TextBlock Grid.Row="3"
-                   Text="During the process you will be asked to enter your login credentials. These credentials are stored in your computer in a secure form and never transmitted over internet. To learn more about our privacy policy, please follow the link below."
+                   Text="{DynamicResource hsv_t2}"
                    HorizontalAlignment="Center"
                    TextAlignment="Center"
                    FontSize="{StaticResource NormalFontSize}"

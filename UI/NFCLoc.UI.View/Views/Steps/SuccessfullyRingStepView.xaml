@@ -16,7 +16,7 @@
         
         <!-- step text -->
         <TextBlock Grid.Row="1"
-                   Text="Ring successfully registered"
+                   Text="{DynamicResource SRSV_header}"
                    TextWrapping="Wrap"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"

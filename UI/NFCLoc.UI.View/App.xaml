@@ -10,7 +10,8 @@
         <ResourceDictionary.MergedDictionaries>
             <ResourceDictionary Source="/NFCLoc.UI.View;component/Themes/Styles.xaml"/>
             <ResourceDictionary Source="/NFCLoc.UI.View;component/Themes/ViewDictionary.xaml"/>
-
+            <ResourceDictionary Source="Resources/StringResources.xaml"/>
+            <ResourceDictionary Source="Resources/StringResources.de-DE.xaml"/>
             <ResourceDictionary>
                 <viewModel:ViewModelLocator x:Key="Locator" d:IsDataSource="True" xmlns:vm="clr-namespace:NFCLoc.UI.View.ViewModel" />
             </ResourceDictionary>

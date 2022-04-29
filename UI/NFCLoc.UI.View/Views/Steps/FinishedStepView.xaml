@@ -16,14 +16,14 @@
         
         <!-- step text -->
         <TextBlock Grid.Row="1"
-                   Text="Finished!"
+                   Text="{DynamicResource fsv_header}"
                    HorizontalAlignment="Center"
                    FontSize="{StaticResource MediumFontSize}"
                    Margin="{StaticResource ContentMargin}"/>
         
         <!-- text 1 -->
         <TextBlock Grid.Row="2"
-                   Text="You can now use your ring to lock and unlock your computer. Just tap your ring on the reader!"
+                   Text="{DynamicResource fsv_h2}"
                    HorizontalAlignment="Center"
                    TextAlignment="Center"
                    FontSize="{StaticResource MediumFontSize}"
@@ -31,7 +31,7 @@
         
         <!-- text 2 -->
         <TextBlock Grid.Row="3"
-                   Text="You can also add more rings for other users or revoke access on the next screen."
+                   Text="{DynamicResource fsv_h3}"
                    HorizontalAlignment="Center"
                    TextAlignment="Center"
                    FontSize="{StaticResource MediumFontSize}"

@@ -32,14 +32,14 @@
             <Label Content="NFCLoc Version:" FontWeight="Bold" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="18"></Label>
             <Label Content="{Binding VersionInfo}" FontWeight="Bold" Name="lblVersionInfo" Grid.Row="0" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="18"></Label>
             <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
-                <Label Content="About NFCLoc" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="18"></Label>
-                <TextBlock Text="NFCLoc provides NFC based login and logout functionality for the Microsoft Windows Operating System. The NFCLoc can be used to make payments, access control, unlock &amp; control mobile devices, transfer information, link people and much more." TextWrapping="Wrap" Margin="10" FontSize="16"></TextBlock>
+                <Label Content="{DynamicResource about_abouttext}" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="18"></Label>
+                <TextBlock Text="{DynamicResource about_text}" TextWrapping="Wrap" Margin="10" FontSize="16"></TextBlock>
             </StackPanel>
             <DockPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
                 <!--
                 <TextBlock Text="Copyright © 2018 McLear Ltd" TextWrapping="Wrap" Margin="10" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left"></TextBlock>
                 -->
-                <Button IsDefault="True" IsCancel="True" Content="Close" VerticalAlignment="Center" HorizontalAlignment="Right" Width="50" Height="25" Margin="0,0,10,0"></Button>
+                <Button IsDefault="True" IsCancel="True" Content="{DynamicResource close}" VerticalAlignment="Center" HorizontalAlignment="Right" Width="50" Height="25" Margin="0,0,10,0" />
             </DockPanel>
         </Grid>
     </Grid>

@@ -29,7 +29,7 @@
                 <DropShadowEffect BlurRadius="30" ShadowDepth="5" />
             </Border.Effect>
         </Border>
-        <TextBlock Text="Please wait..."
+        <TextBlock Text="{DynamicResource wait}"
                    Foreground="White"
                    FontSize="{StaticResource NormalFontSize}"
                    HorizontalAlignment="Center"
