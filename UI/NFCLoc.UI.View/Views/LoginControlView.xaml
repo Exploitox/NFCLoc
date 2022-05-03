@@ -244,7 +244,7 @@
                         <ContentControl />
                     </Viewbox>
                 </Button>
-                <TextBlock Text="No Compatible NFC Reader detected." DockPanel.Dock="Right"
+                <TextBlock Text="{DynamicResource missing_reader}" DockPanel.Dock="Right"
                                FontSize="{StaticResource SmallFontSize}" 
                                VerticalAlignment="Center" 
                                HorizontalAlignment="Right" 

@@ -50,4 +50,5 @@
     <system:String x:Key="invalid_credentials">Please input valid User credentials</system:String>
     <system:String x:Key="no_username">Please input the Username</system:String>
     <system:String x:Key="no_password">A password-less user account is not allowed!</system:String>
+    <system:String x:Key="missing_reader">No Compatible NFC Reader detected.</system:String>
 </ResourceDictionary>

@@ -99,7 +99,7 @@ HRESULT NFCCredential::Initialize(
 	// Initialize the String values of all the fields.
 	if (SUCCEEDED(hr))
 	{
-		hr = SHStrDupW(L"NFC Ring Login", &_rgFieldStrings[SFI_FIMTITLE]);
+		hr = SHStrDupW(L"NFCLoc Login", &_rgFieldStrings[SFI_FIMTITLE]);
 	}
 	if (SUCCEEDED(hr))
 	{

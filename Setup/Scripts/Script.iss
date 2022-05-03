@@ -1,10 +1,10 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
-#define MyAppName "NFCLoc Fence"
-#define GitCommitHash "5afa111"
-#define MyAppVersion "1.0.0.7"
-#define MyAppPublisher "McLear Ltd"
-#define MyAppURL "http://www.example.com/"
+#define MyAppName "NFCLoc"
+#define GitCommitHash "b8f562d"
+#define MyAppVersion "2.0.0.57"
+#define MyAppPublisher "Wolkenhof"
+#define MyAppURL "http://wolkenhof.com/"
 #define MyAppExeName "NFCLoc.UI.View.exe"
 #define AppGuid "{F7D4EF32-2D80-441A-A499-3E6000BFCEBA}"
 #define AppPath = "{app}\App"
@@ -49,23 +49,23 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 ; exe file
-Source: "..\..\UI\NFCLoc.UI.View\bin\Release\NFCLoc.UI.View.exe"; DestDir: {#AppPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\UI\NFCLoc.UI.View.exe"; DestDir: {#AppPath}; Flags: ignoreversion
 
 ; Application files
-Source: "..\..\UI\NFCLoc.UI.View\bin\Release\NFCLoc.UI.View.exe.config"; DestDir: {#AppPath}; Flags: ignoreversion
-Source: "..\..\UI\NFCLoc.UI.View\bin\Release\NLog.config"; DestDir: {#AppPath}; Flags: ignoreversion
-Source: "..\..\UI\NFCLoc.UI.View\bin\Release\Autofac.dll"; DestDir: {#AppPath}; Flags: ignoreversion
-Source: "..\..\UI\NFCLoc.UI.View\bin\Release\Autofac.Extras.CommonServiceLocator.dll"; DestDir: {#AppPath}; Flags: ignoreversion
-Source: "..\..\UI\NFCLoc.UI.View\bin\Release\GalaSoft.MvvmLight.dll"; DestDir: {#AppPath}; Flags: ignoreversion
-Source: "..\..\UI\NFCLoc.UI.View\bin\Release\GalaSoft.MvvmLight.Extras.dll"; DestDir: {#AppPath}; Flags: ignoreversion
-Source: "..\..\UI\NFCLoc.UI.View\bin\Release\GalaSoft.MvvmLight.Platform.dll"; DestDir: {#AppPath}; Flags: ignoreversion
-Source: "..\..\UI\NFCLoc.UI.View\bin\Release\Microsoft.Practices.ServiceLocation.dll"; DestDir: {#AppPath}; Flags: ignoreversion
-Source: "..\..\UI\NFCLoc.UI.View\bin\Release\Newtonsoft.Json.dll"; DestDir: {#AppPath}; Flags: ignoreversion
-Source: "..\..\UI\NFCLoc.UI.View\bin\Release\NFCLoc.UI.ViewModel.dll"; DestDir: {#AppPath}; Flags: ignoreversion
-Source: "..\..\UI\NFCLoc.UI.View\bin\Release\NFCLocServiceCommon.dll"; DestDir: {#AppPath}; Flags: ignoreversion
-Source: "..\..\UI\NFCLoc.UI.View\bin\Release\NLog.dll"; DestDir: {#AppPath}; Flags: ignoreversion
-Source: "..\..\UI\NFCLoc.UI.View\bin\Release\System.Windows.Interactivity.dll"; DestDir: {#AppPath}; Flags: ignoreversion
-Source: "..\..\UI\NFCLoc.UI.View\bin\Release\Icon.ico"; DestDir: {#AppPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\UI\NFCLoc.UI.View.exe.config"; DestDir: {#AppPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\UI\NLog.config"; DestDir: {#AppPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\UI\Autofac.dll"; DestDir: {#AppPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\UI\Autofac.Extras.CommonServiceLocator.dll"; DestDir: {#AppPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\UI\GalaSoft.MvvmLight.dll"; DestDir: {#AppPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\UI\GalaSoft.MvvmLight.Extras.dll"; DestDir: {#AppPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\UI\GalaSoft.MvvmLight.Platform.dll"; DestDir: {#AppPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\UI\Microsoft.Practices.ServiceLocation.dll"; DestDir: {#AppPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\UI\Newtonsoft.Json.dll"; DestDir: {#AppPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\UI\NFCLoc.UI.ViewModel.dll"; DestDir: {#AppPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\UI\NFCLocServiceCommon.dll"; DestDir: {#AppPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\UI\NLog.dll"; DestDir: {#AppPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\UI\System.Windows.Interactivity.dll"; DestDir: {#AppPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\UI\Icon.ico"; DestDir: {#AppPath}; Flags: ignoreversion
 
 ; Service files
 Source: "..\..\bin\Release\Service\NFCLocServiceHost.exe.config"; DestDir: {#ServiceAppPath}; Flags: ignoreversion
@@ -73,7 +73,7 @@ Source: "..\..\bin\Release\Service\Newtonsoft.Json.dll"; DestDir: {#ServiceAppPa
 Source: "..\..\bin\Release\Service\NFCLocServiceCommon.dll"; DestDir: {#ServiceAppPath}; Flags: ignoreversion
 Source: "..\..\bin\Release\Service\NFCLocServiceCore.dll"; DestDir: {#ServiceAppPath}; Flags: ignoreversion
 Source: "..\..\bin\Release\Service\NFCLocServiceHost.exe"; DestDir: {#ServiceAppPath}; Flags: ignoreversion
-Source: "..\..\bin\Release\Service\WinAPIWrapper.dll"; DestDir: {#ServiceAppPath}; Flags: ignoreversion
+;Source: "..\..\bin\Release\Service\WinAPIWrapper.dll"; DestDir: {#ServiceAppPath}; Flags: ignoreversion
 Source: "..\..\bin\Release\Service\Plugins\NFCLoc.Plugin.Lock.dll"; DestDir: {#ServiceAppPluginsPath}; Flags: ignoreversion
 Source: "..\..\bin\Release\Service\Plugins\NFCLoc.Plugin.Unlock.dll"; DestDir: {#ServiceAppPluginsPath}; Flags: ignoreversion
 ;Source: "..\..\bin\Release\Service\Plugins\NFCLocServiceCommon.dll"; DestDir: {#ServiceAppPluginsPath}; Flags: ignoreversion
@@ -84,7 +84,7 @@ Source: "..\..\bin\Release\Management\CredentialRegistration.exe.config"; DestDi
 Source: "..\..\bin\Release\Management\Newtonsoft.Json.dll"; DestDir: {#ServiceManagementPath}; Flags: ignoreversion
 Source: "..\..\bin\Release\Management\NFCLocServiceCommon.dll"; DestDir: {#ServiceManagementPath}; Flags: ignoreversion
 Source: "..\..\bin\Release\Management\CredentialRegistration.exe"; DestDir: {#ServiceManagementPath}; Flags: ignoreversion
-Source: "..\..\bin\Release\Management\WinAPIWrapper.dll"; DestDir: {#ServiceManagementPath}; Flags: ignoreversion
+;Source: "..\..\bin\Release\Management\WinAPIWrapper.dll"; DestDir: {#ServiceManagementPath}; Flags: ignoreversion
 
 Source: "..\..\bin\Release\Credential\CredUILauncher.exe"; DestDir: {#ServiceCredentialPath}; Flags: ignoreversion
 Source: "..\..\bin\Release\Credential\NFCLocCredentialProvider.dll"; DestDir: {#ServiceCredentialPath}; Flags: ignoreversion

@@ -50,4 +50,5 @@
     <system:String x:Key="invalid_credentials">Bitte geben Sie gültige Anmeldedaten ein.</system:String>
     <system:String x:Key="no_username">Bitte geben Sie einen Benutzernamen ein.</system:String>
     <system:String x:Key="no_password">Ein Benutzerkonto ohne Passwort ist nicht zulässig!</system:String>
+    <system:String x:Key="missing_reader">Kein kompatibles NFC-Lesegerät gefunden.</system:String>
 </ResourceDictionary>
