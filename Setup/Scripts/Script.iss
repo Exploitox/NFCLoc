@@ -12,6 +12,7 @@
 #define ServiceManagementPath = "{app}\Service\Management"
 #define ServiceAppPath = "{app}\Service\Service"
 #define ServiceAppPluginsPath = "{app}\Service\Service\Plugins"
+#define medatixxPluginPath = "{app}\Service\medatixx"
 #define RegistryKey = "{{8EB4E5F7-9DFB-4674-897C-2A584934CDBE}"
 #define ProviderNameKey = "NFCLocCredentialProvider"
 #define VCmsg "Installing Microsoft Visual C++ Redistributable...."
@@ -90,6 +91,18 @@ Source: "..\..\bin\Release\Credential\CredUILauncher.exe"; DestDir: {#ServiceCre
 Source: "..\..\bin\Release\Credential\NFCLocCredentialProvider.dll"; DestDir: {#ServiceCredentialPath}; Flags: ignoreversion
 Source: "..\..\bin\Release\Credential\tileimage.bmp"; DestDir: {#ServiceCredentialPath}; Flags: ignoreversion
 Source: "..\..\bin\Release\Credential\NFCLocCredentialProvider.dll"; DestDir: {sys};
+
+; Plugin (medatixx)
+Source: "..\..\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\CommandLine.dll"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
+Source: "..\..\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\Microsoft.Toolkit.Uwp.Notifications.dll"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
+Source: "..\..\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\Microsoft.Windows.SDK.NET.dll"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
+Source: "..\..\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\Newtonsoft.Json.dll"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
+Source: "..\..\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\NFCLoc.Plugin.medatixx.deps.json"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
+Source: "..\..\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\NFCLoc.Plugin.medatixx.dll"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
+Source: "..\..\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\NFCLoc.Plugin.medatixx.exe"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
+Source: "..\..\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\NFCLoc.Plugin.medatixx.pdb"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
+Source: "..\..\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\NFCLoc.Plugin.medatixx.runtimeconfig.json"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
+Source: "..\..\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\WinRT.Runtime.dll"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
 
 ; Visual C++ 2015
 Source: "vc_redist.x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall

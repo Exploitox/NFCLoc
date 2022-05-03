@@ -32,6 +32,9 @@ namespace NFCLoc.Plugin.Lock
                 return;
             try
             {
+                // Check if User is currently running medatixx Client
+                ProcessAsUser.Launch($@"C:\Program Files\Wolkenhof\NFCLoc\Service\medatixx\NFCLoc.Plugin.medatixx.exe -c {id} -s");
+                System.Threading.Thread.Sleep(8000);
                 ProcessAsUser.Launch(@"C:\WINDOWS\system32\rundll32.exe user32.dll,LockWorkStation");
             }
             catch (Exception ex)
