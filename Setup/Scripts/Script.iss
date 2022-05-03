@@ -1,7 +1,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "NFCLoc"
-#define GitCommitHash "b8f562d"
+#define GitCommitHash "d5455c7"
 #define MyAppVersion "2.0.0.57"
 #define MyAppPublisher "Wolkenhof"
 #define MyAppURL "http://wolkenhof.com/"
@@ -32,7 +32,7 @@ AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 
-DefaultDirName={pf}\{#MyAppName}
+DefaultDirName={pf}\{#MyAppPublisher}\{#MyAppName}
 DisableProgramGroupPage=yes
 
 OutputDir=..\Result
