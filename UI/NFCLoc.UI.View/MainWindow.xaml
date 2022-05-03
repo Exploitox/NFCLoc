@@ -10,7 +10,7 @@
         Height="550"
         Width="825"
         WindowStartupLocation="CenterScreen"
-        DataContext="{Binding Source={StaticResource Locator}, Path=MainViewModel}">
+        DataContext="{Binding Source={StaticResource Locator}, Path=MainViewModel}" Closing="Window_Closing">
 
     <Grid>
         <!-- content -->

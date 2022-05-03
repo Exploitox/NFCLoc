@@ -19,7 +19,7 @@ namespace NFCLoc.Service.Host
             serviceProcessInstaller.AfterInstall += OnAfterInstall;
             _serviceInstaller = new ServiceInstaller();
             _serviceInstaller.ServiceName = "NFCLocService";
-            _serviceInstaller.Description = "Service for lock and unlock your computer by NFC Ring";
+            _serviceInstaller.Description = "Service for lock and unlock your computer by NFCLoc";
             _serviceInstaller.StartType = ServiceStartMode.Automatic;
             Installers.Add(serviceProcessInstaller);
             Installers.Add(_serviceInstaller);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
@@ -11,15 +12,27 @@ namespace NFCLoc.UI.View
     /// </summary>
     public partial class MainWindow
     {
+        System.Windows.Forms.NotifyIcon nIcon = new System.Windows.Forms.NotifyIcon();
+
         public MainWindow()
         {
             InitializeComponent();
+            nIcon.Icon = new Icon("icon.ico");
+            nIcon.Visible = true;
+            nIcon.Click += nIcon_Click;
         }
 
         protected override void OnSourceInitialized(EventArgs e)
         {
             IconHelper.RemoveIcon(this);
         }
+        
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = true;
+            this.Visibility = Visibility.Hidden;
+        }
+
         private void SetLanguageDictionary()
         {
             ResourceDictionary dict = new ResourceDictionary();
@@ -36,6 +49,13 @@ namespace NFCLoc.UI.View
                     break;
             }
             this.Resources.MergedDictionaries.Add(dict);
+        }
+        
+        void nIcon_Click(object sender, EventArgs e)
+        {
+            // events comes here
+            this.Visibility = Visibility.Visible;
+            this.WindowState = WindowState.Normal;
         }
     }
 
