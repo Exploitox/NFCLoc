@@ -36,7 +36,7 @@ namespace NFCLoc.UI.ViewModel.ViewModels
 
         public WizardViewModel(List<IStepViewModel> steps)
         {
-            Title = "NFC Ring Login Setup";
+            Title = "NFCLoc Login Setup";
 
             _steps = steps;
 

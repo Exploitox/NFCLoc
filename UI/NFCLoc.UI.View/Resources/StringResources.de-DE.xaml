@@ -3,14 +3,17 @@
                     xmlns:system="clr-namespace:System;assembly=mscorlib">
 
     <system:String x:Key="close">Beenden</system:String>
-    <system:String x:Key="cancel">Abbrechen</system:String>
     <system:String x:Key="about">Über</system:String>
-    <system:String x:Key="wait">Bitte Warten...</system:String>
+    <system:String x:Key="wait">Bitte Warten ...</system:String>
+    <system:String x:Key="cancel">Abbrechen</system:String>
+    <system:String x:Key="next">Weiter</system:String>
+    <system:String x:Key="finish">Fertig</system:String>
+    <system:String x:Key="remove">Löschen</system:String>
 
     <!-- Login -->
     <system:String x:Key="login_manageNFC">NFC Karten verwalten</system:String>
     <system:String x:Key="login_addNFC">NFC Karte hinzufügen</system:String>
-    <system:String x:Key="login_availableReaders">Verfügbare NFC Lesegeräte:</system:String>
+    <system:String x:Key="login_availableReaders">Verfügbare NFC Lesegeräte: </system:String>
 
     <!-- About -->
     <system:String x:Key="about_abouttext">Über NFCLoc</system:String>
@@ -34,4 +37,17 @@
     <system:String x:Key="PRSV_header">Legen Sie Ihre NFC-Karte auf das Lesegerät.</system:String>
     <system:String x:Key="RRSV_header">Legen Sie die Karte zur Bestätigung erneut auf das Lesegerät</system:String>
     <system:String x:Key="SRSV_header">Karte erfolgreich registriert!</system:String>
+    
+    <!-- Error Handling -->
+    <system:String x:Key="error_header">Fehler</system:String>
+    <system:String x:Key="question_header">Frage</system:String>
+    <system:String x:Key="warning_header">Warnung</system:String>
+
+    <system:String x:Key="remove_item_text">Soll dieses Objekt gelöscht werden: </system:String>
+    <system:String x:Key="service_not_available">Windows-Dienst nicht erreichbar!</system:String>
+    <system:String x:Key="file_not_found">Datei nicht gefunden.</system:String>
+    <system:String x:Key="file_too_big">Datei ist zu groß. Maximale Dateigröße:</system:String>
+    <system:String x:Key="invalid_credentials">Bitte geben Sie gültige Anmeldedaten ein.</system:String>
+    <system:String x:Key="no_username">Bitte geben Sie einen Benutzernamen ein.</system:String>
+    <system:String x:Key="no_password">Ein Benutzerkonto ohne Passwort ist nicht zulässig!</system:String>
 </ResourceDictionary>

@@ -245,7 +245,7 @@ namespace NFCLoc.UI.ViewModel.Services
                 }
             }
 
-            return $"ring {id}";
+            return $"Card {id}";
         }
     }
 }

@@ -14,7 +14,8 @@
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
-        Style="{StaticResource UiWindow}">
+        Style="{StaticResource UiWindow}"
+        DataContext="{Binding Source={StaticResource Locator}, Path=MainViewModel}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -38,12 +39,12 @@
                         Content="Add"
                         Icon="Add24"
                         Tag="add"
-                        Page="{x:Type pages:AddCard}" />
+                        Click="DialogAddCard" />
                     <wpfui:NavigationItem
                         Content="Manage"
                         Icon="ContactCard24"
                         Tag="manage"
-                        Page="{x:Type pages:ManageCards}" />
+                        Page="{x:Type pages:ManageCards}" Cursor="Hand" />
                 </wpfui:NavigationStore.Items>
                 <wpfui:NavigationStore.Footer>
                     <wpfui:NavigationItem

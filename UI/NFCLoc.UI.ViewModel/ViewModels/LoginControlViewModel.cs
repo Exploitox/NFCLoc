@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using Microsoft.Practices.ServiceLocation;
@@ -144,7 +145,11 @@ namespace NFCLoc.UI.ViewModel.ViewModels
             _userCredentials = userCredentials;
             _logger = logger;
 
-            Title = "NFCLoc - Fence";
+            Title = "NFCLoc";
+
+#if DEBUG
+            Title = "NFCLoc - Debug Build";
+#endif
 
             AddCommand = new RelayCommand(Add, () => AllowAdd);
             RemoveCommand = new RelayCommand<RingItemViewModel>(Remove);
@@ -164,7 +169,7 @@ namespace NFCLoc.UI.ViewModel.ViewModels
             {
                 _synchronizationService.RunInMainThread(() => RaisePropertyChanged(nameof(AllowAdd)));
 
-                _dialogService.ShowErrorDialog("Service not available");
+                _dialogService.ShowErrorDialog((string)Application.Current.FindResource("service_not_available"));
 
                 return;
             }
@@ -208,7 +213,7 @@ namespace NFCLoc.UI.ViewModel.ViewModels
             if (item == null)
                 return;
 
-            if (!_dialogService.ShowQuestionDialog($"Remove {item.Name}?"))
+            if (!_dialogService.ShowQuestionDialog($"{(string)Application.Current.FindResource("remove_item_text")} {item.Name}?"))
                 return;
 
             await RemoveAsync(item.Token);

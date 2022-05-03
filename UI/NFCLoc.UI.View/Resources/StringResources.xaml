@@ -4,12 +4,16 @@
 
     <system:String x:Key="close">Close</system:String>
     <system:String x:Key="about">About</system:String>
-    <system:String x:Key="wait">Please wait...</system:String>   
- 
+    <system:String x:Key="wait">Please wait...</system:String>
+    <system:String x:Key="cancel">Cancel</system:String>
+    <system:String x:Key="next">Next</system:String>
+    <system:String x:Key="finish">Finish</system:String>
+    <system:String x:Key="remove">Remove</system:String>
+
     <!-- Login -->
     <system:String x:Key="login_manageNFC">Manage NFC Cards</system:String>
     <system:String x:Key="login_addNFC">Add new NFC Ring</system:String>
-    <system:String x:Key="login_availableReaders">Available NFC Readers:</system:String>
+    <system:String x:Key="login_availableReaders">Available NFC Readers: </system:String>
 
     <!-- About -->
     <system:String x:Key="about_abouttext">About NFCLoc</system:String>
@@ -22,7 +26,7 @@
     
     <!-- HelloStepView -->
     <system:String x:Key="hsv_header">Windows Login Setup</system:String>
-    <system:String x:Key="hsv_t1">Let's set up your card to lock and unlock your computer with an NFC Card. You will need a compatible NFC Reader installed and your ring.</system:String>
+    <system:String x:Key="hsv_t1">Let's set up your card to lock and unlock your computer with an NFC Card. You will need a compatible NFC Reader installed and your card.</system:String>
     <system:String x:Key="hsv_t2">During the process you will be asked to enter your login credentials. These credentials are stored in your computer in a secure form and never transmitted over internet. To learn more about our privacy policy, please follow the link below.</system:String>
     
     <!-- LoginStepView -->
@@ -33,4 +37,17 @@
     <system:String x:Key="PRSV_header">Place then remove your NFC Card on the reader</system:String>
     <system:String x:Key="RRSV_header">Place the card on the reader again for confirmation</system:String>
     <system:String x:Key="SRSV_header">Card successfully registered</system:String>
+    
+    <!-- Error Handling -->
+    <system:String x:Key="error_header">Error</system:String>
+    <system:String x:Key="question_header">Question</system:String>
+    <system:String x:Key="warning_header">Warning</system:String>
+
+    <system:String x:Key="remove_item_text">Should this object be deleted: </system:String>
+    <system:String x:Key="service_not_available">Windows Service not available!</system:String>
+    <system:String x:Key="file_not_found">File not found</system:String>
+    <system:String x:Key="file_too_big">Please choose a smaller file. Max size:</system:String>
+    <system:String x:Key="invalid_credentials">Please input valid User credentials</system:String>
+    <system:String x:Key="no_username">Please input the Username</system:String>
+    <system:String x:Key="no_password">A password-less user account is not allowed!</system:String>
 </ResourceDictionary>

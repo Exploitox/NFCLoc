@@ -30,7 +30,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             
-            <Button Content="Cancel"
+            <Button Content="{DynamicResource cancel}"
                     Command="{Binding CancelCommand}"
                     Style="{StaticResource ButtonStyle}"
                     IsCancel="True"

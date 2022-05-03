@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Windows;
 using Microsoft.Practices.ServiceLocation;
 
 namespace NFCLoc.UI.ViewModel.ViewModels
@@ -8,7 +9,7 @@ namespace NFCLoc.UI.ViewModel.ViewModels
     {
         public override int Index => 6;
         public override bool CancelIsVisible => false;
-        public override string NextText => "Finish";
+        public override string NextText => (string)Application.Current.FindResource("finish");
         public override Func<Task<bool>> NextAction => Finish;
 
         private async Task<bool> Finish()

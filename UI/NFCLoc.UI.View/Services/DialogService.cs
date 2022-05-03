@@ -12,17 +12,17 @@ namespace NFCLoc.UI.View.Services
 
         public bool ShowQuestionDialog(string message)
         {
-            return ShowMessageDialog(message, "Question", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            return ShowMessageDialog(message, (string)Application.Current.FindResource("question_header"), MessageBoxButton.YesNo, MessageBoxImage.Question);
         }
 
         public bool ShowErrorDialog(string message)
         {
-            return ShowMessageDialog(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            return ShowMessageDialog(message, (string)Application.Current.FindResource("error_header"), MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         public bool ShowWarningDialog(string message)
         {
-            return ShowMessageDialog(message, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return ShowMessageDialog(message, (string)Application.Current.FindResource("warning_header"), MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
         private bool ShowMessageDialog(string message, string caption, MessageBoxButton buttons, MessageBoxImage image)
@@ -49,7 +49,7 @@ namespace NFCLoc.UI.View.Services
 
             if (!File.Exists(fileName))
             {
-                ShowErrorDialog("File not found");
+                ShowErrorDialog((string)Application.Current.FindResource("file_not_found"));
 
                 return false;
             }
@@ -57,7 +57,7 @@ namespace NFCLoc.UI.View.Services
             var sizeMb = (double)new FileInfo(fileName).Length / 1024 / 1024;
             if (sizeMb > MaxImageSizeMb)
             {
-                ShowWarningDialog($"Please choose a smaller file. Max size {MaxImageSizeMb} Mb.");
+                ShowWarningDialog($"{(string)Application.Current.FindResource("file_too_big")} {MaxImageSizeMb} MB.");
 
                 return false;
             }

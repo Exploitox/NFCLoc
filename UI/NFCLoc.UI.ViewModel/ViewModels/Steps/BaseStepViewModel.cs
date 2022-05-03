@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Windows;
 using GalaSoft.MvvmLight;
 
 namespace NFCLoc.UI.ViewModel.ViewModels
@@ -9,7 +10,7 @@ namespace NFCLoc.UI.ViewModel.ViewModels
         public abstract int Index { get; }
         public virtual bool CancelIsVisible => true;
         public virtual bool NextIsVisible => true;
-        public virtual string NextText => "Next";
+        public virtual string NextText => (string)Application.Current.FindResource("next");
         public virtual Func<Task<bool>> NextAction => null;
         public virtual Action CancelAction => null;
         public Action ToNext { get; set; }

@@ -18,7 +18,7 @@
         <!-- content -->
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="215"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
@@ -210,7 +210,7 @@
 
                                             <!-- remove button -->
                                             <Button Grid.Row="2"
-                                                    Content="Remove"
+                                                    Content="{DynamicResource remove}"
                                                     Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ListBox}, Path=DataContext.RemoveCommand}"
                                                     CommandParameter="{Binding}"
                                                     HorizontalAlignment="Left"

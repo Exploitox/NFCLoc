@@ -9,7 +9,7 @@
     <!-- font -->
     <system:Double x:Key="BigFontSize">40</system:Double>
     <system:Double x:Key="MediumFontSize">30</system:Double>
-    <system:Double x:Key="NormalFontSize">20</system:Double>
+    <system:Double x:Key="NormalFontSize">18</system:Double>
     <system:Double x:Key="SmallFontSize">15</system:Double>
     <system:Double x:Key="EditBoxHeight">32</system:Double>
     

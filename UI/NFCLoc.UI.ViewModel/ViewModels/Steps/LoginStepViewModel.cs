@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security;
 using System.Threading.Tasks;
+using System.Windows;
 using NFCLoc.UI.ViewModel.Services;
 
 namespace NFCLoc.UI.ViewModel.ViewModels
@@ -55,7 +56,7 @@ namespace NFCLoc.UI.ViewModel.ViewModels
         {
             if (string.IsNullOrEmpty(NewRingViewModel.Login))
             {
-                _dialogService.ShowErrorDialog("Please input User name");
+                _dialogService.ShowErrorDialog((string)Application.Current.FindResource("no_username"));
 
                 return false;
             }
@@ -64,14 +65,14 @@ namespace NFCLoc.UI.ViewModel.ViewModels
 
             if (string.IsNullOrEmpty(NewRingViewModel.Password) && !isValidCredentials)
             {
-                _dialogService.ShowErrorDialog("Please input password");
+                _dialogService.ShowErrorDialog((string)Application.Current.FindResource("no_password"));
 
                 return false;
             }
 
             if (!isValidCredentials)
             {
-                _dialogService.ShowErrorDialog("Please input valid User credentials");
+                _dialogService.ShowErrorDialog((string)Application.Current.FindResource("invalid_credentials"));
 
                 return false;
             }

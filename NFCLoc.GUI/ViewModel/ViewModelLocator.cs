@@ -71,6 +71,7 @@ namespace NFCLoc.GUI.ViewModel
                 return wizardViewModel;
             })
                 .AsSelf();
+            
             builder.RegisterType<HelloStepViewModel>();
             builder.RegisterType<PlaceRingStepViewModel>();
             builder.RegisterType<RemoveRingStepViewModel>();

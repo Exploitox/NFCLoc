@@ -105,7 +105,7 @@
             this.lblSwipe.Name = "lblSwipe";
             this.lblSwipe.Size = new System.Drawing.Size(145, 13);
             this.lblSwipe.TabIndex = 7;
-            this.lblSwipe.Text = "Swipe your ring on the reader";
+            this.lblSwipe.Text = "Swipe your card on the reader";
             // 
             // frmNewToken
             // 
