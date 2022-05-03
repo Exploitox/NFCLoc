@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              dp:Ignorable="d"
              xmlns:dp="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:viewModel="clr-namespace:NFCLoc.UI.View.ViewModel;assembly=NFCLoc.UI.View"
+             xmlns:viewModel="clr-namespace:NFCLoc.GUI.ViewModel"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
@@ -17,7 +17,7 @@
                 <ResourceDictionary Source="Resources/StringResources.xaml"/>
                 <ResourceDictionary Source="Resources/StringResources.de-DE.xaml"/>
                 <ResourceDictionary>
-                    <viewModel:ViewModelLocator x:Key="Locator" d:IsDataSource="True" xmlns:vm="clr-namespace:NFCLoc.UI.View.ViewModel" />
+                    <viewModel:ViewModelLocator x:Key="Locator" d:IsDataSource="True" xmlns:vm="clr-namespace:NFCLoc.GUI.ViewModel" />
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
