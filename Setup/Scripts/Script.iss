@@ -6,7 +6,7 @@
 #define MyAppPublisher "Wolkenhof"
 #define MyAppURL "http://wolkenhof.com/"
 #define MyAppExeName "NFCLoc.UI.View.exe"
-#define AppGuid "{F7D4EF32-2D80-441A-A499-3E6000BFCEBA}"
+#define AppGuid "{A33A7C95-A915-4A87-8E33-0A429819B22E}"
 #define AppPath = "{app}\App"
 #define ServiceCredentialPath = "{app}\Service\Credential"
 #define ServiceManagementPath = "{app}\Service\Management"
@@ -17,6 +17,8 @@
 #define RegistryKey = "{{8EB4E5F7-9DFB-4674-897C-2A584934CDBE}"
 #define ProviderNameKey = "NFCLocCredentialProvider"
 #define VCmsg "Installing Microsoft Visual C++ Redistributable...."
+#define medatixxCredManager = "CredManager"
+#define medatixxCredManagerExePath = "{app}\Management\medatixx\NFCLoc.CredManager.medatixx.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -120,8 +122,9 @@ Source: "vc_redist.x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{commonprograms}\{#MyAppName}"; Filename: "{app}\App\{#MyAppExeName}"
-Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\App\{#MyAppExeName}"; Tasks: desktopicon
+Name: "{commonprograms}\Wolkenhof\{#MyAppName}"; Filename: "{app}\App\{#MyAppExeName}"
+Name: "{commonprograms}\Wolkenhof\{#medatixxCredManager}"; Filename: "{app}\{#medatixxCredManagerExePath}"
+;Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\App\{#MyAppExeName}"; Tasks: desktopicon
 
 [Code]
 #include "dotnet.pas"
