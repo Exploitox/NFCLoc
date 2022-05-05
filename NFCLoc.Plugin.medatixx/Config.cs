@@ -10,16 +10,16 @@
 
 
         #region Debug Config
+
+#if DEBUG
         public static bool debug = true;
+#else
+        public static bool debug = false;
+#endif
         public static bool skipWait = false;
 
-        // Discord | #test text-channel, ID: 954361534082076712 
-        public static string webhookLink = "https://discord.com/api/webhooks/954361555447873556/g8bEyV6hDQIPqo4xINdFIv_aVdvYBSqoaBEWQ7qVV68zaWo5VAjdYJkS0YO8vzEeYK23";
-       
         public static string IsDebug() { if (debug) { return "Debug Build"; } return "Production Build"; }
 
-        // Webhook.site
-        // public static string webhookLink = "https://webhook.site/10272bb2-31b7-4a6c-be39-997ec4a9bda0";
         #endregion
     }
 }

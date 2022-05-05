@@ -7,6 +7,7 @@ using System.Configuration;
 using System.Collections.Specialized;
 using CommandLine;
 using System.Runtime.InteropServices;
+using Meziantou.Framework.Win32;
 
 namespace NFCLoc.Plugin.medatixx
 {
@@ -23,6 +24,9 @@ namespace NFCLoc.Plugin.medatixx
 
             [Option('s', "start", Default = false, HelpText = "Start / Switch medatixx")]
             public bool stage { get; set; } // false = Start medatixx, true = Switch user on medatixx
+
+            [Option('l', "loginback", Default = false, HelpText = "Logged in back")]
+            public bool LoginBack { get; set; } // false = First run, true = Login user from id
         }
 
         static void Main(string[] args)
@@ -39,67 +43,115 @@ namespace NFCLoc.Plugin.medatixx
                     "Warnung",
                     "Hoch");
 
-            // Check if the webhook is reachable. Disable debug if not.
-            HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(NFCLoc.Plugin.medatixx.Config.webhookLink);
-            webRequest.AllowAutoRedirect = false;
-            HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
-            if ((int)response.StatusCode != 200) { NFCLoc.Plugin.medatixx.Config.debug = false; }
-
             // Check System before start
             CheckSystem();
-
-            // Show toast, that this software cannot run because of missing function
-            ShowToast(
-                "Fehlende Funktionen",
-                "Diese Software ist instabil, da eine oder mehrere Funktionen noch fehlen.",
-                "Warnung",
-                "Hoch");
 
             Parser.Default.ParseArguments<CPOptions>(args)
                    .WithParsed<CPOptions>(o =>
                    {
-                       if (o.stage == true) // Switch
+                       if (o.LoginBack == true)
                        {
-                           Console.WriteLine($"Swtich medatixx");
-                           File.WriteAllText("C:\\Users\\Administrator\\Desktop\\card.txt", $"SWITCH: CardID: {o.cardId}");
+                           if (Config.debug) Console.WriteLine($"Login back with card id {o.cardId}");
+                           if (Config.debug) File.WriteAllText("C:\\Users\\Administrator\\Desktop\\card.txt", $"LOGINBACK: CardID: {o.cardId}");
 
+                           if (Config.debug) Console.WriteLine("Call SwitchUserWithKeyStroke");
                            int procLenght = SetToForegound("Client.UI");
                            if (procLenght == 0) // Not running
                            {
                                Environment.Exit(0);
                            }
+                           SwitchUserWithKeyStroke(o.cardId);
+                           Environment.Exit(0);
+                       }
+                       if (o.stage == true) // Switch
+                       {
+                           if (Config.debug) Console.WriteLine($"Logoff medatixx");
+                           if (Config.debug) File.WriteAllText("C:\\Users\\Administrator\\Desktop\\card.txt", $"LOGOFF: CardID: {o.cardId}");
 
-                           Thread.Sleep(1000);
-                           Console.WriteLine("Call Switch");
-                           SwitchUserWithKeyStroke();
-                           
-
-                           
+                           int procLenght = SetToForegound("Client.UI");
+                           if (procLenght == 0) // Not running
+                           {
+                               LockWorkstation();
+                               Environment.Exit(0);
+                           }
+                           LogoffMedatixx();
+                           LockWorkstation();
+                           Environment.Exit(0);
                        }
                        else // start
                        {
-                           Console.WriteLine($"Start medatixx");
+                           if (Config.debug) Console.WriteLine($"Start medatixx");
                            File.WriteAllText("C:\\Users\\Administrator\\Desktop\\card.txt", $"START: CardID: {o.cardId}");
+                           Environment.Exit(0);
                        }
                    });
-
-            // Break this, everything down here is not working, so ...
-            return;
         }
 
-        private static void SwitchUserWithKeyStroke()
+        private static void LockWorkstation()
+        {
+            try
+            {
+                Process p = new Process();
+                p.StartInfo.FileName = "C:\\WINDOWS\\system32\\rundll32.exe";
+                p.StartInfo.Arguments = "user32.dll,LockWorkStation";
+                p.Start();
+            }
+            catch
+            {
+                ShowToast(
+                    "Sperren fehlgeschlagen!",
+                    "Das Sperren dieses Computers ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
+                    "Warnung",
+                    "Hoch");
+            }
+        }
+
+        private static void SwitchUserWithKeyStroke(string cardId)
+        {
+            // Delete content in textbox
+            SendKeys.SendWait("^{HOME}");  // Move to start of control
+            SendKeys.SendWait("^+{END}");  // Select everything
+            SendKeys.SendWait("{DEL}");
+            Thread.Sleep(500);
+            
+            // Username
+            SendKeys.SendWait(GetUsername(cardId));
+            Thread.Sleep(500);
+
+            SendKeys.SendWait("{TAB}");
+            Thread.Sleep(500);
+
+            SendKeys.SendWait(GetPassword(cardId));
+            Thread.Sleep(500);
+
+            SendKeys.SendWait("{ENTER}");
+        }
+
+        private static void LogoffMedatixx()
         {
             // CTRL L
             SendKeys.SendWait("^{l}");
+            Thread.Sleep(500);
             // Shift Tab
             SendKeys.SendWait("+{TAB}");
+            Thread.Sleep(500);
             // Space
             SendKeys.SendWait(" ");
-            // Username
-            SendKeys.SendWait("Admin");
-            SendKeys.SendWait("{TAB}");
-            SendKeys.SendWait("Pa$$w0rd");
-            SendKeys.SendWait("{ENTER}");
+            Thread.Sleep(500);
+        }
+
+        private static string GetUsername(string cId)
+        {
+            // Get a credential from the credential manager
+            var cred = CredentialManager.ReadCredential(applicationName: $"NFCLoc_{cId}");
+            return cred.UserName;
+        }
+
+        private static string GetPassword(string cId)
+        {
+            // Get a credential from the credential manager
+            var cred = CredentialManager.ReadCredential(applicationName: $"NFCLoc_{cId}");
+            return cred.Password;
         }
 
         #region Foreground
