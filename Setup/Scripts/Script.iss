@@ -1,7 +1,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "NFCLoc"
-#define GitCommitHash "c4aa8c2"
+#define GitCommitHash "242ce0f"
 #define MyAppVersion "2.0.0.57"
 #define MyAppPublisher "Wolkenhof"
 #define MyAppURL "http://wolkenhof.com/"
@@ -17,7 +17,7 @@
 #define RegistryKey = "{{8EB4E5F7-9DFB-4674-897C-2A584934CDBE}"
 #define ProviderNameKey = "NFCLocCredentialProvider"
 #define VCmsg "Installing Microsoft Visual C++ Redistributable...."
-#define medatixxCredManager = "CredManager"
+#define medatixxCredManagerName = "CredManager"
 #define medatixxCredManagerExePath = "{app}\Management\medatixx\NFCLoc.CredManager.medatixx.exe"
 
 [Setup]
@@ -123,7 +123,7 @@ Source: "vc_redist.x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall
 
 [Icons]
 Name: "{commonprograms}\Wolkenhof\{#MyAppName}"; Filename: "{app}\App\{#MyAppExeName}"
-Name: "{commonprograms}\Wolkenhof\{#medatixxCredManager}"; Filename: "{app}\{#medatixxCredManagerExePath}"
+Name: "{commonprograms}\Wolkenhof\{#medatixxCredManagerName}"; Filename: "{#medatixxCredManagerExePath}"
 ;Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\App\{#MyAppExeName}"; Tasks: desktopicon
 
 [Code]
