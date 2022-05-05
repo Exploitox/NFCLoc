@@ -1,7 +1,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "NFCLoc"
-#define GitCommitHash "d5455c7"
+#define GitCommitHash "c4aa8c2"
 #define MyAppVersion "2.0.0.57"
 #define MyAppPublisher "Wolkenhof"
 #define MyAppURL "http://wolkenhof.com/"
@@ -13,6 +13,7 @@
 #define ServiceAppPath = "{app}\Service\Service"
 #define ServiceAppPluginsPath = "{app}\Service\Service\Plugins"
 #define medatixxPluginPath = "{app}\Service\medatixx"
+#define medatixxCredManager = "{app}\Management\medatixx"
 #define RegistryKey = "{{8EB4E5F7-9DFB-4674-897C-2A584934CDBE}"
 #define ProviderNameKey = "NFCLocCredentialProvider"
 #define VCmsg "Installing Microsoft Visual C++ Redistributable...."
@@ -103,6 +104,15 @@ Source: "..\..\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\NFC
 Source: "..\..\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\NFCLoc.Plugin.medatixx.pdb"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
 Source: "..\..\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\NFCLoc.Plugin.medatixx.runtimeconfig.json"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
 Source: "..\..\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\WinRT.Runtime.dll"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
+
+; medatixx Credential Manager
+Source: "..\..\Management\NFCLoc.CredManager.medatixx\bin\Release\net6.0-windows\publish\NFCLoc.CredManager.medatixx.exe"; DestDir: {#medatixxCredManager}; Flags: ignoreversion
+Source: "..\..\Management\NFCLoc.CredManager.medatixx\bin\Release\net6.0-windows\publish\D3DCompiler_47_cor3.dll"; DestDir: {#medatixxCredManager}; Flags: ignoreversion
+Source: "..\..\Management\NFCLoc.CredManager.medatixx\bin\Release\net6.0-windows\publish\PenImc_cor3.dll"; DestDir: {#medatixxCredManager}; Flags: ignoreversion
+Source: "..\..\Management\NFCLoc.CredManager.medatixx\bin\Release\net6.0-windows\publish\PresentationNative_cor3.dll"; DestDir: {#medatixxCredManager}; Flags: ignoreversion
+Source: "..\..\Management\NFCLoc.CredManager.medatixx\bin\Release\net6.0-windows\publish\vcruntime140_cor3.dll"; DestDir: {#medatixxCredManager}; Flags: ignoreversion
+Source: "..\..\Management\NFCLoc.CredManager.medatixx\bin\Release\net6.0-windows\publish\wpfgfx_cor3.dll"; DestDir: {#medatixxCredManager}; Flags: ignoreversion
+Source: "..\..\Management\NFCLoc.CredManager.medatixx\bin\Release\net6.0-windows\publish\Newtonsoft.Json.xml"; DestDir: {#medatixxCredManager}; Flags: ignoreversion
 
 ; Visual C++ 2015
 Source: "vc_redist.x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall
