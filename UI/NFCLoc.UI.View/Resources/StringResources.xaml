@@ -14,6 +14,7 @@
     <system:String x:Key="login_manageNFC">Manage NFC Cards</system:String>
     <system:String x:Key="login_addNFC">Add new NFC Ring</system:String>
     <system:String x:Key="login_availableReaders">Available NFC Readers: </system:String>
+    <system:String x:Key="login_manageMedatixx">Manage medatixx</system:String>
 
     <!-- About -->
     <system:String x:Key="about_abouttext">About NFCLoc</system:String>
@@ -37,7 +38,13 @@
     <system:String x:Key="PRSV_header">Place then remove your NFC Card on the reader</system:String>
     <system:String x:Key="RRSV_header">Place the card on the reader again for confirmation</system:String>
     <system:String x:Key="SRSV_header">Card successfully registered</system:String>
-    
+
+    <!-- medatixx Credential Manager -->
+    <system:String x:Key="mcm_read_card">Read card</system:String>
+    <system:String x:Key="mcm_add">Add</system:String>
+    <system:String x:Key="mcm_remove">Remove</system:String>
+    <system:String x:Key="mcm_cardid">Card ID</system:String>
+
     <!-- Error Handling -->
     <system:String x:Key="error_header">Error</system:String>
     <system:String x:Key="question_header">Question</system:String>
@@ -51,4 +58,11 @@
     <system:String x:Key="no_username">Please input the Username</system:String>
     <system:String x:Key="no_password">A password-less user account is not allowed!</system:String>
     <system:String x:Key="missing_reader">No Compatible NFC Reader detected.</system:String>
+    <system:String x:Key="cannot_start_service">Service cannot be started.</system:String>
+    <system:String x:Key="cannot_stop_service">Service cannot be stopped.</system:String>
+    <system:String x:Key="connection_failed">"Connection failed. Please try again."</system:String>
+    <system:String x:Key="already_registered">"This Card is already registered."</system:String>
+    <system:String x:Key="no_card_selected">No card was selected.</system:String>
+    <system:String x:Key="data_empty">Please fill out everything.</system:String>
+
 </ResourceDictionary>

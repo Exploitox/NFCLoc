@@ -23,15 +23,25 @@ namespace NFCLoc.UI.View
         {
             ServiceLocator.Current.GetInstance<ILogger>().Info("NFC Ring startup");
             Messenger.Default.Register<AboutViewModel>(this, ProcessAboutMessage);
+            Messenger.Default.Register<MedatixxManagerViewModel>(this, ProcessMedatixxManager);
+
 
             base.OnStartup(e);
         }
+
+        private void ProcessMedatixxManager(MedatixxManagerViewModel obj)
+        {
+            MedatixxManager mm = new MedatixxManager();
+            mm.ShowDialog();
+        }
+
         private void ProcessAboutMessage(AboutViewModel message)
         {
             AboutWindow about = new AboutWindow();
             about.DataContext = message;
             about.ShowDialog();
         }
+
         protected override void OnExit(ExitEventArgs e)
         {
             ServiceLocator.Current.GetInstance<ILogger>().Info("NFC Ring exit");
