@@ -1,7 +1,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "NFCLoc"
-#define GitCommitHash "242ce0f"
+#define GitCommitHash "3ea40ba"
 #define MyAppVersion "2.0.0.57"
 #define MyAppPublisher "Wolkenhof"
 #define MyAppURL "http://wolkenhof.com/"
@@ -68,6 +68,8 @@ Source: "..\..\bin\Release\UI\NFCLocServiceCommon.dll"; DestDir: {#AppPath}; Fla
 Source: "..\..\bin\Release\UI\NLog.dll"; DestDir: {#AppPath}; Flags: ignoreversion
 Source: "..\..\bin\Release\UI\System.Windows.Interactivity.dll"; DestDir: {#AppPath}; Flags: ignoreversion
 Source: "..\..\bin\Release\UI\Icon.ico"; DestDir: {#AppPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\UI\Meziantou.Framework.Win32.CredentialManager.dll"; DestDir: {#AppPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\UI\System.ServiceProcess.ServiceController.dll"; DestDir: {#AppPath}; Flags: ignoreversion
 
 ; Service files
 Source: "..\..\bin\Release\Service\NFCLocServiceHost.exe.config"; DestDir: {#ServiceAppPath}; Flags: ignoreversion
@@ -94,16 +96,16 @@ Source: "..\..\bin\Release\Credential\tileimage.bmp"; DestDir: {#ServiceCredenti
 Source: "..\..\bin\Release\Credential\NFCLocCredentialProvider.dll"; DestDir: {sys};
 
 ; Plugin (medatixx)
-Source: "..\..\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\CommandLine.dll"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
-Source: "..\..\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\Microsoft.Toolkit.Uwp.Notifications.dll"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
-Source: "..\..\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\Microsoft.Windows.SDK.NET.dll"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
-Source: "..\..\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\Newtonsoft.Json.dll"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
-Source: "..\..\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\NFCLoc.Plugin.medatixx.deps.json"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
-Source: "..\..\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\NFCLoc.Plugin.medatixx.dll"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
-Source: "..\..\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\NFCLoc.Plugin.medatixx.exe"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
-Source: "..\..\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\NFCLoc.Plugin.medatixx.pdb"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
-Source: "..\..\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\NFCLoc.Plugin.medatixx.runtimeconfig.json"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
-Source: "..\..\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\WinRT.Runtime.dll"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
+Source: "..\..\Service\Plugins\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\CommandLine.dll"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
+Source: "..\..\Service\Plugins\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\Microsoft.Toolkit.Uwp.Notifications.dll"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
+Source: "..\..\Service\Plugins\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\Microsoft.Windows.SDK.NET.dll"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
+Source: "..\..\Service\Plugins\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\Newtonsoft.Json.dll"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
+Source: "..\..\Service\Plugins\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\NFCLoc.Plugin.medatixx.deps.json"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
+Source: "..\..\Service\Plugins\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\NFCLoc.Plugin.medatixx.dll"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
+Source: "..\..\Service\Plugins\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\NFCLoc.Plugin.medatixx.exe"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
+Source: "..\..\Service\Plugins\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\NFCLoc.Plugin.medatixx.pdb"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
+Source: "..\..\Service\Plugins\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\NFCLoc.Plugin.medatixx.runtimeconfig.json"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
+Source: "..\..\Service\Plugins\NFCLoc.Plugin.medatixx\bin\Release\net6.0-windows10.0.19041.0\WinRT.Runtime.dll"; DestDir: {#medatixxPluginPath}; Flags: ignoreversion
 
 ; medatixx Credential Manager
 ;Source: "..\..\Management\NFCLoc.CredManager.medatixx\bin\Release\net6.0-windows\publish\NFCLoc.CredManager.medatixx.exe"; DestDir: {#medatixxCredManager}; Flags: ignoreversion
