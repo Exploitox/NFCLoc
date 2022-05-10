@@ -43,10 +43,5 @@
                    Margin="{StaticResource ContentMargin}"/>
         
         <!-- link -->
-        <TextBlock Grid.Row="4"
-                   HorizontalAlignment="Center"
-                   FontSize="{StaticResource NormalFontSize}">
-            <Hyperlink Command="{Binding NavigateCommand}">http://NFCLoc.com/privacy</Hyperlink>
-        </TextBlock>
     </Grid>
 </UserControl>

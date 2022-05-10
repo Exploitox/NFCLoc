@@ -26,8 +26,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\UI\NFCLoc.UI.ViewModel\NFCLoc.UI.ViewModel.csproj" />
-    <ProjectReference Include="..\UI\NFCLoc.UI.View\NFCLoc.UI.View.csproj" />
+    <ProjectReference Include="..\NFCLoc.UI.ViewModel\NFCLoc.UI.ViewModel.csproj" />
+    <ProjectReference Include="..\NFCLoc.UI.View\NFCLoc.UI.View.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -8,14 +8,14 @@
         WindowStyle="ToolWindow"
         WindowStartupLocation="CenterScreen"
         
-        Title="About NFC Ring Fence" Height="400" Width="600">
+        Title="About NFCLoc" Height="400" Width="600">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="60"/>
+            <RowDefinition Height="80"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Image 
-            Source="/NFCLoc.UI.View;component/Assets/NFCLoc_logo_2x.png" 
+            Source="/NFCLoc.UI.View;component/Assets/Wolkenhof-Logo.png" 
             Margin="{StaticResource ContentMarginSmallLeftRight}"/>
 
         <Grid Grid.Row="1" Margin="10">
@@ -35,7 +35,7 @@
                 <TextBlock Text="{DynamicResource about_text}" TextWrapping="Wrap" Margin="10" FontSize="16"></TextBlock>
             </StackPanel>
             <DockPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
-                <TextBlock Text="Copyright © 2018 - 2022 valnoxy." TextWrapping="Wrap" Margin="10" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left"></TextBlock>
+                <TextBlock Text="Copyright © 2022 Wolkenhof GmbH." TextWrapping="Wrap" Margin="10" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Left"></TextBlock>
                 <Button IsDefault="True" IsCancel="True" Content="{DynamicResource close}" VerticalAlignment="Center" HorizontalAlignment="Right" Width="50" Height="25" Margin="0,0,10,0" />
             </DockPanel>
         </Grid>

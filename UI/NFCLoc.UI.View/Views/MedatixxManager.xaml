@@ -8,22 +8,22 @@
         WindowStyle="ToolWindow"
         WindowStartupLocation="CenterScreen"
         
-        Title="NFCLoc - medatixx Credential Manager" Height="400" Width="600" Closing="Window_Closing">
+        Title="NFCLoc - medatixx Credential Manager" Height="420" Width="600" Closing="Window_Closing">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="60"/>
+            <RowDefinition Height="80"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Image 
-            Source="/NFCLoc.UI.View;component/Assets/NFCLoc_logo_2x.png" 
-            Margin="{StaticResource ContentMarginSmallLeftRight}"/>
+            Source="/NFCLoc.UI.View;component/Assets/Wolkenhof-Logo.png" Stretch="Uniform"
+            Margin="130,10,130,0"/>
 
         <Grid Grid.Row="1" Margin="10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="200"/>
             </Grid.ColumnDefinitions>
-            
+
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="240"/>

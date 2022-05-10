@@ -70,7 +70,7 @@
                         <TextBlock VerticalAlignment="Center">
                         <Hyperlink TextDecorations="{x:Null}" Foreground="Black">
                             <StackPanel Orientation="Horizontal">
-                                <Image Source="/NFCLoc.UI.View;component/Assets/DoubleCircle_36.png"
+                                <Image Source="/NFCLoc.UI.View;component/Assets/card-36.png"
                                        Height="16"
                                        Width="16"/>
                                 <TextBlock Text="{DynamicResource login_manageNFC}"
@@ -118,7 +118,7 @@
                         <TextBlock VerticalAlignment="Center">
                         <Hyperlink Command="{Binding MedatixxCommand}" TextDecorations="{x:Null}" Foreground="Black">
                             <StackPanel Orientation="Horizontal">
-                                <Image Source="/NFCLoc.UI.View;component/Assets/DoubleCircle_36.png"
+                                <Image Source="/NFCLoc.UI.View;component/Assets/doctor-36.png"
                                        Height="16"
                                        Width="16"/>
                                 <TextBlock Text="{DynamicResource login_manageMedatixx}"
@@ -290,8 +290,8 @@
 
             </Grid.ColumnDefinitions>
             <Image Grid.Row="1"
-               Source="/NFCLoc.UI.View;component/Assets/NFCLoc_logo_12.png"
-               Height="12"
+               Source="/NFCLoc.UI.View;component/Assets/Wolkenhof-Logo.png"
+               Height="20"
                HorizontalAlignment="Left"
                Margin="{StaticResource ContentMarginLight}"/>
             <DockPanel Grid.Column="1" LastChildFill="False" VerticalAlignment="Center" Margin="0,0,10,0" Visibility="{Binding IsDeviceNotAvailable,Converter={StaticResource BooleanToVisibilityConverter}}">

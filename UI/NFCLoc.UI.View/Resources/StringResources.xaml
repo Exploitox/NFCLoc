@@ -28,7 +28,7 @@
     <!-- HelloStepView -->
     <system:String x:Key="hsv_header">Windows Login Setup</system:String>
     <system:String x:Key="hsv_t1">Let's set up your card to lock and unlock your computer with an NFC Card. You will need a compatible NFC Reader installed and your card.</system:String>
-    <system:String x:Key="hsv_t2">During the process you will be asked to enter your login credentials. These credentials are stored in your computer in a secure form and never transmitted over internet. To learn more about our privacy policy, please follow the link below.</system:String>
+    <system:String x:Key="hsv_t2">During the process you will be asked to enter your login credentials. These credentials are stored in your computer in a secure form and never transmitted over internet.</system:String>
     
     <!-- LoginStepView -->
     <system:String x:Key="lsv_header">Enter your Windows Login credentials</system:String>

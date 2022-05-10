@@ -7,7 +7,7 @@
         Title="{Binding Content.Title}"
         MinHeight="550"
         MinWidth="700"
-        Height="550"
+        Height="600"
         Width="825"
         WindowStartupLocation="CenterScreen"
         DataContext="{Binding Source={StaticResource Locator}, Path=MainViewModel}" Closing="Window_Closing">

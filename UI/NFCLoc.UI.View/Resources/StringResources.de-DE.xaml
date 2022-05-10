@@ -28,7 +28,7 @@
     <!-- HelloStepView -->
     <system:String x:Key="hsv_header">Windows-Login Einrichtung</system:String>
     <system:String x:Key="hsv_t1">Richten wir nun deine Karte ein, um Ihren Computer mit der NFC-Karte zu sperren und zu entsperren. Sie benötigen ein kompatibles NFC-Lesegerät und Ihre Karte.</system:String>
-    <system:String x:Key="hsv_t2">Während des Vorgangs werden Sie aufgefordert, Ihre Anmeldedaten einzugeben. Diese Anmeldedaten werden auf Ihrem Computer in einer sicheren Form gespeichert und niemals über das Internet übertragen. Um mehr über unsere Datenschutzbestimmungen zu erfahren, folgen Sie bitte dem unten stehenden Link.</system:String>
+    <system:String x:Key="hsv_t2">Während des Vorgangs werden Sie aufgefordert, Ihre Anmeldedaten einzugeben. Diese Anmeldedaten werden auf Ihrem Computer in einer sicheren Form gespeichert und niemals über das Internet übertragen.</system:String>
 
     <!-- LoginStepView -->
     <system:String x:Key="lsv_header">Geben Sie Ihre Windows-Anmeldedaten ein</system:String>

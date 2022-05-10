@@ -50,6 +50,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
@@ -356,6 +357,15 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\abouticon_32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Wolkenhof-Logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\doctor-36.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\card-36.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\packages\System.Runtime.WindowsRuntime.4.6.0\build\net461\System.Runtime.WindowsRuntime.targets" Condition="Exists('..\..\packages\System.Runtime.WindowsRuntime.4.6.0\build\net461\System.Runtime.WindowsRuntime.targets')" />
