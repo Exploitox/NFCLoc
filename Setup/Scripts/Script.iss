@@ -2,9 +2,9 @@
 
 #define MyAppName "NFCLoc"
 #define GitCommitHash "3ea40ba"
-#define MyAppVersion "2.0.0.57"
+#define MyAppVersion "2.0.0.168"
 #define MyAppPublisher "Wolkenhof"
-#define MyAppURL "http://wolkenhof.com/"
+#define MyAppURL "https://wolkenhof.com/"
 #define MyAppExeName "NFCLoc.UI.View.exe"
 #define AppGuid "{A33A7C95-A915-4A87-8E33-0A429819B22E}"
 #define AppPath = "{app}\App"
