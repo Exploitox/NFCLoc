@@ -60,8 +60,8 @@
     <system:String x:Key="missing_reader">Kein kompatibles NFC-Lesegerät gefunden.</system:String>
     <system:String x:Key="cannot_start_service">Der Windows-Dienst kann nicht gestartet werden.</system:String>
     <system:String x:Key="cannot_stop_service">Der Windows-Dienst kann nicht beendet werden.</system:String>
-    <system:String x:Key="connection_failed">"Die Verbindung ist fehlgeschlagen. Versuche es erneut."</system:String>
-    <system:String x:Key="already_registered">"Diese Karte wurde bereits registriert."</system:String>
+    <system:String x:Key="connection_failed">Die Verbindung ist fehlgeschlagen. Versuche es erneut.</system:String>
+    <system:String x:Key="already_registered">Diese Karte wurde bereits registriert.</system:String>
     <system:String x:Key="no_card_selected">Es wurde keine Karte ausgewählt.</system:String>
     <system:String x:Key="data_empty">Bitte füllen Sie alle Werte aus.</system:String>
 
