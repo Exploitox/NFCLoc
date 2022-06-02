@@ -256,7 +256,7 @@ namespace CredentialRegistration
                 }
                 return hive;
             }
-            catch(Exception ex)
+            catch
             {
                 return null;
             }

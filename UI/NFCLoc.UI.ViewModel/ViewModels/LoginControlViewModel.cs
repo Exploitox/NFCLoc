@@ -269,7 +269,7 @@ namespace NFCLoc.UI.ViewModel.ViewModels
             {
                 DevicesList = await Task.Factory.StartNew(() => NFCWMQService.GetConnectedDevices());
             }
-            catch (Exception ex)
+            catch
             {
                 
             }

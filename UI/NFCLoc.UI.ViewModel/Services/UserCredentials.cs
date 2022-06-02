@@ -24,6 +24,13 @@ namespace NFCLoc.UI.ViewModel.Services
                 // return with domain name 
                 using (PrincipalContext context = new PrincipalContext(ContextType.Domain))
                 {
+                    // If Hostname is in Username
+                    if (username.Contains(System.Net.Dns.GetHostName()))
+                    {
+                        var status = context.ValidateCredentials(username, password, ContextOptions.Signing);
+                        return status;
+                    }
+
                     // Try with SSL
                     try
                     {

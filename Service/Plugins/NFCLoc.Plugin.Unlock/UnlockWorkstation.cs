@@ -101,7 +101,7 @@ namespace NFCLoc.Plugin.Unlock
                 ServiceCommunication.SendNetworkMessage(ref tc, (parameters.ContainsKey("Domain") ? (string)parameters["Domain"] : ""));
                 state.CredentialData.Client = tc;
             }
-            catch (Exception ex)
+            catch
             {
                 // it blew up
                 state.CredentialData.Client.Close(); // maybe i shouldnt do this here?

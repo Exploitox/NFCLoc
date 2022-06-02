@@ -96,7 +96,7 @@ namespace NFCLoc.Libraries
                 {
                     SCardReleaseContext(context);
                 }
-                catch (Exception ex)
+                catch
                 {
 
                 }
@@ -146,7 +146,7 @@ namespace NFCLoc.Libraries
                     {
                         SCardReleaseContext(context);
                     }
-                    catch (Exception ex)
+                    catch
                     {
 
                     }

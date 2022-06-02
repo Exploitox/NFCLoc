@@ -173,7 +173,7 @@ namespace NFCLoc.Service.Core
                                 }
                             }
                         }
-                        catch (Exception ex)
+                        catch
                         {
                             // couldnt open the port for some reason. already open elsewhere?
                             if (InaccessiblePorts.ContainsKey(portName))

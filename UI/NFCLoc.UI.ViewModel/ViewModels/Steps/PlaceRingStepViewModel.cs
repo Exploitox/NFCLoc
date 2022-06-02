@@ -79,7 +79,7 @@ namespace NFCLoc.UI.ViewModel.ViewModels
                 else
                     duplicateTag = false;
             }
-            catch (Exception ex)
+            catch
             {
                 
             }

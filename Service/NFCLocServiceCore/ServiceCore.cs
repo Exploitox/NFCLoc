@@ -79,7 +79,7 @@ namespace NFCLoc.Service.Core
                 {
                     this.container.ComposeParts(this);
                 }
-                catch (CompositionException ex)
+                catch
                 {
                     //LogEntry(ex, "Unable to load extensions");
                 }
@@ -91,7 +91,7 @@ namespace NFCLoc.Service.Core
                         plugin.Value.PluginLoad();
                         Log("Plugin " + plugin.Value.GetPluginName() + " passed Load event");
                     }
-                    catch(Exception ex)
+                    catch
                     {
                         Log("Plugin threw an excception on Load event");
                     }
@@ -399,7 +399,7 @@ namespace NFCLoc.Service.Core
                         {
                             nm = JsonConvert.DeserializeObject<NetworkMessage>(message);
                         }
-                        catch(Exception ex)
+                        catch
                         {
                             Log(message);
                             continue;
@@ -522,7 +522,7 @@ namespace NFCLoc.Service.Core
                         }
                     }
                 }
-                catch(Exception ex)
+                catch
                 {
                     Log("TCP Client disconnected");
                     if (client.Connected)
