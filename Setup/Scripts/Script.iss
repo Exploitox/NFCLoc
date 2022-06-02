@@ -1,7 +1,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "NFCLoc"
-#define GitCommitHash "3ea40ba"
+#define GitCommitHash "538e38e"
 #define MyAppVersion "2.0.0.168"
 #define MyAppPublisher "Wolkenhof"
 #define MyAppURL "https://wolkenhof.com/"

@@ -8,7 +8,7 @@
 		<UseWindowsForms>true</UseWindowsForms>
 		<SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
 		<PlatformTarget>x86</PlatformTarget>
-		<BaseOutputPath>bin\</BaseOutputPath>
+		<BaseOutputPath>..\..\..\bin\Release\Service\Plugins\</BaseOutputPath>
 	</PropertyGroup>
 
 	<ItemGroup>
