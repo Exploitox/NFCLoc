@@ -19,6 +19,26 @@ namespace NFCLoc.UI.ViewModel.Services
                 : ContextType.Machine;
 
 
+            if (contextType == ContextType.Domain)
+            {
+                // return with domain name 
+                using (PrincipalContext context = new PrincipalContext(ContextType.Domain))
+                {
+                    // Try with SSL
+                    try
+                    {
+                        var status = context.ValidateCredentials(username, password, ContextOptions.SecureSocketLayer);
+                        return status;
+                    }
+                    catch
+                    {
+                        // SSL not working. Try with SimpleBind.. 
+                        var status = context.ValidateCredentials(username, password, ContextOptions.SimpleBind);
+                        return status;
+                    }
+                }                
+            }
+
             using (PrincipalContext context = new PrincipalContext(contextType))
             {
                 return context.ValidateCredentials(username, password);
