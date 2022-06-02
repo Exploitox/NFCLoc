@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using GalaSoft.MvvmLight.Command;
@@ -215,7 +217,19 @@ namespace NFCLoc.UI.ViewModel.ViewModels
         }
         private void AboutCommandMethod()
         {
-            string version = new Version(System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetEntryAssembly().Location).ProductVersion).ToString();
+            // Set Git version
+            string gitVersion = "";
+            
+            var assembly = Assembly.GetExecutingAssembly();
+            var resourceName = "NFCLoc.UI.ViewModel.version.txt";
+
+            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                gitVersion = reader.ReadToEnd();
+            }
+            
+            string version = new Version(System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetEntryAssembly().Location).ProductVersion).ToString() + $" - {gitVersion}";
             Messenger.Default.Send(new AboutViewModel() { VersionInfo= version });
         }
 

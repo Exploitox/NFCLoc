@@ -121,5 +121,11 @@
       <Name>NFCLoc.Service.Common</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="version.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>git rev-parse --short HEAD &gt; "$(ProjectDir)\version.txt"</PreBuildEvent>
+  </PropertyGroup>
 </Project>

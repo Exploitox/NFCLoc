@@ -399,3 +399,4 @@ FodyWeavers.xsd
 
 # Setup output
 Setup/Result/*
+version.txt
