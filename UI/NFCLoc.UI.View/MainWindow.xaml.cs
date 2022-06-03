@@ -53,9 +53,18 @@ namespace NFCLoc.UI.View
         
         void nIcon_Click(object sender, EventArgs e)
         {
-            // events comes here
-            this.Visibility = Visibility.Visible;
-            this.WindowState = WindowState.Normal;
+            if (WindowState == WindowState.Minimized)
+            {
+                this.Show();
+                this.ShowInTaskbar = true;
+                WindowState = WindowState.Normal;
+            }
+            else
+            {
+                this.Hide();
+                this.ShowInTaskbar = false;
+                WindowState = WindowState.Minimized;
+            }
         }
     }
 
