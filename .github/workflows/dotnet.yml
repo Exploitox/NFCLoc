@@ -34,5 +34,8 @@ jobs:
     - name: Copy resources
       run: copy Credential\NFCLocCredentialProvider\tileimage.bmp bin\Release\Credential
       
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: AutoInit
+        path: bin\
