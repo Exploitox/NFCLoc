@@ -8,7 +8,9 @@
 		<UseWindowsForms>true</UseWindowsForms>
 		<SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
 		<PlatformTarget>x86</PlatformTarget>
-		<BaseOutputPath>..\..\..\bin\Release\Service\Plugins\</BaseOutputPath>
+		<OutputPath>..\..\..\bin\Release\Service\Plugins\</OutputPath>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 	</PropertyGroup>
 
 	<ItemGroup>
