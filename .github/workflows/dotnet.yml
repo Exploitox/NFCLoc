@@ -36,7 +36,7 @@ jobs:
       
     - name: Create Setup file
       run: FOR /F "tokens=*" %g IN ('git rev-parse --short HEAD') do (SET GITHASH=%g)
-      run: "%programfiles(x86)%\Inno Setup 6\iscc.exe" /dGitCommitHash="%GITHASH%" "Setup\Script\Script.iss"
+      run: "%programfiles(x86)%\\Inno Setup 6\\iscc.exe" /dGitCommitHash="%GITHASH%" "Setup\Script\Script.iss"
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
