@@ -744,14 +744,14 @@ namespace NFCLoc.Service.Core
 
         public static void Log(string message)
         {
-            if(_debug)
-            { 
-                try
-                {
-                    File.AppendAllText(appPath + "\\log.txt", DateTime.Now.ToString("yy-MM-dd HH:mm:ss ") + message + Environment.NewLine);
-                }
-                catch { }
-                }
+            //if (_debug)
+            //{ 
+            try
+            {
+                File.AppendAllText(appPath + "\\log.txt", DateTime.Now.ToString("[dd-MM-yy HH:mm:ss] ") + message + Environment.NewLine);
+            }
+            catch { }
+            //}
         }
 
         private string GetCurrentUsername()
