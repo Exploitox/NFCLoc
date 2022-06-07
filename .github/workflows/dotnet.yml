@@ -29,7 +29,7 @@ jobs:
       run: nuget restore NFCLoc.sln
       
     - name: Build
-      run: msbuild.exe NFCLoc.sln /p:platform="Any CPU" /p:configuration="Release"
+      run: msbuild.exe NFCLoc.sln /p:platform="x64" /p:configuration="Release"
       
     - name: Copy resources
       run: copy Credential\NFCLocCredentialProvider\tileimage.bmp bin\Release\Credential
