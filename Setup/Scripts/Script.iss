@@ -1,7 +1,6 @@
 ; Codename NFCLoc
 
 #define MyAppName "NFCLoc"
-#define GitCommitHash "0000000"
 #define MyAppVersion "2.0.0.205"
 #define MyAppPublisher "Wolkenhof"
 #define MyAppURL "https://wolkenhof.com/"
