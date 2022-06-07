@@ -23,6 +23,10 @@ namespace NFCLoc.Service.Host
                         ManagedInstallerClass.InstallHelper(new[] { "/u", Assembly.GetExecutingAssembly().Location });
                         break;
                 }
+#if DEBUG
+                NFCLocServiceHost service1 = new NFCLocServiceHost();
+                service1.TestStartupAndStop(args);
+#endif
             }
             else
             {

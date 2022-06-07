@@ -52,7 +52,7 @@ namespace NFCLoc.Plugin.medatixx
                        if (o.LoginBack == true)
                        {
                            if (Config.debug) Console.WriteLine($"Login back with card id {o.cardId}");
-                           if (Config.debug) File.WriteAllText("C:\\Users\\Administrator\\Desktop\\card.txt", $"LOGINBACK: CardID: {o.cardId}");
+                           if (Config.debug) File.WriteAllText("C:\\card.txt", $"LOGINBACK: CardID: {o.cardId}");
 
                            if (Config.debug) Console.WriteLine("Call SwitchUserWithKeyStroke");
                            int procLenght = SetToForegound("Client.UI");
@@ -66,7 +66,7 @@ namespace NFCLoc.Plugin.medatixx
                        if (o.stage == true) // Switch
                        {
                            if (Config.debug) Console.WriteLine($"Logoff medatixx");
-                           if (Config.debug) File.WriteAllText("C:\\Users\\Administrator\\Desktop\\card.txt", $"LOGOFF: CardID: {o.cardId}");
+                           if (Config.debug) File.WriteAllText("C:\\card.txt", $"LOGOFF: CardID: {o.cardId}");
 
                            int procLenght = SetToForegound("Client.UI");
                            if (procLenght == 0) // Not running
@@ -80,8 +80,6 @@ namespace NFCLoc.Plugin.medatixx
                        }
                        else // start
                        {
-                           if (Config.debug) Console.WriteLine($"Start medatixx");
-                           File.WriteAllText("C:\\Users\\Administrator\\Desktop\\card.txt", $"START: CardID: {o.cardId}");
                            Environment.Exit(0);
                        }
                    });
@@ -92,7 +90,7 @@ namespace NFCLoc.Plugin.medatixx
             try
             {
                 Process p = new Process();
-                p.StartInfo.FileName = "C:\\WINDOWS\\system32\\rundll32.exe";
+                p.StartInfo.FileName = Path.Combine(Environment.SystemDirectory, "rundll32.exe");
                 p.StartInfo.Arguments = "user32.dll,LockWorkStation";
                 p.Start();
             }

@@ -20,7 +20,7 @@ namespace NFCLoc.Service.Core
 {
     public class ServiceCore
     {
-        private static bool _debug = false;
+        private static bool _debug = true;
         private CompositionContainer container;
         protected static string appPath = new System.IO.FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location).DirectoryName;
         private ServiceState state = ServiceState.Stopped;

@@ -61,6 +61,15 @@ namespace NFCLoc.Service.Host
             InitializeComponent();
         }
 
+#if DEBUG
+        internal void TestStartupAndStop(string[] args)
+        {
+            this.OnStart(args);
+            Console.ReadLine();
+            this.OnStop();
+        }
+#endif
+
         protected override void OnStart(string[] args)
         {
             //Thread.Sleep(10000);

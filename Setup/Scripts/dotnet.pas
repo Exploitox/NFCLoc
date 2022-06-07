@@ -15,6 +15,9 @@ function IsDotNetDetected(version: string; service: cardinal): boolean;
 //    'v4.6.1'        .NET Framework 4.6.1
 //    'v4.6.2'        .NET Framework 4.6.2
 //    'v4.7'          .NET Framework 4.7
+//    'v4.7.1'        .NET Framework 4.7.1
+//    'v4.7.2'        .NET Framework 4.7.2
+//    'v4.8'          .NET Framework 4.8
 //
 // service -- Specify any non-negative integer for the required service pack level:
 //    0               No service packs required
@@ -45,6 +48,9 @@ begin
           'v4.6.1': versionRelease := 394254; // 394271 before Win10 November Update
           'v4.6.2': versionRelease := 394802; // 394806 before Win10 Anniversary Update
           'v4.7':   versionRelease := 460798; // 460805 before Win10 Creators Update
+          'v4.7.1': versionRelease := 461308; // 461310 before Win10 Fall Creators Update
+          'v4.7.2': versionRelease := 461808; // 461814 before Win10 April 2018 Update
+          'v4.8':   versionRelease := 528040; // 528049 before Win10 May 2019 Update
         end;
     end;
 
@@ -76,12 +82,19 @@ end;
 
 function CheckNetFramework(): Boolean;
 begin
-    if (IsDotNetDetected('v4\Full', 0) = false) or (IsDotNetDetected('v4.5', 0) = false) then
-	begin
-        MsgBox('{#MyAppName} requires Microsoft .NET Framework 4.5'#13#13
+    if not IsDotNetDetected('v4.8', 0) then begin
+        MsgBox('MyApp requires Microsoft .NET Framework 4.8.'#13#13
             'Please use Windows Update to install this version,'#13
-            'and then re-run the {#MyAppName} setup program.', mbInformation, MB_OK);
+            'and then re-run the MyApp setup program.', mbInformation, MB_OK);
         result := false;
     end else
         result := true;
+end;
+
+function NET6NeedsInstall(): Boolean;
+begin
+    if DirExists(ExpandConstant('{pf}\dotnet\shared\Microsoft.WindowsDesktop.App\6.0.5')) then begin
+        result := true;
+    end else
+        result := false;
 end;

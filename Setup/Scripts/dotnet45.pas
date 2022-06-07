@@ -1,5 +1,5 @@
 // Check .NET Framework
-function Framework45IsNotInstalled(): Boolean;
+function Framework48IsNotInstalled(): Boolean;
 var
   bSuccess: Boolean;
   regVersion: Cardinal;
@@ -14,9 +14,9 @@ end;
 
 procedure InitializeWizard;
 begin
-  if Framework45IsNotInstalled() then
+  if Framework48IsNotInstalled() then
   begin
-    idpAddFile('https://www.microsoft.com/en-us/download/confirmation.aspx?id=30653', ExpandConstant('{tmp}\NetFrameworkInstaller.exe'));
+    idpAddFile('https://go.microsoft.com/fwlink/?linkid=2088631', ExpandConstant('{tmp}\NetFrameworkInstaller.exe'));
     idpDownloadAfter(wpReady);
   end;
 end;
@@ -27,7 +27,7 @@ var
   ResultCode: Integer;
 begin
   StatusText := WizardForm.StatusLabel.Caption;
-  WizardForm.StatusLabel.Caption := 'Installing .NET Framework 4.5. This might take a few minutes...';
+  WizardForm.StatusLabel.Caption := 'Installing .NET Framework 4.8. This might take a few minutes...';
   WizardForm.ProgressGauge.Style := npbstMarquee;
   try
     if not Exec(ExpandConstant('{tmp}\NetFrameworkInstaller.exe'), '/passive /norestart', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then
@@ -47,7 +47,7 @@ begin
   case CurStep of
     ssPostInstall:
       begin
-        if Framework45IsNotInstalled() then
+        if Framework48IsNotInstalled() then
         begin
           InstallFramework();
         end;

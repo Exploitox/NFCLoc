@@ -112,7 +112,8 @@ namespace NFCLoc.Plugin.Unlock
             // Exectute medatixx unlock after a delay
             Thread.Sleep(1000);
             // Check if User is currently running medatixx Client
-            ProcessAsUser.Launch($@"C:\Program Files\Wolkenhof\NFCLoc\Service\medatixx\NFCLoc.Plugin.medatixx.exe -c {id} -s -l");
+            string AppDir = AppContext.BaseDirectory;
+            ProcessAsUser.Launch($"{AppDir}\\medatixx\\NFCLoc.Plugin.medatixx.exe -c {id} -s -l");
         }
 
         public void NFCLocDataRead(string id, byte[] data, Dictionary<string, object> parameters, SystemState state)

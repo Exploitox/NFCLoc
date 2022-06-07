@@ -29,7 +29,7 @@ begin
     if V = IDYES then
     begin
       sUnInstallString := GetUninstallString();
-      sUnInstallString :=  RemoveQuotes(sUnInstallString);
+      sUnInstallString := RemoveQuotes(sUnInstallString);
       Exec(ExpandConstant(sUnInstallString), '', '', SW_SHOW, ewWaitUntilTerminated, iResultCode);
       Result := True; { if you want to proceed after uninstall }
       { Exit; //if you want to quit after uninstall }
