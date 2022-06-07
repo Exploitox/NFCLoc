@@ -35,9 +35,7 @@ jobs:
       run: copy Credential\NFCLocCredentialProvider\tileimage.bmp bin\Release\Credential
       
     - name: Create Setup file
-      run: >
-          $githash = git rev-parse --short HEAD
-          "%programfiles(x86)%\\Inno Setup 6\\iscc.exe" /dGitCommitHash="$githash" "Setup\Scripts\Script.iss"
+      run: $githash = git rev-parse --short HEAD; "%programfiles(x86)%\\Inno Setup 6\\iscc.exe" /dGitCommitHash="$githash" "Setup\Scripts\Script.iss"
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
