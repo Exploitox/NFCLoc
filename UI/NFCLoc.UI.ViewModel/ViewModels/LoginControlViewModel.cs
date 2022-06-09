@@ -94,7 +94,6 @@ namespace NFCLoc.UI.ViewModel.ViewModels
         /// </summary>
         public RelayCommand AddCommand { get; }
 
-
         /// <summary>
         /// Medatixx Credential Manager command.
         /// </summary>
@@ -104,6 +103,11 @@ namespace NFCLoc.UI.ViewModel.ViewModels
         /// About command.
         /// </summary>
         public RelayCommand AboutCommand { get; }
+
+        /// <summary>
+        /// Close application command.
+        /// </summary>
+        public RelayCommand CloseCommand { get; }
 
         /// <summary>
         /// Remove ring item command.
@@ -168,6 +172,7 @@ namespace NFCLoc.UI.ViewModel.ViewModels
             RefreshConnectedDevicesCommand = new RelayCallbackCommand<object>(RefreshConnectedDevices);
             AboutCommand=new RelayCommand(AboutCommandMethod);
             PropertyChanged += OnPropertyChanged;
+            CloseCommand = new RelayCommand(Close);
         }
 
         public async Task InitializeAsync()
@@ -215,6 +220,12 @@ namespace NFCLoc.UI.ViewModel.ViewModels
         {
             Messenger.Default.Send(new MedatixxManagerViewModel());
         }
+
+        private void Close()
+        {
+            Environment.Exit(0);
+        }
+        
         private void AboutCommandMethod()
         {
             // Set Git version

@@ -31,6 +31,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <!-- add new -->
@@ -144,33 +145,70 @@
                     </Border>
                 </Grid>
 
-
                 <!-- About -->
                 <Grid Grid.Row="4" Margin="{StaticResource ContentMarginLightRight}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    
-                    <!-- name -->
-                    <TextBlock VerticalAlignment="Center">
+                    <!-- manage -->
+                    <Border Margin="{StaticResource ContentMarginLight}">
+                        <TextBlock VerticalAlignment="Center">
                         <Hyperlink Command="{Binding AboutCommand}" TextDecorations="{x:Null}" Foreground="Black">
                             <StackPanel Orientation="Horizontal">
-
-                            <!-- icon -->
-                            <Image Height="16" Width="16"
-                                   Source="/NFCLoc.UI.View;component/Assets/abouticon_32.png"
-                                   Margin="{StaticResource ContentMarginSmallLeftRight}"/>
-                                
-                            <TextBlock Text="{DynamicResource about}"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Center"
-                                        FontSize="{StaticResource SmallFontSize}"
-                                        />
+                                <Image Source="/NFCLoc.UI.View;component/Assets/abouticon_32.png"
+                                       Height="16"
+                                       Width="16"/>
+                                <TextBlock Text="{DynamicResource about}"
+                                           VerticalAlignment="Center"
+                                           FontSize="{StaticResource SmallFontSize}"
+                                           Margin="{StaticResource ContentMarginLightLeft}"/>
                             </StackPanel>
                         </Hyperlink>
                     </TextBlock>
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Opacity" Value="0.5" />
+                                        <Setter Property="Cursor" Value="Hand" />
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Opacity" Value="0.5" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                    </Border>
+                </Grid>
+
+                <!-- Close -->
+                <Grid Grid.Row="5" Margin="{StaticResource ContentMarginLightRight}">
+                    <!-- manage -->
+                    <Border Margin="{StaticResource ContentMarginLight}">
+                        <TextBlock VerticalAlignment="Center">
+                        <Hyperlink Command="{Binding CloseCommand}" TextDecorations="{x:Null}" Foreground="Black">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="/NFCLoc.UI.View;component/Assets/Cancel_128.png"
+                                       Height="16"
+                                       Width="16"/>
+                                <TextBlock Text="{DynamicResource close}"
+                                           VerticalAlignment="Center"
+                                           FontSize="{StaticResource SmallFontSize}"
+                                           Margin="{StaticResource ContentMarginLightLeft}"/>
+                            </StackPanel>
+                        </Hyperlink>
+                    </TextBlock>
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Opacity" Value="0.5" />
+                                        <Setter Property="Cursor" Value="Hand" />
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Opacity" Value="0.5" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                    </Border>
                 </Grid>
             </Grid>
 

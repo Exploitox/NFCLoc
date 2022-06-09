@@ -13,10 +13,6 @@ namespace NFCLoc.Plugin.medatixx
 {
     internal class Program
     {
-        #region Static definition
-        private static string salt = String.Empty;
-        #endregion
-
         class CPOptions
         {
             [Option('c', "cardid", Required = true, HelpText = "Input card id")]
@@ -27,6 +23,23 @@ namespace NFCLoc.Plugin.medatixx
 
             [Option('l', "loginback", Default = false, HelpText = "Logged in back")]
             public bool LoginBack { get; set; } // false = First run, true = Login user from id
+        }
+
+        class ProcessUtils
+        {
+            [DllImport("user32.dll")]
+            private static extern IntPtr GetForegroundWindow();
+            [DllImport("user32.dll", SetLastError = true)]
+            static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+            public static Process getForegroundProcess()
+            {
+                uint processID = 0;
+                IntPtr hWnd = GetForegroundWindow(); // Get foreground window handle
+                uint threadID = GetWindowThreadProcessId(hWnd, out processID); // Get PID from window handle
+                Process fgProc = Process.GetProcessById(Convert.ToInt32(processID)); // Get it as a C# obj.
+                                                                                     // NOTE: In some rare cases ProcessID will be NULL. Handle this how you want. 
+                return fgProc;
+            }
         }
 
         static void Main(string[] args)
@@ -43,9 +56,6 @@ namespace NFCLoc.Plugin.medatixx
                     "Warnung",
                     "Hoch");
 
-            // Check System before start
-            CheckSystem();
-
             Parser.Default.ParseArguments<CPOptions>(args)
                    .WithParsed<CPOptions>(o =>
                    {
@@ -53,13 +63,23 @@ namespace NFCLoc.Plugin.medatixx
                        {
                            if (Config.debug) Console.WriteLine($"Login back with card id {o.cardId}");
                            if (Config.debug) File.WriteAllText("C:\\card.txt", $"LOGINBACK: CardID: {o.cardId}");
-
                            if (Config.debug) Console.WriteLine("Call SwitchUserWithKeyStroke");
-                           int procLenght = SetToForegound("Client.UI");
-                           if (procLenght == 0) // Not running
+
+                           int trys = 0;
+                           while (trys != 3)
                            {
-                               Environment.Exit(0);
+                               Process fgProc = ProcessUtils.getForegroundProcess();
+                               if (fgProc.ProcessName != "Client.UI")
+                               {
+                                   int procLenght = SetToForegound("Client.UI");
+                                   if (procLenght == 0) // Not running
+                                   {
+                                       Environment.Exit(0);
+                                   }
+                               }
+                               trys++;
                            }
+
                            SwitchUserWithKeyStroke(o.cardId);
                            Environment.Exit(0);
                        }
@@ -68,12 +88,22 @@ namespace NFCLoc.Plugin.medatixx
                            if (Config.debug) Console.WriteLine($"Logoff medatixx");
                            if (Config.debug) File.WriteAllText("C:\\card.txt", $"LOGOFF: CardID: {o.cardId}");
 
-                           int procLenght = SetToForegound("Client.UI");
-                           if (procLenght == 0) // Not running
+                           int trys = 0;
+                           while (trys != 3)
                            {
-                               LockWorkstation();
-                               Environment.Exit(0);
+                               Process fgProc = ProcessUtils.getForegroundProcess();
+                               if (fgProc.ProcessName != "Client.UI")
+                               {
+                                   int procLenght = SetToForegound("Client.UI");
+                                   if (procLenght == 0) // Not running
+                                   {
+                                       LockWorkstation();
+                                       Environment.Exit(0);
+                                   }
+                               }
+                               trys++;
                            }
+
                            LogoffMedatixx();
                            LockWorkstation();
                            Environment.Exit(0);
@@ -106,36 +136,47 @@ namespace NFCLoc.Plugin.medatixx
 
         private static void SwitchUserWithKeyStroke(string cardId)
         {
-            // Delete content in textbox
-            SendKeys.SendWait("^{HOME}");  // Move to start of control
-            SendKeys.SendWait("^+{END}");  // Select everything
-            SendKeys.SendWait("{DEL}");
-            Thread.Sleep(500);
+            int delay = 500;            
             
             // Username
+            SendKeys.SendWait("^{HOME}");  // Move to start of control
+            SendKeys.SendWait("^+{END}");  // Select everything
+            SendKeys.SendWait("{DEL}");    // Delete content in textbox
+            Thread.Sleep(delay);
+                        
             SendKeys.SendWait(GetUsername(cardId));
-            Thread.Sleep(500);
+            Thread.Sleep(delay);
 
             SendKeys.SendWait("{TAB}");
-            Thread.Sleep(500);
+            Thread.Sleep(delay);
+
+            // Password
+            SendKeys.SendWait("^{HOME}");  // Move to start of control
+            SendKeys.SendWait("^+{END}");  // Select everything
+            SendKeys.SendWait("{DEL}");    // Delete content in textbox
+            Thread.Sleep(delay);
 
             SendKeys.SendWait(GetPassword(cardId));
-            Thread.Sleep(500);
+            Thread.Sleep(delay);
 
             SendKeys.SendWait("{ENTER}");
         }
 
         private static void LogoffMedatixx()
         {
+            int delay = 500;
+            
             // CTRL L
             SendKeys.SendWait("^{l}");
-            Thread.Sleep(500);
+            Thread.Sleep(delay);
+
             // Shift Tab
             SendKeys.SendWait("+{TAB}");
-            Thread.Sleep(500);
+            Thread.Sleep(delay);
+            
             // Space
             SendKeys.SendWait(" ");
-            Thread.Sleep(500);
+            Thread.Sleep(delay);
         }
 
         private static string GetUsername(string cId)
@@ -172,6 +213,34 @@ namespace NFCLoc.Plugin.medatixx
                 SetForegroundWindow(objProcesses[0].MainWindowHandle);
             }
             return objProcesses.Length;
+        }
+
+        /// <summary>
+        /// The GetForegroundWindow function returns a handle to the foreground window.
+        /// </summary>
+        [DllImport("user32.dll")]
+        static extern IntPtr GetForegroundWindow();
+
+        public bool ProcessIsFocused(string processname)
+        {
+            if (processname == null || processname.Length == 0)
+            {
+                throw new ArgumentNullException("processname");
+            }
+
+            Process[] runninProcesses = Process.GetProcessesByName(processname);
+            IntPtr activeWindowHandle = GetForegroundWindow();
+
+            foreach (Process process in runninProcesses)
+            {
+                if (process.MainWindowHandle.Equals(activeWindowHandle))
+                {
+                    return true;
+                }
+            }
+
+            // Process was not found or didn't had the focus.
+            return false;
         }
         #endregion
 
@@ -228,47 +297,6 @@ namespace NFCLoc.Plugin.medatixx
             });
 
             toastContent.Show();
-        }
-        private static void CheckSystem()
-        {
-            /*
-             * Encryption support
-             * ========================================================================================
-             */
-            if (NFCLoc.Plugin.medatixx.Config.UseEncryption)
-            {
-                if (!File.Exists(Path.Combine(NFCLoc.Plugin.medatixx.Config.InstDir, "salt.key")))
-                {
-                    salt = CryptoUtils.CreateSalt();
-                    try
-                    {
-                        File.WriteAllText(Path.Combine(NFCLoc.Plugin.medatixx.Config.InstDir, "salt.key"), salt);
-                        ShowToast(
-                            "Salt-Key erstellt!",
-                            "Bei der Ersteinrichtung wurde erfolgreich ein Saltkey für die Verschlüsselung erstellt!",
-                            "Hinweis",
-                            "Niedrig"
-                        );
-                    }
-                    catch (Exception ex) { ShowToast("Ein Fehler ist aufgetreten!", "Es konnte kein Salt-Key erstellt werden.", "Fehler", "Hoch"); Console.WriteLine("help me: " + ex); Environment.Exit(1); }
-                }
-                else
-                {
-                    try
-                    {
-                        salt = File.ReadAllText(Path.Combine(NFCLoc.Plugin.medatixx.Config.InstDir, "salt.key"));
-                    }
-                    catch
-                    {
-                        ShowToast(
-                            "Lesefehler",
-                            "Der Saltkey kann nicht gelesen werden.",
-                            "Fehler",
-                            "Hoch"
-                        );
-                    }
-                }
-            }
         }
         #endregion
     }

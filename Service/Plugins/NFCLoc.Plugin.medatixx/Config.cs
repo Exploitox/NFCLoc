@@ -5,10 +5,8 @@
         #region General Config
         public static string WinDrive = Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.System));
         public static string InstDir = Path.Combine(WinDrive, "Program Files", "Wolkenhof", "NFCLoc", "Service", "medatixx");
-        public static bool UseEncryption = false;
         #endregion
-
-
+        
         #region Debug Config
 
 #if DEBUG
