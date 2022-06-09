@@ -86,16 +86,16 @@ Source: "..\..\bin\Release\Service\Plugins\NFCLoc.Plugin.Unlock.dll"; DestDir: {
 Source: "..\..\bin\Release\Service\Plugins\Newtonsoft.Json.dll"; DestDir: {#ServiceAppPluginsPath}; Flags: ignoreversion
 
 ; Plugin (medatixx)
-Source: "..\..\bin\Release\Service\Plugins\CommandLine.dll"; DestDir: {#ServiceAppMedatixxPath}; Flags: ignoreversion
-Source: "..\..\bin\Release\Service\Plugins\Microsoft.Toolkit.Uwp.Notifications.dll"; DestDir: {#ServiceAppMedatixxPath}; Flags: ignoreversion
-Source: "..\..\bin\Release\Service\Plugins\Microsoft.Windows.SDK.NET.dll"; DestDir: {#ServiceAppMedatixxPath}; Flags: ignoreversion
-Source: "..\..\bin\Release\Service\Plugins\Newtonsoft.Json.dll"; DestDir: {#ServiceAppMedatixxPath}; Flags: ignoreversion
-Source: "..\..\bin\Release\Service\Plugins\NFCLoc.Plugin.medatixx.deps.json"; DestDir: {#ServiceAppMedatixxPath}; Flags: ignoreversion
-Source: "..\..\bin\Release\Service\Plugins\NFCLoc.Plugin.medatixx.dll"; DestDir: {#ServiceAppMedatixxPath}; Flags: ignoreversion
-Source: "..\..\bin\Release\Service\Plugins\NFCLoc.Plugin.medatixx.exe"; DestDir: {#ServiceAppMedatixxPath}; Flags: ignoreversion
-Source: "..\..\bin\Release\Service\Plugins\NFCLoc.Plugin.medatixx.pdb"; DestDir: {#ServiceAppMedatixxPath}; Flags: ignoreversion
-Source: "..\..\bin\Release\Service\Plugins\NFCLoc.Plugin.medatixx.runtimeconfig.json"; DestDir: {#ServiceAppMedatixxPath}; Flags: ignoreversion
-Source: "..\..\bin\Release\Service\Plugins\WinRT.Runtime.dll"; DestDir: {#ServiceAppMedatixxPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Service\medatixx\CommandLine.dll"; DestDir: {#ServiceAppMedatixxPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Service\medatixx\Microsoft.Toolkit.Uwp.Notifications.dll"; DestDir: {#ServiceAppMedatixxPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Service\medatixx\Microsoft.Windows.SDK.NET.dll"; DestDir: {#ServiceAppMedatixxPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Service\medatixx\Newtonsoft.Json.dll"; DestDir: {#ServiceAppMedatixxPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Service\medatixx\NFCLoc.Plugin.medatixx.deps.json"; DestDir: {#ServiceAppMedatixxPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Service\medatixx\NFCLoc.Plugin.medatixx.dll"; DestDir: {#ServiceAppMedatixxPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Service\medatixx\NFCLoc.Plugin.medatixx.exe"; DestDir: {#ServiceAppMedatixxPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Service\medatixx\NFCLoc.Plugin.medatixx.pdb"; DestDir: {#ServiceAppMedatixxPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Service\medatixx\NFCLoc.Plugin.medatixx.runtimeconfig.json"; DestDir: {#ServiceAppMedatixxPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Service\medatixx\WinRT.Runtime.dll"; DestDir: {#ServiceAppMedatixxPath}; Flags: ignoreversion
 
 ; Management
 ;Source: "..\..\bin\Release\Management\CredentialRegistration.exe.config"; DestDir: {#ServiceManagementPath}; Flags: ignoreversion

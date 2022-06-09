@@ -20,7 +20,8 @@ namespace NFCLoc.Service.Core
 {
     public class ServiceCore
     {
-        private static bool _debug = true;
+        private static bool _debug = false;
+        public static string _logFile = "";
         private CompositionContainer container;
         protected static string appPath = new System.IO.FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location).DirectoryName;
         private ServiceState state = ServiceState.Stopped;
@@ -58,6 +59,17 @@ namespace NFCLoc.Service.Core
                     }
                 }
                 catch { }
+        }
+
+        public void InitLog()
+        {
+            string currentDateTime = DateTime.Now.ToString("ddMMyy-HHmmss");
+            _logFile = Path.Combine(appPath, "logs", $"log-{currentDateTime}.txt");
+            if (!Directory.Exists(Path.Combine(appPath, "logs")))
+            {
+                Directory.CreateDirectory(Path.Combine(appPath, "logs"));
+            }
+            File.Create(_logFile).Close();
         }
 
         // load plugins
@@ -744,14 +756,11 @@ namespace NFCLoc.Service.Core
 
         public static void Log(string message)
         {
-            //if (_debug)
-            //{ 
             try
             {
-                File.AppendAllText(appPath + "\\log.txt", DateTime.Now.ToString("[dd-MM-yy HH:mm:ss] ") + message + Environment.NewLine);
+                File.AppendAllText(_logFile, DateTime.Now.ToString("[dd-MM-yy HH:mm:ss] ") + message + Environment.NewLine);
             }
             catch { }
-            //}
         }
 
         private string GetCurrentUsername()
