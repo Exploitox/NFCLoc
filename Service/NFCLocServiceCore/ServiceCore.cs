@@ -20,7 +20,7 @@ namespace NFCLoc.Service.Core
 {
     public class ServiceCore
     {
-        private static bool _debug = false;
+        private static bool _debug = true;
         public static string _logFile = "";
         private CompositionContainer container;
         protected static string appPath = new System.IO.FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location).DirectoryName;
@@ -81,8 +81,8 @@ namespace NFCLoc.Service.Core
                 // load extension catalog
                 var catalog = new AggregateCatalog();
                 //Adds all the parts found in the same assembly as the Program class
-                catalog.Catalogs.Add(new DirectoryCatalog(appPath + @"\plugins\"));
-
+                catalog.Catalogs.Add(new DirectoryCatalog(appPath + @"\Plugins\"));
+                Log("Plugin directory: " + appPath + @"\Plugins\");
                 //Create the CompositionContainer with the parts in the catalog
                 container = new CompositionContainer(catalog);
 
@@ -114,6 +114,11 @@ namespace NFCLoc.Service.Core
                 Log("Exception loading plugins: " + ex.Message);
             }
             Log(plugins.Count().ToString() + " Plugin(s) loaded");
+            if (plugins.Count() == 0)
+            {
+                Log("No plugins loaded. Closing service ...");
+                Environment.Exit(1);
+            }
         }
 
         // thread to monitor nfc reader
@@ -264,6 +269,7 @@ namespace NFCLoc.Service.Core
 
         public void Start()
         {
+            InitLog();
             Log("Core starting");
             //System.Threading.Thread.Sleep(10000);
             LoadConfig();
@@ -667,7 +673,6 @@ namespace NFCLoc.Service.Core
             }
             Log("Plugin deregistered");
             SaveConfig();
-
         }
 
         private string RegisterToken(string user, string rawToken, string name)
@@ -712,13 +717,9 @@ namespace NFCLoc.Service.Core
         {
             string loggedInUser = GetCurrentUsername();
             string domain = "";
-                // do some work
-            //if(loggedInUser.ToLower() == user.ToLower())
-            //{
-                // username and domain
             domain = loggedInUser.Substring(0,loggedInUser.LastIndexOf('\\'));
             user = user.Replace(domain + @"\", "");
-            //}
+            
             if (loggedInUser.Substring(loggedInUser.LastIndexOf('\\')+1).ToLower() == user.ToLower())
             {
                 // check to see if there is a domain?
