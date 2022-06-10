@@ -27,6 +27,7 @@ namespace NFCLoc.UI.ViewModel.ViewModels
         private ObservableCollection<NFCDevice> devicesList;
         private bool _IsDeviceNotAvailable = false;
         private bool _IsDeviceAvailable = false;
+        private string gitVersion = "";
 
         public ObservableCollection<RingItemViewModel> Items
         {
@@ -157,10 +158,20 @@ namespace NFCLoc.UI.ViewModel.ViewModels
             _userCredentials = userCredentials;
             _logger = logger;
 
-            Title = "NFCLoc";
 
+            // Set Git Hash
+            var assembly = Assembly.GetExecutingAssembly();
+            var resourceName = "NFCLoc.UI.ViewModel.version.txt";
+
+            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                gitVersion = reader.ReadToEnd();
+            }
+
+            Title = $"NFCLoc";
 #if DEBUG
-            Title = "NFCLoc - Debug Build";
+            Title = $"NFCLoc - Debug Build ({gitVersion})";
 #endif
 
             AddCommand = new RelayCommand(Add, () => AllowAdd);
@@ -227,19 +238,7 @@ namespace NFCLoc.UI.ViewModel.ViewModels
         }
         
         private void AboutCommandMethod()
-        {
-            // Set Git version
-            string gitVersion = "";
-            
-            var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = "NFCLoc.UI.ViewModel.version.txt";
-
-            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-            using (StreamReader reader = new StreamReader(stream))
-            {
-                gitVersion = reader.ReadToEnd();
-            }
-            
+        {                       
             string version = new Version(System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetEntryAssembly().Location).ProductVersion).ToString() + $" - {gitVersion}";
             Messenger.Default.Send(new AboutViewModel() { VersionInfo= version });
         }

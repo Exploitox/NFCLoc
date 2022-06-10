@@ -12,6 +12,8 @@
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 		<Platforms>AnyCPU;x64</Platforms>
+		<Authors>valnoxy</Authors>
+		<Company>Wolkenhof</Company>
 	</PropertyGroup>
 
 	<ItemGroup>

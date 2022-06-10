@@ -18,8 +18,8 @@
         </Grid.RowDefinitions>
 
         <!-- image -->
-        <Image Source="/NFCLoc.UI.View;component/Assets/NFCLoc_logo_2x.png"
-               Height="36"
+        <Image Source="/NFCLoc.GUI;component/Assets/Wolkenhof-Logo.png"
+               Height="58"
                HorizontalAlignment="Center"/>
 
         <!-- step content -->

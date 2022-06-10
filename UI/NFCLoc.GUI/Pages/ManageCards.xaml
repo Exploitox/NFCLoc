@@ -8,120 +8,37 @@
       xmlns:controls="clr-namespace:NFCLoc.UI.View.Controls;assembly=NFCLoc.UI.View"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="ManageCards">
-
+      Title="ManageCards"
+      xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml">
+    
     <Grid Margin="19,20,19,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="386" />
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="1" Margin="0,44,0,0" VerticalAlignment="Top">
-            <ListBox Grid.Column="2"
-                     x:Name="ItemsListBox"
-                     ItemsSource="{Binding Items}"
-                     BorderThickness="0"
-                     >
-                     <!-- Margin="{StaticResource ContentMarginLeft}" -->
-                     
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-                        <Style.Setters>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate>
-                                        <Grid d:DataContext="{d:DesignInstance viewModels:RingItemViewModel}" Margin="0,10,0,0" Focusable="False">
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="*"/>
-                                            </Grid.RowDefinitions>
-
-                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
-
-                                                <!-- image -->
-                                                <ContentControl>
-                                                    <ContentControl.Template>
-                                                        <ControlTemplate>
-                                                            <Border x:Name="ImageBorder" Margin="0,5,10,0" BorderBrush="Blue">
-                                                                <Image Height="32" Width="32">
-                                                                    <Image.Style>
-                                                                        <Style TargetType="{x:Type Image}">
-                                                                            <Setter Property="HorizontalAlignment" Value="Center"/>
-                                                                            <Setter Property="VerticalAlignment" Value="Center"/>
-                                                                            <Setter Property="Source" Value="{Binding Image}" />
-                                                                            <Style.Triggers>
-                                                                                <DataTrigger Binding="{Binding Image}" Value="{x:Null}">
-                                                                                    <Setter Property="Source" Value="/NFCLoc.UI.View;component/Assets/DoubleCircle_36.png" />
-                                                                                </DataTrigger>
-                                                                            </Style.Triggers>
-                                                                        </Style>
-                                                                    </Image.Style>
-                                                                    <Image.InputBindings>
-                                                                        <MouseBinding MouseAction="LeftClick"
-                                                                                      Command="{Binding ElementName=ItemsListBox, Path=DataContext.SelectImageCommand}"
-                                                                                      CommandParameter="{Binding Token}"/>
-                                                                    </Image.InputBindings>
-                                                                </Image>
-                                                            </Border>
-
-                                                            <ControlTemplate.Triggers>
-                                                                <Trigger Property="IsMouseOver" Value="True">
-                                                                    <Setter TargetName="ImageBorder" Property="Cursor" Value="Hand" />
-                                                                </Trigger>
-                                                                <EventTrigger SourceName="ImageBorder" RoutedEvent="Border.MouseEnter">
-                                                                    <BeginStoryboard>
-                                                                        <Storyboard>
-                                                                            <DoubleAnimation Duration="0:0:0.4" Storyboard.TargetName="ImageBorder" Storyboard.TargetProperty="Opacity" To="0.5" />
-                                                                        </Storyboard>
-                                                                    </BeginStoryboard>
-                                                                </EventTrigger>
-                                                                <EventTrigger SourceName="ImageBorder" RoutedEvent="Border.MouseLeave">
-                                                                    <BeginStoryboard>
-                                                                        <Storyboard>
-                                                                            <DoubleAnimation Duration="0:0:0.4" Storyboard.TargetName="ImageBorder" Storyboard.TargetProperty="Opacity" To="1" />
-                                                                        </Storyboard>
-                                                                    </BeginStoryboard>
-                                                                </EventTrigger>
-                                                            </ControlTemplate.Triggers>
-                                                        </ControlTemplate>
-                                                    </ContentControl.Template>
-                                                </ContentControl>
-
-                                                <!-- name -->
-                                                <controls:SkypeTextEditControl Text="{Binding Name, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                                                               
-                                                                               CancelCommand="{Binding ElementName=ItemsListBox, Path=DataContext.CancelEditNameCommand}"
-                                                                               CommandParameter="{Binding Token}"/>
-                                            </StackPanel>
-
-                                            <!-- token -->
-                                            <StackPanel Grid.Row="1"
-                                                        Margin="{StaticResource ContentMarginLightTop}"
-                                                        Orientation="Horizontal"
-                                                        Visibility="Collapsed">
-                                                <TextBlock Text="Token: " FontSize="{StaticResource SmallFontSize}"/>
-                                                <TextBlock Text="{Binding Token}" FontSize="{StaticResource SmallFontSize}"/>
-                                            </StackPanel>
-
-                                            <!-- remove button -->
-                                            <Button Grid.Row="2"
-                                                    Content="Remove"
-                                                    Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ListBox}, Path=DataContext.RemoveCommand}"
-                                                    CommandParameter="{Binding}"
-                                                    HorizontalAlignment="Left"
-                                                    Margin="{StaticResource ContentMarginLightTop}"
-                                                    Style="{StaticResource ButtonStyle}"/>
-                                        </Grid>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style.Setters>
-                    </Style>
-                </ListBox.ItemContainerStyle>
-            </ListBox>
+            <wpfui:VirtualizingItemsControl
+            Height="300"
+            Foreground="White"
+            ItemsSource="{Binding Cards, Mode=OneWay}"
+            VirtualizingPanel.CacheLengthUnit="Pixel">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="Brush">
+                        <wpfui:Button
+                        Width="140"
+                        Height="80"
+                        Margin="2"
+                        Padding="0"
+                        Appearance="Secondary"
+                        Background="Black"
+                        FontSize="18"
+                        Content="{Binding}"
+                        Icon="ContactCard24" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </wpfui:VirtualizingItemsControl>
         </Grid>
 
         <Grid Grid.Row="3" Margin="-19,0,-19,0" VerticalAlignment="Bottom">

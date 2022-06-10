@@ -5,20 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              dp:Ignorable="d"
              xmlns:dp="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:viewModel="clr-namespace:NFCLoc.GUI.ViewModel"
+             xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/WPFUI;component/Styles/Theme/Dark.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/WPFUI;component/Styles/WPFUI.xaml" />
-                <ResourceDictionary Source="/NFCLoc.UI.View;component/Themes/Styles.xaml"/>
-                <ResourceDictionary Source="/NFCLoc.UI.View;component/Themes/ViewDictionary.xaml"/>
+                <wpfui:Resources Theme="Dark" />
                 <ResourceDictionary Source="Resources/StringResources.xaml"/>
                 <ResourceDictionary Source="Resources/StringResources.de-DE.xaml"/>
-                <ResourceDictionary>
-                    <viewModel:ViewModelLocator x:Key="Locator" d:IsDataSource="True" xmlns:vm="clr-namespace:NFCLoc.GUI.ViewModel" />
-                </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

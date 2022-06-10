@@ -1,5 +1,4 @@
-﻿using Microsoft.Practices.ServiceLocation;
-using NFCLoc.UI.ViewModel.ViewModels;
+﻿using NFCLoc.UI.ViewModel.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,8 +51,7 @@ namespace NFCLoc.GUI
 
         private void DialogAddCard(object sender, RoutedEventArgs e)
         {
-            ServiceLocator.Current.GetInstance<MainViewModel>()
-                .SetContent(ServiceLocator.Current.GetInstance<WizardViewModel>());
+
         }
     }
 }

@@ -14,8 +14,7 @@
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         xmlns:wpfui="clr-namespace:WPFUI.Controls;assembly=WPFUI"
-        Style="{StaticResource UiWindow}"
-        DataContext="{Binding Source={StaticResource Locator}, Path=MainViewModel}">
+        Style="{StaticResource UiWindow}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

@@ -45,7 +45,7 @@ namespace NFCLoc.UI.View.Views
                 }
 
             }
-            catch { MessageBox.Show((string)Application.Current.FindResource("cannot_stop_service")); }
+            catch (Exception ex) { MessageBox.Show((string)Application.Current.FindResource("cannot_stop_service") + $"\n{ex.Message}"); }
         }
 
         private void SetCurrentUserDatabase()

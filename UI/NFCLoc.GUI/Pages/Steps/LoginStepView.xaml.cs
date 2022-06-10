@@ -25,8 +25,7 @@ namespace NFCLoc.GUI.Pages.Steps
 
             PasswordTextBox.Text = passwordBox.Password;
             var viewModel = DataContext as LoginStepViewModel;
-            if (viewModel == null)
-                return;
+
 
             viewModel.Password = passwordBox.SecurePassword;
         }
