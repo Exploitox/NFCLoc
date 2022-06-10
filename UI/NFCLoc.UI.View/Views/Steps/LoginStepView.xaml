@@ -26,6 +26,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -41,7 +42,9 @@
                 <TextBox Style="{StaticResource TextBoxStyle}"
                          Text="{Binding UserName}"
                          Padding="{StaticResource TextBoxPadding}"
-                         MaxLength="104"/>
+                         IsEnabled="False"
+                         MaxLength="104"
+                         x:Name="username"/>
             </StackPanel>
             
             <!-- password -->
@@ -85,6 +88,30 @@
                     </Button>
                 </Grid>
                 
+            </StackPanel>
+            
+            <!-- note -->
+            <StackPanel Grid.Row="2" Grid.Column="1" Margin="{StaticResource ContentMarginTop}">
+                <TextBlock x:Name="note" TextWrapping="Wrap" Text="{DynamicResource lsv_note}" FontSize="{StaticResource SmallFontSize}" Margin="{StaticResource LabelMarginBottom}" TextAlignment="Center"/>
+                <Button x:Name="ignoreWarning" Margin="5" Content="{DynamicResource lsv_ignoreWarning}" Cursor="Hand" HorizontalAlignment="Center" Click="Button_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <TextBlock TextDecorations="Underline">
+                                <ContentPresenter />
+                            </TextBlock>
+                        </ControlTemplate>
+                    </Button.Template>
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Foreground" Value="Blue" />
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="true">
+                                    <Setter Property="Foreground" Value="Red" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
             </StackPanel>
         </Grid>
     </Grid>

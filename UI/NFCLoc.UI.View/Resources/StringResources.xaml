@@ -34,6 +34,8 @@
     <system:String x:Key="lsv_header">Enter your Windows Login credentials</system:String>
     <system:String x:Key="lsv_UserName">User Name</system:String>
     <system:String x:Key="lsv_Password">Password</system:String>
+    <system:String x:Key="lsv_note">Note: If you want to register a card for another user, please log in first.</system:String>
+    <system:String x:Key="lsv_ignoreWarning">Continue anyway</system:String>
 
     <system:String x:Key="PRSV_header">Place then remove your NFC Card on the reader</system:String>
     <system:String x:Key="RRSV_header">Place the card on the reader again for confirmation</system:String>

@@ -34,6 +34,8 @@
     <system:String x:Key="lsv_header">Geben Sie Ihre Windows-Anmeldedaten ein</system:String>
     <system:String x:Key="lsv_UserName">Benutername</system:String>
     <system:String x:Key="lsv_Password">Kennwort</system:String>
+    <system:String x:Key="lsv_note">Hinweis: Wenn Sie eine Karte für einen anderen Benutzer registrieren möchten, melden Sie sich bitte zuerst an.</system:String>
+    <system:String x:Key="lsv_ignoreWarning">Trotzdem fortfahren</system:String>
 
     <system:String x:Key="PRSV_header">Legen Sie Ihre NFC-Karte auf das Lesegerät.</system:String>
     <system:String x:Key="RRSV_header">Legen Sie die Karte zur Bestätigung erneut auf das Lesegerät</system:String>

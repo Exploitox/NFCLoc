@@ -42,6 +42,13 @@ namespace NFCLoc.UI.View.Views
         }
 
         #endregion
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            ignoreWarning.Visibility = Visibility.Hidden;
+            note.Visibility = Visibility.Hidden;
+            username.IsEnabled = true;
+        }
     }
 
 
