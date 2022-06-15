@@ -8,7 +8,7 @@
 <p align="center">
    <strong>Status: Maintained (preview)</strong>
    <br />
-   <strong>Version: </strong>2.0.0 <em>(preview; not stable!)</em>
+   <strong>Version: </strong>2.0.0
    <br />
    <a href="https://github.com/Exploitox/NFCLoc/issues">Report Bug</a>
    ·
