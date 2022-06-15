@@ -17,13 +17,8 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- image -->
-        <Image Source="/NFCLoc.GUI;component/Assets/Wolkenhof-Logo.png"
-               Height="58"
-               HorizontalAlignment="Center"/>
-
         <!-- step content -->
-        <ContentPresenter Grid.Row="1" Content="{Binding StepViewModel}"/>
+        <!--<ContentPresenter Grid.Row="1" Content="{Binding StepViewModel}"/>-->
 
         <!-- buttons -->
         <Grid Grid.Row="2">
@@ -34,14 +29,14 @@
             </Grid.ColumnDefinitions>
 
             <Button Content="Cancel"
-                    Command="{Binding CancelCommand}"
+                    Command=""
                     IsCancel="True"
                     Visibility="{Binding StepViewModel.CancelIsVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             <Button Grid.Column="2"
-                    Content="{Binding NextText}"
-                    Command="{Binding NextCommand}"
+                    Content="Next"
+                    Command=""
                     Visibility="{Binding StepViewModel.NextIsVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
-                    IsDefault="True" Cursor="Hand"/>
+                    IsDefault="True"/>
         </Grid>
     </Grid>
 </Page>

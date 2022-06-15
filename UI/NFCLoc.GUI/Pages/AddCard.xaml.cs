@@ -23,6 +23,8 @@ namespace NFCLoc.GUI.Pages
         public AddCard()
         {
             InitializeComponent();
+
+            
         }
     }
 }

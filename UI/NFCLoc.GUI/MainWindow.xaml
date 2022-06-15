@@ -38,12 +38,12 @@
                         Content="Add"
                         Icon="Add24"
                         Tag="add"
-                        Click="DialogAddCard" />
+                        Page="{x:Type pages:AddCard}" Cursor="Hand" />
                     <wpfui:NavigationItem
                         Content="Manage"
                         Icon="ContactCard24"
                         Tag="manage"
-                        Page="{x:Type pages:ManageCards}" Cursor="Hand" />
+                        Page="{x:Type pages:ManageCards}" />
                 </wpfui:NavigationStore.Items>
                 <wpfui:NavigationStore.Footer>
                     <wpfui:NavigationItem
