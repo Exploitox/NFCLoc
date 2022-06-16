@@ -7,6 +7,14 @@
                     xmlns:view="clr-namespace:NFCLoc.UI.View;assembly=NFCLoc.UI.View"
                     mc:Ignorable="d"
                     d:DataContext="{d:DesignInstance viewModels:PlaceRingStepViewModel}">
+    <UserControl.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style TargetType="Image">
+        </Style>
+    </UserControl.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -21,16 +29,16 @@
             <TextBlock Text="{DynamicResource PRSV_header}"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"
-                       FontSize="{StaticResource MediumFontSize}"
-                       Margin="{StaticResource ContentMargin}"/>
+                       FontSize="24"
+                       Margin="20"/>
         </Grid>
 
         <!-- image -->
         <Image Grid.Row="3"
-               Source="/NFCLoc.UI.View;component/Assets/nfc_reader_2x.png"
+               Source="/NFCLoc.GUI;component/Assets/nfc_reader_2x.png"
                Height="200"
                HorizontalAlignment="Center"
-               Margin="{StaticResource ContentMargin}"/>
+               Margin="20"/>
     </Grid>
 </view:CustomControl>
 

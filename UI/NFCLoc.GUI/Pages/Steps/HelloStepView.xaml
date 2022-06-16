@@ -8,7 +8,14 @@
              d:DesignWidth="800"
              d:DesignHeight="600"
              d:DataContext="{d:DesignInstance viewModels:HelloStepViewModel}">
-    <Grid>
+
+    <UserControl.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="0,40,0,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -18,19 +25,20 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- step text -->
+        <!-- title -->
         <TextBlock Grid.Row="1"
                    Text="{DynamicResource hsv_header}"
                    HorizontalAlignment="Center"
-                   FontSize="{StaticResource BigFontSize}"
-                   Margin="{StaticResource ContentMargin}"/>
+                   FontSize="24"
+                   Margin="20"/>
         
         <!-- text 1 -->
         <TextBlock Grid.Row="2"
                    Text="{DynamicResource hsv_t1}"
                    HorizontalAlignment="Center"
                    TextAlignment="Center"
-                   FontSize="{StaticResource NormalFontSize}"
+                   FontSize="16"
+                   Margin="20"
                    TextWrapping="Wrap"/>
         
         <!-- text 2 -->
@@ -38,15 +46,15 @@
                    Text="{DynamicResource hsv_t2}"
                    HorizontalAlignment="Center"
                    TextAlignment="Center"
-                   FontSize="{StaticResource NormalFontSize}"
+                   FontSize="16"
                    TextWrapping="Wrap"
-                   Margin="{StaticResource ContentMargin}"/>
+                   Margin="20"/>
         
         <!-- link -->
         <TextBlock Grid.Row="4"
                    HorizontalAlignment="Center"
-                   FontSize="{StaticResource NormalFontSize}">
-            <Hyperlink Command="{Binding NavigateCommand}">http://NFCLoc.com/privacy</Hyperlink>
+                   FontSize="16">
+            <Hyperlink NavigateUri="https://github.com/Wolkenhof/NFCLoc/" RequestNavigate="Hyperlink_RequestNavigate">GitHub Repository</Hyperlink>
         </TextBlock>
     </Grid>
 </UserControl>

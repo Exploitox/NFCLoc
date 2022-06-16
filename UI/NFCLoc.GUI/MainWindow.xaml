@@ -38,7 +38,7 @@
                         Content="Add"
                         Icon="Add24"
                         Tag="add"
-                        Page="{x:Type pages:AddCard}" Cursor="Hand" />
+                        Page="{x:Type pages:AddCard}"/>
                     <wpfui:NavigationItem
                         Content="Manage"
                         Icon="ContactCard24"
@@ -50,7 +50,7 @@
                         Content="About"
                         Icon="QuestionCircle24"
                         Tag="about"
-                        Page="{x:Type pages:About}" />
+                        Page="{x:Type pages:About}" Cursor="Hand" />
                 </wpfui:NavigationStore.Footer>
             </wpfui:NavigationStore>
 
@@ -70,7 +70,7 @@
             </Border>
         </Grid>
 
-        <Label x:Name="debugLabel" Grid.Row="0" Content="" Margin="70,16,0,0"/>
-        <wpfui:TitleBar Grid.Row="0" ShowMaximize="False" ShowMinimize="False" Title="NFCLoc"/>
+        <Label x:Name="debugLabel" Grid.Row="0" Content="" Margin="90,17,0,0"/>
+        <wpfui:TitleBar Grid.Row="0" ShowMaximize="False" ShowMinimize="False" Title="NFCLoc" Icon="pack://application:,,,/Icon.ico"/>
     </Grid>
 </Window>

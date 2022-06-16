@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:NFCLoc.GUI.Pages"
+      xmlns:pages="clr-namespace:NFCLoc.GUI.Pages.Steps"
       xmlns:viewModels="clr-namespace:NFCLoc.UI.ViewModel.ViewModels;assembly=NFCLoc.UI.ViewModel"
       d:DataContext="{d:DesignInstance viewModels:WizardViewModel}"
       mc:Ignorable="d" 
@@ -19,6 +20,7 @@
 
         <!-- step content -->
         <!--<ContentPresenter Grid.Row="1" Content="{Binding StepViewModel}"/>-->
+        <ContentControl x:Name="FrameWindow"/>
 
         <!-- buttons -->
         <Grid Grid.Row="2">
@@ -29,13 +31,15 @@
             </Grid.ColumnDefinitions>
 
             <Button Content="Cancel"
-                    Command=""
+                    x:Name="CancelBtn"
                     IsCancel="True"
+                    Click="CancelBtn_Click"
                     Visibility="{Binding StepViewModel.CancelIsVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             <Button Grid.Column="2"
                     Content="Next"
-                    Command=""
+                    x:Name="NextBtn"
                     Visibility="{Binding StepViewModel.NextIsVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Click="Button_Click"
                     IsDefault="True"/>
         </Grid>
     </Grid>
