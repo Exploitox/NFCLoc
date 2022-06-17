@@ -26,7 +26,7 @@ namespace NFCLoc.GUI.Pages.Steps
 
         public async Task InitializeAsync()
         {
-
+        labelstart:
             var token = await _tokenService.GetNewTokenAsync(_cancellationTokenSource.Token);
 
             if (_cancellationTokenSource.IsCancellationRequested)

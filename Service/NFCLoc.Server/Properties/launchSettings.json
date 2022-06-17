@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "NFCLoc.Server": {
+      "commandName": "Project",
+      "remoteDebugEnabled": true,
+      "remoteDebugMachine": "192.168.32.116"
+    }
+  }
+}
