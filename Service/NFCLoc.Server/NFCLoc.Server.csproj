@@ -12,6 +12,7 @@
 		<Authors>valnoxy</Authors>
 		<Company>Wolkenhof GmbH</Company>
 		<ApplicationIcon>Icon.ico</ApplicationIcon>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -21,6 +22,21 @@
 	<ItemGroup>
 	  <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.2.4" />
 	  <PackageReference Include="WPF-UI" Version="2.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Tools.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Tools.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Tools.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Tools.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	</ItemGroup>
 
 </Project>

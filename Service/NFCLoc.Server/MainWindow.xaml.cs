@@ -1,21 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Management.Automation;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Wpf.Ui.Appearance;
-using Wpf.Ui.Mvvm.Contracts;
+using System.Diagnostics;
+using System.IO;
 
 namespace NFCLoc.Server
 {
@@ -28,17 +21,13 @@ namespace NFCLoc.Server
 
         public MainWindow()
         {
-
             InitializeComponent();
-            
-            Loaded += (sender, args) =>
-            {
-                Wpf.Ui.Appearance.Watcher.Watch(
-                  this,                                     // Window class
-                  Wpf.Ui.Appearance.BackgroundType.Mica,    // Background type
-                  true                                      // Whether to change accents automatically
-                );
-            };
+
+            Wpf.Ui.Appearance.Theme.Apply(
+                    Wpf.Ui.Appearance.ThemeType.Dark,            // Theme type
+                    Wpf.Ui.Appearance.BackgroundType.Mica,        // Background type
+                    true                                          // Whether to change accents automatically
+            );
         }
 
         private void ChangeTheme(object sender, RoutedEventArgs e)
@@ -46,23 +35,22 @@ namespace NFCLoc.Server
             if (dark)
             {
                 Wpf.Ui.Appearance.Theme.Apply(
-                Wpf.Ui.Appearance.ThemeType.Light,            // Theme type
-                Wpf.Ui.Appearance.BackgroundType.Mica,        // Background type
-                true                                          // Whether to change accents automatically
-              );
+                    Wpf.Ui.Appearance.ThemeType.Light,            // Theme type
+                    Wpf.Ui.Appearance.BackgroundType.Mica,        // Background type
+                    true                                          // Whether to change accents automatically
+                );
                 dark = false;
                 ChangeThemeBtn.Icon = Wpf.Ui.Common.SymbolRegular.WeatherSunny24;
             }
             else
             {
-                Wpf.Ui.Appearance.Watcher.Watch(
-                    this,                                     // Window class
-                    Wpf.Ui.Appearance.BackgroundType.Mica,    // Background type
-                    true                                      // Whether to change accents automatically
+                Wpf.Ui.Appearance.Theme.Apply(
+                    Wpf.Ui.Appearance.ThemeType.Dark,            // Theme type
+                    Wpf.Ui.Appearance.BackgroundType.Mica,        // Background type
+                    true                                          // Whether to change accents automatically
                 );
                 dark = true;
                 ChangeThemeBtn.Icon = Wpf.Ui.Common.SymbolRegular.WeatherMoon24;
-
             }
         }
 
@@ -98,41 +86,111 @@ namespace NFCLoc.Server
         
         private void ToggleSwitchOn_Click(object sender, RoutedEventArgs e)
         {
-            // Create SMB Share
-            using (PowerShell powerShell = PowerShell.Create())
+            if (ToggleSwitch.IsChecked == true)
             {
-                // Source functions.
-                powerShell.AddScript("Import-Module AppVPkgConverter");
-                powerShell.AddScript("Get-Command -Module AppVPkgConverter");
-                powerShell.AddScript("ConvertFrom-AppvLegacyPackage -DestinationPath "C:\Temp" -SourcePath "C:\Temp2"");
+                // Generate data
+                string Passwd = GeneratePassword(12);
+                string Username = $"NFCLoc_{GenerateUsername(5)}";
+                string ConfigPath = Path.Combine("C:", "NFCLOC");
+                string NTRights = Path.Combine(Path.GetTempPath(), "ntrights.exe");
 
-                // invoke execution on the pipeline (collecting output)
-                Collection<PSObject> PSOutput = powerShell.Invoke();
+                tbIP.Text = GetLocalIPAddress();
+                tbUser.Text = Username;
+                tbPW.Text = Passwd;
+                tbSMB.Text = @$"\\{GetLocalIPAddress()}\NFCLOCCONF";
+                tbConf.Text = ConfigPath;
 
-                // loop through each output object item
-                foreach (PSObject outputItem in PSOutput)
+                // Create SMB User
+                Process p = new Process();
+                p.StartInfo.FileName = "cmd.exe";
+                p.StartInfo.Arguments = $"/c \"net user {Username} /add {Passwd}\"";
+                p.StartInfo.RedirectStandardOutput = true;
+                p.StartInfo.RedirectStandardError = true;
+                p.StartInfo.UseShellExecute = false;
+                p.StartInfo.CreateNoWindow = true;
+                p.Start();
+                p.WaitForExit();
+
+                try
                 {
-                    // if null object was dumped to the pipeline during the script then a null object may be present here
-                    if (outputItem != null)
+                    File.WriteAllBytes(NTRights, Tools.ntrights);
+                    p.StartInfo.FileName = NTRights;
+                    p.StartInfo.Arguments = $"-u {Username} +r SeDenyInteractiveLogonRight";
+                    p.Start();
+                    p.WaitForExit();
+
+                    p.StartInfo.Arguments = $"-u {Username} +r SeDenyRemoteInteractiveLogonRight";
+                    p.Start(); 
+                    p.WaitForExit();
+                }
+                catch (Exception ex)
+                {
+                    RootSnackbar.Show("Cannot enable server!", ex.Message);
+                }
+
+                // Create SMB Share
+                Process process = new Process();
+                ProcessStartInfo processInfo = new ProcessStartInfo();
+                processInfo.RedirectStandardError = true;
+                processInfo.RedirectStandardOutput = true;
+                processInfo.UseShellExecute = false;
+                processInfo.CreateNoWindow = true;
+                process.StartInfo = processInfo;
+
+                if (ExistsNetworkPath(@"NFCLOCCONF"))
+                {
+                    processInfo.FileName = @"powershell.exe";
+                    processInfo.Arguments = $"& {{Remove-SmbShare -Name NFCLOCCONF -Force}}";
+
+                    process.Start();
+                    process.WaitForExit();
+
+                    if (process.ExitCode != 0)
                     {
-                        Console.WriteLine($"Output line: [{outputItem}]");
+                        ToggleSwitch.IsChecked = false;
+                        RootSnackbar.Show("Cannot enable server!", "Failed to disable old SMB Share.");
                     }
                 }
 
-                // check the other output streams (for example, the error stream)
-                if (powerShell.Streams.Error.Count > 0)
+                processInfo.FileName = @"powershell.exe";
+                processInfo.Arguments = $"& {{New-SmbShare -Name NFCLOCCONF -Path \"{ConfigPath}\" -EncryptData $True -FullAccess \"{Username}\"}}";
+
+                process.Start();
+                process.WaitForExit();
+
+                if (p.ExitCode != 0)
                 {
-                    // error records were written to the error stream.
-                    // Do something with the error
+                    RootSnackbar.Show("Cannot enable server!", "Failed to create SMB Share.");
                 }
             }
 
+            if (ToggleSwitch.IsChecked == false)
+            {
+                try
+                {
+                    // Remove user
+                    Process process = new Process();
+                    ProcessStartInfo processInfo = new ProcessStartInfo();
+                    processInfo.RedirectStandardError = true;
+                    processInfo.RedirectStandardOutput = true;
+                    processInfo.UseShellExecute = false;
+                    processInfo.CreateNoWindow = true;
+                    process.StartInfo = processInfo;
 
-            tbIP.Text = GetLocalIPAddress();
-            tbUser.Text = Environment.UserName;
-            tbPW.Text = GeneratePassword(16);
-            tbSMB.Text = @$"\\{GetLocalIPAddress()}\NFCLOCCONF";
-            tbConf.Text = @"C:\NFCLoc\conf\";
+                    processInfo.FileName = @"cmd.exe";
+                    processInfo.Arguments = $"/c \"net user {tbUser.Text} /delete\"";
+
+                    process.Start();
+                    process.WaitForExit();
+                }
+                catch {;}
+
+                tbIP.Text = "";
+                tbUser.Text = "";
+                tbPW.Text = "";
+                tbSMB.Text = "";
+                tbConf.Text = "";
+            }
         }
 
         private void ToggleSwitchOff_Click(object sender, RoutedEventArgs e)
@@ -146,10 +204,60 @@ namespace NFCLoc.Server
 
         private void ResetPWButton_Click(object sender, RoutedEventArgs e)
         {
+            string bkg_pw = tbPW.Text;
+            tbPW.Text = GeneratePassword(16);
+
+            Process process = new Process();
+            ProcessStartInfo processInfo = new ProcessStartInfo();
+            processInfo.RedirectStandardError = true;
+            processInfo.RedirectStandardOutput = true;
+            processInfo.UseShellExecute = false;
+            processInfo.CreateNoWindow = true;
+            process.StartInfo = processInfo;
+
+            processInfo.FileName = @"cmd.exe";
+            processInfo.Arguments = $"/c \"net user {tbUser.Text} {tbPW.Text}\"";
+
+            process.Start();
+            process.WaitForExit();
+
+            if (process.ExitCode != 0)
+            {
+                RootSnackbar.Show("Cannot change password!", $"Failed to change password of user {tbUser.Text}.");
+                tbPW.Text = bkg_pw;
+            }
+        }
+
+        private void ClearConfig_Click(object sender, RoutedEventArgs e)
+        {
             tbPW.Text = GeneratePassword(16);
         }
 
         #region Modules
+
+        public static bool ExistsNetworkPath(string path)
+        {
+            if (string.IsNullOrEmpty(path)) return false;
+            string pathRoot = Path.GetPathRoot(path);
+            if (string.IsNullOrEmpty(pathRoot)) return false;
+            ProcessStartInfo pinfo = new ProcessStartInfo("powershell", "Get-SmbShare");
+            pinfo.CreateNoWindow = true;
+            pinfo.RedirectStandardOutput = true;
+            pinfo.UseShellExecute = false;
+            string output;
+            using (Process p = Process.Start(pinfo))
+            {
+                output = p.StandardOutput.ReadToEnd();
+            }
+            foreach (string line in output.Split('\n'))
+            {
+                if (line.Contains(pathRoot) && line.Contains("OK"))
+                {
+                    return true; // shareIsProbablyConnected
+                }
+            }
+            return false;
+        }
 
         public static string GetLocalIPAddress()
         {
@@ -177,7 +285,19 @@ namespace NFCLoc.Server
             }
             return res.ToString();
         }
-        
+
+        public static string GenerateUsername(int length)
+        {
+            const string valid = $"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+            StringBuilder res = new StringBuilder();
+            Random rnd = new Random();
+            while (0 < length--)
+            {
+                res.Append(valid[rnd.Next(valid.Length)]);
+            }
+            return res.ToString();
+        }
+
         #endregion
     }
 }
