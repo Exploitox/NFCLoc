@@ -588,6 +588,33 @@ namespace NFCLoc.Service.Core
             // read in our JSON file
             // decrypt?
             // store this in an object of some kind
+
+            // Read local database config
+            try
+            {
+                var db = new IniFile(appPath + @"\Database.ini");
+                string ip = db.Read("IP", "Login");
+                string user = db.Read("User", "Login");
+                string pass = db.Read("Password", "Login");
+
+                if (ip != null || user != null || pass != null)
+                {
+                    // Using network based configuration
+                    NetworkCredential cred = new NetworkCredential(user, pass);
+                    using (new NetworkConnection($@"\\{ip}\NFCLOCCONF", cred))
+                    {
+                        string sc = File.ReadAllText($@"\\{ip}\NFCLOCCONF\Application.config");
+                        ApplicationConfiguration = JsonConvert.DeserializeObject<Config>(sc);
+                        Log($@"Configuration loaded from \\{ip}\NFCLOCCONF\Application.config");
+                        return true;
+                    }
+                }
+            }
+            catch
+            {
+                Log("Failed to connect with remote authentification server.");
+            }
+
             try
             {
                 if (File.Exists(appPath + @"\Application.config"))
