@@ -13,8 +13,8 @@ using System.Diagnostics;
 
 namespace NFCLoc.Plugin.Unlock
 {
-    [Export(typeof(INFCLocServicePlugin))]
-    public class UnlockWorkstation : INFCLocServicePlugin
+    [Export(typeof(INfcLocServicePlugin))]
+    public class UnlockWorkstation : INfcLocServicePlugin
     {
         //TcpListener listener;
         //Thread listenThread;
@@ -73,12 +73,12 @@ namespace NFCLoc.Plugin.Unlock
             //}
         }
 
-        public void NCFRingUp(string id, Dictionary<string, object> parameters, SystemState state)
+        public void NcfRingUp(string id, Dictionary<string, object> parameters, SystemState state)
         {
             // this space intentionally left blank
         }
 
-        public void NCFRingDown(string id, Dictionary<string, object> parameters, SystemState state)
+        public void NcfRingDown(string id, Dictionary<string, object> parameters, SystemState state)
         {
             //if(state.SessionStatus != SessionState.Locked && state.SessionStatus != SessionState.LoggedOff)
             //{
@@ -112,11 +112,11 @@ namespace NFCLoc.Plugin.Unlock
             // Exectute medatixx unlock after a delay
             Thread.Sleep(1000);
             // Check if User is currently running medatixx Client
-            string AppDir = AppContext.BaseDirectory;
-            ProcessAsUser.Launch($"{AppDir}\\medatixx\\NFCLoc.Plugin.medatixx.exe -c {id} -s -l");
+            var appDir = AppContext.BaseDirectory;
+            ProcessAsUser.Launch($"{appDir}\\medatixx\\NFCLoc.Plugin.medatixx.exe -c {id} -s -l");
         }
 
-        public void NFCLocDataRead(string id, byte[] data, Dictionary<string, object> parameters, SystemState state)
+        public void NfcLocDataRead(string id, byte[] data, Dictionary<string, object> parameters, SystemState state)
         {
             // this space intentionally left blank
             // wouldnt it be neat if i could store an encrypted credential in the data section?
@@ -129,7 +129,7 @@ namespace NFCLoc.Plugin.Unlock
 
         public List<Parameter> GetParameters()
         {
-            List<Parameter> lp = new List<Parameter>();
+            var lp = new List<Parameter>();
             lp.Add(new Parameter { Name = "Username", DataType = typeof(string), Default = "", IsOptional = false });
             lp.Add(new Parameter { Name = "Password", DataType = typeof(string), Default = "", IsOptional = false });
             lp.Add(new Parameter { Name = "Domain", DataType = typeof(string), Default = "", IsOptional = true });
@@ -137,7 +137,8 @@ namespace NFCLoc.Plugin.Unlock
         }
 
         #region LaunchProcess
-        public class ProcessAsUser
+
+        private class ProcessAsUser
         {
 
             [DllImport("advapi32.dll", SetLastError = true)]
@@ -145,31 +146,31 @@ namespace NFCLoc.Plugin.Unlock
                 IntPtr hToken,
                 string lpApplicationName,
                 string lpCommandLine,
-                ref SECURITY_ATTRIBUTES lpProcessAttributes,
-                ref SECURITY_ATTRIBUTES lpThreadAttributes,
+                ref SecurityAttributes lpProcessAttributes,
+                ref SecurityAttributes lpThreadAttributes,
                 bool bInheritHandles,
                 uint dwCreationFlags,
                 IntPtr lpEnvironment,
                 string lpCurrentDirectory,
-                ref STARTUPINFO lpStartupInfo,
-                out PROCESS_INFORMATION lpProcessInformation);
+                ref Startupinfo lpStartupInfo,
+                out ProcessInformation lpProcessInformation);
 
 
             [DllImport("advapi32.dll", EntryPoint = "DuplicateTokenEx", SetLastError = true)]
             private static extern bool DuplicateTokenEx(
                 IntPtr hExistingToken,
                 uint dwDesiredAccess,
-                ref SECURITY_ATTRIBUTES lpThreadAttributes,
-                Int32 ImpersonationLevel,
+                ref SecurityAttributes lpThreadAttributes,
+                Int32 impersonationLevel,
                 Int32 dwTokenType,
                 ref IntPtr phNewToken);
 
 
             [DllImport("advapi32.dll", SetLastError = true)]
             private static extern bool OpenProcessToken(
-                IntPtr ProcessHandle,
-                UInt32 DesiredAccess,
-                ref IntPtr TokenHandle);
+                IntPtr processHandle,
+                UInt32 desiredAccess,
+                ref IntPtr tokenHandle);
 
             [DllImport("userenv.dll", SetLastError = true)]
             private static extern bool CreateEnvironmentBlock(
@@ -186,27 +187,27 @@ namespace NFCLoc.Plugin.Unlock
             private static extern bool CloseHandle(
                 IntPtr hObject);
 
-            private const short SW_SHOW = 5;
-            private const uint TOKEN_QUERY = 0x0008;
-            private const uint TOKEN_DUPLICATE = 0x0002;
-            private const uint TOKEN_ASSIGN_PRIMARY = 0x0001;
-            private const int GENERIC_ALL_ACCESS = 0x10000000;
-            private const int STARTF_USESHOWWINDOW = 0x00000001;
-            private const int STARTF_FORCEONFEEDBACK = 0x00000040;
-            private const uint CREATE_UNICODE_ENVIRONMENT = 0x00000400;
+            private const short SwShow = 5;
+            private const uint TokenQuery = 0x0008;
+            private const uint TokenDuplicate = 0x0002;
+            private const uint TokenAssignPrimary = 0x0001;
+            private const int GenericAllAccess = 0x10000000;
+            private const int StartfUseshowwindow = 0x00000001;
+            private const int StartfForceonfeedback = 0x00000040;
+            private const uint CreateUnicodeEnvironment = 0x00000400;
 
             private static bool LaunchProcessAsUser(string cmdLine, IntPtr token, IntPtr envBlock)
             {
-                bool result = false;
+                var result = false;
 
 
-                PROCESS_INFORMATION pi = new PROCESS_INFORMATION();
-                SECURITY_ATTRIBUTES saProcess = new SECURITY_ATTRIBUTES();
-                SECURITY_ATTRIBUTES saThread = new SECURITY_ATTRIBUTES();
+                ProcessInformation pi = new ProcessInformation();
+                SecurityAttributes saProcess = new SecurityAttributes();
+                SecurityAttributes saThread = new SecurityAttributes();
                 saProcess.nLength = (uint)Marshal.SizeOf(saProcess);
                 saThread.nLength = (uint)Marshal.SizeOf(saThread);
 
-                STARTUPINFO si = new STARTUPINFO();
+                Startupinfo si = new Startupinfo();
                 si.cb = (uint)Marshal.SizeOf(si);
 
 
@@ -219,8 +220,8 @@ namespace NFCLoc.Plugin.Unlock
                 //existing desktop. 
 
                 si.lpDesktop = @"WinSta0\Default"; //Modify as needed 
-                si.dwFlags = STARTF_USESHOWWINDOW | STARTF_FORCEONFEEDBACK;
-                si.wShowWindow = SW_SHOW;
+                si.dwFlags = StartfUseshowwindow | StartfForceonfeedback;
+                si.wShowWindow = SwShow;
                 //Set other si properties as required. 
 
                 result = CreateProcessAsUser(
@@ -230,7 +231,7 @@ namespace NFCLoc.Plugin.Unlock
                     ref saProcess,
                     ref saThread,
                     false,
-                    CREATE_UNICODE_ENVIRONMENT,
+                    CreateUnicodeEnvironment,
                     envBlock,
                     null,
                     ref si,
@@ -250,23 +251,23 @@ namespace NFCLoc.Plugin.Unlock
             }
 
             [StructLayout(LayoutKind.Sequential)]
-            internal struct PROCESS_INFORMATION
+            private struct ProcessInformation
             {
-                public IntPtr hProcess;
-                public IntPtr hThread;
-                public uint dwProcessId;
-                public uint dwThreadId;
+                private readonly IntPtr hProcess;
+                private readonly IntPtr hThread;
+                private readonly uint dwProcessId;
+                private readonly uint dwThreadId;
             }
 
             [StructLayout(LayoutKind.Sequential)]
-            internal struct SECURITY_ATTRIBUTES
+            private struct SecurityAttributes
             {
                 public uint nLength;
-                public IntPtr lpSecurityDescriptor;
-                public bool bInheritHandle;
+                private readonly IntPtr lpSecurityDescriptor;
+                private readonly bool bInheritHandle;
             }
 
-            internal enum SECURITY_IMPERSONATION_LEVEL
+            private enum SecurityImpersonationLevel
             {
                 SecurityAnonymous,
                 SecurityIdentification,
@@ -274,33 +275,33 @@ namespace NFCLoc.Plugin.Unlock
                 SecurityDelegation
             }
 
-            internal enum TOKEN_TYPE
+            private enum TokenType
             {
                 TokenPrimary = 1,
                 TokenImpersonation
             }
 
             [StructLayout(LayoutKind.Sequential)]
-            public struct STARTUPINFO
+            private struct Startupinfo
             {
                 public uint cb;
-                public string lpReserved;
+                private readonly string lpReserved;
                 public string lpDesktop;
-                public string lpTitle;
-                public uint dwX;
-                public uint dwY;
-                public uint dwXSize;
-                public uint dwYSize;
-                public uint dwXCountChars;
-                public uint dwYCountChars;
-                public uint dwFillAttribute;
+                private readonly string lpTitle;
+                private readonly uint dwX;
+                private readonly uint dwY;
+                private readonly uint dwXSize;
+                private readonly uint dwYSize;
+                private readonly uint dwXCountChars;
+                private readonly uint dwYCountChars;
+                private readonly uint dwFillAttribute;
                 public uint dwFlags;
                 public short wShowWindow;
-                public short cbReserved2;
-                public IntPtr lpReserved2;
-                public IntPtr hStdInput;
-                public IntPtr hStdOutput;
-                public IntPtr hStdError;
+                private readonly short cbReserved2;
+                private readonly IntPtr lpReserved2;
+                private readonly IntPtr hStdInput;
+                private readonly IntPtr hStdOutput;
+                private readonly IntPtr hStdError;
             }
 
             public static bool Launch(string appCmdLine /*,int processId*/)
@@ -312,8 +313,8 @@ namespace NFCLoc.Plugin.Unlock
                 //Or try to get it from a process owned by the user. 
                 //In this case assuming there is only one explorer.exe 
 
-                Process[] ps = Process.GetProcessesByName("explorer");
-                int processId = -1;//=processId 
+                var ps = Process.GetProcessesByName("explorer");
+                var processId = -1;//=processId 
                 if (ps.Length > 0)
                 {
                     processId = ps[0].Id;
@@ -321,22 +322,19 @@ namespace NFCLoc.Plugin.Unlock
 
                 if (processId > 1)
                 {
-                    IntPtr token = GetPrimaryToken(processId);
+                    var token = GetPrimaryToken(processId);
 
-                    if (token != IntPtr.Zero)
+                    if (token == IntPtr.Zero) return ret;
+                    var envBlock = GetEnvironmentBlock(token);
+                    ret = LaunchProcessAsUser(appCmdLine, token, envBlock);
+                    if (!ret)
                     {
-
-                        IntPtr envBlock = GetEnvironmentBlock(token);
-                        ret = LaunchProcessAsUser(appCmdLine, token, envBlock);
-                        if (!ret)
-                        {
-                            NFCLoc.Service.Core.ServiceCore.Log("UnlockWorkstationPlugin: unlock failed");
-                        }
-                        if (envBlock != IntPtr.Zero)
-                            DestroyEnvironmentBlock(envBlock);
-
-                        CloseHandle(token);
+                        NFCLoc.Service.Core.ServiceCore.Log("UnlockWorkstationPlugin: unlock failed");
                     }
+                    if (envBlock != IntPtr.Zero)
+                        DestroyEnvironmentBlock(envBlock);
+
+                    CloseHandle(token);
 
                 }
                 else
@@ -347,9 +345,9 @@ namespace NFCLoc.Plugin.Unlock
             }
             private static IntPtr GetPrimaryToken(int processId)
             {
-                IntPtr token = IntPtr.Zero;
-                IntPtr primaryToken = IntPtr.Zero;
-                bool retVal = false;
+                var token = IntPtr.Zero;
+                var primaryToken = IntPtr.Zero;
+                var retVal = false;
                 Process p = null;
 
                 try
@@ -360,7 +358,7 @@ namespace NFCLoc.Plugin.Unlock
                 catch (ArgumentException)
                 {
 
-                    string details = String.Format("ProcessID {0} Not Available", processId);
+                    var details = $"ProcessID {processId} Not Available";
                     NFCLoc.Service.Core.ServiceCore.Log("UnlockWorkstationPlugin: " + details);
 
                     //Debug.WriteLine(details);
@@ -369,37 +367,35 @@ namespace NFCLoc.Plugin.Unlock
 
 
                 //Gets impersonation token 
-                retVal = OpenProcessToken(p.Handle, TOKEN_DUPLICATE, ref token);
+                retVal = OpenProcessToken(p.Handle, TokenDuplicate, ref token);
                 if (retVal == true)
                 {
 
-                    SECURITY_ATTRIBUTES sa = new SECURITY_ATTRIBUTES();
+                    var sa = new SecurityAttributes();
                     sa.nLength = (uint)Marshal.SizeOf(sa);
 
                     //Convert the impersonation token into Primary token 
                     retVal = DuplicateTokenEx(
                         token,
-                        TOKEN_ASSIGN_PRIMARY | TOKEN_DUPLICATE | TOKEN_QUERY,
+                        TokenAssignPrimary | TokenDuplicate | TokenQuery,
                         ref sa,
-                        (int)SECURITY_IMPERSONATION_LEVEL.SecurityIdentification,
-                        (int)TOKEN_TYPE.TokenPrimary,
+                        (int)SecurityImpersonationLevel.SecurityIdentification,
+                        (int)TokenType.TokenPrimary,
                         ref primaryToken);
 
                     //Close the Token that was previously opened. 
                     CloseHandle(token);
-                    if (retVal == false)
-                    {
-                        string message = String.Format("DuplicateTokenEx Error: {0}", Marshal.GetLastWin32Error());
-                        NFCLoc.Service.Core.ServiceCore.Log("UnlockWorkstationPlugin: " + message);
-                        //Debug.WriteLine(message);
-                    }
+                    if (retVal != false) return primaryToken;
+                    var message = $"DuplicateTokenEx Error: {Marshal.GetLastWin32Error()}";
+                    NFCLoc.Service.Core.ServiceCore.Log("UnlockWorkstationPlugin: " + message);
+                    //Debug.WriteLine(message);
 
                 }
 
                 else
                 {
 
-                    string message = String.Format("OpenProcessToken Error: {0}", Marshal.GetLastWin32Error());
+                    var message = $"OpenProcessToken Error: {Marshal.GetLastWin32Error()}";
                     NFCLoc.Service.Core.ServiceCore.Log("UnlockWorkstationPlugin: " + message);
                     //Debug.WriteLine(message);
 
@@ -413,20 +409,16 @@ namespace NFCLoc.Plugin.Unlock
             private static IntPtr GetEnvironmentBlock(IntPtr token)
             {
 
-                IntPtr envBlock = IntPtr.Zero;
-                bool retVal = CreateEnvironmentBlock(ref envBlock, token, false);
-                if (retVal == false)
-                {
+                var envBlock = IntPtr.Zero;
+                var retVal = CreateEnvironmentBlock(ref envBlock, token, false);
+                if (retVal != false) return envBlock;
+                //Environment Block, things like common paths to My Documents etc. 
+                //Will not be created if "false" 
+                //It should not adversley affect CreateProcessAsUser. 
 
-                    //Environment Block, things like common paths to My Documents etc. 
-                    //Will not be created if "false" 
-                    //It should not adversley affect CreateProcessAsUser. 
-
-                    string message = String.Format("CreateEnvironmentBlock Error: {0}", Marshal.GetLastWin32Error());
-                    NFCLoc.Service.Core.ServiceCore.Log("UnlockWorkstationPlugin: " + message);
-                    //Debug.WriteLine(message);
-
-                }
+                var message = $"CreateEnvironmentBlock Error: {Marshal.GetLastWin32Error()}";
+                NFCLoc.Service.Core.ServiceCore.Log("UnlockWorkstationPlugin: " + message);
+                //Debug.WriteLine(message);
                 return envBlock;
             }
         }

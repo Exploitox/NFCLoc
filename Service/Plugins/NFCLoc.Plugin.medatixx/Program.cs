@@ -13,62 +13,62 @@ namespace NFCLoc.Plugin.medatixx
 {
     internal class Program
     {
-        class CPOptions
+        private class CpOptions
         {
             [Option('c', "cardid", Required = true, HelpText = "Input card id")]
-            public string cardId { get; set; }
+            public string CardId { get; set; }
 
             [Option('s', "start", Default = false, HelpText = "Start / Switch medatixx")]
-            public bool stage { get; set; } // false = Start medatixx, true = Switch user on medatixx
+            public bool Stage { get; set; } // false = Start medatixx, true = Switch user on medatixx
 
             [Option('l', "loginback", Default = false, HelpText = "Logged in back")]
             public bool LoginBack { get; set; } // false = First run, true = Login user from id
         }
 
-        class ProcessUtils
+        private class ProcessUtils
         {
             [DllImport("user32.dll")]
             private static extern IntPtr GetForegroundWindow();
             [DllImport("user32.dll", SetLastError = true)]
-            static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-            public static Process getForegroundProcess()
+            private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+            public static Process GetForegroundProcess()
             {
-                uint processID = 0;
+                uint processId = 0;
                 IntPtr hWnd = GetForegroundWindow(); // Get foreground window handle
-                uint threadID = GetWindowThreadProcessId(hWnd, out processID); // Get PID from window handle
-                Process fgProc = Process.GetProcessById(Convert.ToInt32(processID)); // Get it as a C# obj.
+                uint threadId = GetWindowThreadProcessId(hWnd, out processId); // Get PID from window handle
+                Process fgProc = Process.GetProcessById(Convert.ToInt32(processId)); // Get it as a C# obj.
                                                                                      // NOTE: In some rare cases ProcessID will be NULL. Handle this how you want. 
                 return fgProc;
             }
         }
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             // Close application if Toast opened it
             if (ToastNotificationManagerCompat.WasCurrentProcessToastActivated())
                 Environment.Exit(0);
 
             // Notify user if this is a debug build
-            if (NFCLoc.Plugin.medatixx.Config.debug)
+            if (NFCLoc.Plugin.medatixx.Config.Debug)
                 ShowToast(
                     "Debug-Build erkannt!",
                     "Diese Version ist nur für das Debuggen zulässig. Verwenden Sie es nicht in einer Produktionsumgebung!",
                     "Warnung",
                     "Hoch");
 
-            Parser.Default.ParseArguments<CPOptions>(args)
-                   .WithParsed<CPOptions>(o =>
+            Parser.Default.ParseArguments<CpOptions>(args)
+                   .WithParsed<CpOptions>(o =>
                    {
                        if (o.LoginBack == true)
                        {
-                           if (Config.debug) Console.WriteLine($"Login back with card id {o.cardId}");
-                           if (Config.debug) File.WriteAllText("C:\\card.txt", $"LOGINBACK: CardID: {o.cardId}");
-                           if (Config.debug) Console.WriteLine("Call SwitchUserWithKeyStroke");
+                           if (Config.Debug) Console.WriteLine($"Login back with card id {o.CardId}");
+                           if (Config.Debug) File.WriteAllText("C:\\card.txt", $"LOGINBACK: CardID: {o.CardId}");
+                           if (Config.Debug) Console.WriteLine("Call SwitchUserWithKeyStroke");
 
                            int trys = 0;
                            while (trys != 3)
                            {
-                               Process fgProc = ProcessUtils.getForegroundProcess();
+                               Process fgProc = ProcessUtils.GetForegroundProcess();
                                if (fgProc.ProcessName != "Client.UI")
                                {
                                    int procLenght = SetToForegound("Client.UI");
@@ -80,18 +80,18 @@ namespace NFCLoc.Plugin.medatixx
                                trys++;
                            }
 
-                           SwitchUserWithKeyStroke(o.cardId);
+                           SwitchUserWithKeyStroke(o.CardId);
                            Environment.Exit(0);
                        }
-                       if (o.stage == true) // Switch
+                       if (o.Stage == true) // Switch
                        {
-                           if (Config.debug) Console.WriteLine($"Logoff medatixx");
-                           if (Config.debug) File.WriteAllText("C:\\card.txt", $"LOGOFF: CardID: {o.cardId}");
+                           if (Config.Debug) Console.WriteLine($"Logoff medatixx");
+                           if (Config.Debug) File.WriteAllText("C:\\card.txt", $"LOGOFF: CardID: {o.CardId}");
 
                            int trys = 0;
                            while (trys != 3)
                            {
-                               Process fgProc = ProcessUtils.getForegroundProcess();
+                               Process fgProc = ProcessUtils.GetForegroundProcess();
                                if (fgProc.ProcessName != "Client.UI")
                                {
                                    int procLenght = SetToForegound("Client.UI");
@@ -197,8 +197,8 @@ namespace NFCLoc.Plugin.medatixx
         [DllImport("user32.dll")]
         public static extern bool ShowWindowAsync(HandleRef hWnd, int nCmdShow);
         [DllImport("user32.dll")]
-        public static extern bool SetForegroundWindow(IntPtr WindowHandle);
-        public const int SW_RESTORE = 9;
+        public static extern bool SetForegroundWindow(IntPtr windowHandle);
+        public const int SwRestore = 9;
         private static int SetToForegound(string procName)
         {
             Console.WriteLine("SetToForegound();");
@@ -209,7 +209,7 @@ namespace NFCLoc.Plugin.medatixx
             {
                 IntPtr hWnd = IntPtr.Zero;
                 hWnd = objProcesses[0].MainWindowHandle;
-                ShowWindowAsync(new HandleRef(null, hWnd), SW_RESTORE);
+                ShowWindowAsync(new HandleRef(null, hWnd), SwRestore);
                 SetForegroundWindow(objProcesses[0].MainWindowHandle);
             }
             return objProcesses.Length;
@@ -219,7 +219,7 @@ namespace NFCLoc.Plugin.medatixx
         /// The GetForegroundWindow function returns a handle to the foreground window.
         /// </summary>
         [DllImport("user32.dll")]
-        static extern IntPtr GetForegroundWindow();
+        private static extern IntPtr GetForegroundWindow();
 
         public bool ProcessIsFocused(string processname)
         {
@@ -245,12 +245,12 @@ namespace NFCLoc.Plugin.medatixx
         #endregion
 
         #region Modules
-        public static void ShowToast(string Title, string message, string ErrorType, string ErrorLevel)
+        public static void ShowToast(string title, string message, string errorType, string errorLevel)
         {
             ToastContentBuilder toastContent = new ToastContentBuilder();
             toastContent.AddArgument("action", "viewConversation");
             toastContent.AddArgument("conversationId", 9813);
-            toastContent.AddText(Title, hintMaxLines: 1);
+            toastContent.AddText(title, hintMaxLines: 1);
             toastContent.AddText(message);
 
             string isDebugStr = NFCLoc.Plugin.medatixx.Config.IsDebug();
@@ -281,13 +281,13 @@ namespace NFCLoc.Plugin.medatixx
                         {
                             new AdaptiveText()
                             {
-                                Text = $"Typ: {ErrorType}",
+                                Text = $"Typ: {errorType}",
                                 HintStyle = AdaptiveTextStyle.CaptionSubtle,
                                 HintAlign = AdaptiveTextAlign.Right
                             },
                             new AdaptiveText()
                             {
-                                Text = $"Stufe: {ErrorLevel}",
+                                Text = $"Stufe: {errorLevel}",
                                 HintStyle = AdaptiveTextStyle.CaptionSubtle,
                                 HintAlign = AdaptiveTextAlign.Right
                             }

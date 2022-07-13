@@ -1,6 +1,6 @@
 ﻿namespace NFCLoc.Service.Host
 {
-    partial class NFCLocServiceHost
+    partial class NfcLocServiceHost
     {
         /// <summary> 
         /// Required designer variable.

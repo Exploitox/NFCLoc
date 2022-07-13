@@ -26,7 +26,7 @@ HRESULT FieldDescriptorCoAllocCopy(
 	HRESULT hr;
 	DWORD cbStruct = sizeof(CREDENTIAL_PROVIDER_FIELD_DESCRIPTOR);
 
-	CREDENTIAL_PROVIDER_FIELD_DESCRIPTOR* pcpfd =
+	auto* pcpfd =
 		(CREDENTIAL_PROVIDER_FIELD_DESCRIPTOR*)CoTaskMemAlloc(cbStruct);
 
 	if (pcpfd)
@@ -286,7 +286,7 @@ HRESULT KerbInteractiveUnlockLogonPack(
 		pkilIn->UserName.Length +
 		pkilIn->Password.Length;
 
-	KERB_INTERACTIVE_UNLOCK_LOGON* pkiulOut = (KERB_INTERACTIVE_UNLOCK_LOGON*)CoTaskMemAlloc(cb);
+	auto* pkiulOut = (KERB_INTERACTIVE_UNLOCK_LOGON*)CoTaskMemAlloc(cb);
 
 	if (pkiulOut)
 	{
@@ -422,7 +422,7 @@ static HRESULT ProtectAndCopyString(
 		if ((ERROR_INSUFFICIENT_BUFFER == dwErr) && (0 < cchProtected))
 		{
 			// Allocate a buffer long enough for the encrypted string.
-			PWSTR pwzProtected = (PWSTR)CoTaskMemAlloc(cchProtected * sizeof(WCHAR));
+			auto pwzProtected = (PWSTR)CoTaskMemAlloc(cchProtected * sizeof(WCHAR));
 
 			if (pwzProtected)
 			{

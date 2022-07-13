@@ -16,10 +16,10 @@ using NFCLoc.Service.Common;
 
 namespace NFCLoc.Service.Host
 {
-    public partial class NFCLocServiceHost : ServiceBase
+    public partial class NfcLocServiceHost : ServiceBase
     {
-        ServiceCore core = null;
-        public ServiceHost serviceHost = null;
+        ServiceCore _core = null;
+        public ServiceHost ServiceHost = null;
 
         [DllImport("Wtsapi32.dll")]
         private static extern bool WTSQuerySessionInformation(IntPtr hServer, int sessionId, WtsInfoClass wtsInfoClass, out IntPtr ppBuffer, out int pBytesReturned);
@@ -30,8 +30,8 @@ namespace NFCLoc.Service.Host
 
         private enum WtsInfoClass
         {
-            WTSUserName = 5,
-            WTSDomainName = 7,
+            WtsUserName = 5,
+            WtsDomainName = 7,
         }
 
         private static string GetUsername(int sessionId, bool prependDomain = true)
@@ -39,13 +39,13 @@ namespace NFCLoc.Service.Host
             IntPtr buffer;
             int strLen;
             string username = "";
-            if (WTSQuerySessionInformation(IntPtr.Zero, sessionId, WtsInfoClass.WTSUserName, out buffer, out strLen) && strLen > 1)
+            if (WTSQuerySessionInformation(IntPtr.Zero, sessionId, WtsInfoClass.WtsUserName, out buffer, out strLen) && strLen > 1)
             {
                 username = Marshal.PtrToStringAnsi(buffer);
                 WTSFreeMemory(buffer);
                 if (prependDomain)
                 {
-                    if (WTSQuerySessionInformation(IntPtr.Zero, sessionId, WtsInfoClass.WTSDomainName, out buffer, out strLen) && strLen > 1)
+                    if (WTSQuerySessionInformation(IntPtr.Zero, sessionId, WtsInfoClass.WtsDomainName, out buffer, out strLen) && strLen > 1)
                     {
                         username = Marshal.PtrToStringAnsi(buffer) + "\\" + username;
                         WTSFreeMemory(buffer);
@@ -55,7 +55,7 @@ namespace NFCLoc.Service.Host
             return username;
         }
 
-        public NFCLocServiceHost()
+        public NfcLocServiceHost()
         {
             CanHandleSessionChangeEvent = true;
             InitializeComponent();
@@ -75,9 +75,9 @@ namespace NFCLoc.Service.Host
             //Thread.Sleep(10000);
             Core.ServiceCore.Log("Service starting");
             // fire up the service core
-            if(core == null)
+            if(_core == null)
             {
-                core = new ServiceCore(Settings.Default.isDebug);
+                _core = new ServiceCore(Settings.Default.isDebug);
             }
             uint sessionId = WTSGetActiveConsoleSessionId();
             if(sessionId == uint.MaxValue)
@@ -100,8 +100,8 @@ namespace NFCLoc.Service.Host
                 }
             }
             Core.ServiceCore.Log("User " + Core.ServiceCore.SystemStatus.User + " is " + Core.ServiceCore.SystemStatus.SessionStatus.ToString());
-            core.Start(); // dont do this until they logon // need to check if they're already logged on and starting it manually
-            core.LoadPlugins();
+            _core.Start(); // dont do this until they logon // need to check if they're already logged on and starting it manually
+            _core.LoadPlugins();
             //// wanna listen for IPC - Named pipes using WCF
             //if (serviceHost != null)
             //{
@@ -147,13 +147,13 @@ namespace NFCLoc.Service.Host
         protected override void OnStop()
         {
             Core.ServiceCore.Log("Service stopping");
-            core.Stop();
-            core = null;
+            _core.Stop();
+            _core = null;
             // stop rpc
-            if (serviceHost != null)
+            if (ServiceHost != null)
             {
-                serviceHost.Close();
-                serviceHost = null;
+                ServiceHost.Close();
+                ServiceHost = null;
             }
             Core.ServiceCore.Log("Service stopped");
         }

@@ -9,19 +9,19 @@ using System.Threading;
 
 namespace CredentialRegistration
 {
-    public partial class frmEventRegistration : Form
+    public partial class FrmEventRegistration : Form
     {
-        List<PluginInfo> plugins = new List<PluginInfo>();
-        TcpClient client;
-        Dictionary<string, string> tokens = new Dictionary<string, string>();
-        System.Threading.Timer t; // progress bar timer
-        string actualPassword = "";
+        List<PluginInfo> _plugins = new List<PluginInfo>();
+        TcpClient _client;
+        Dictionary<string, string> _tokens = new Dictionary<string, string>();
+        System.Threading.Timer _t; // progress bar timer
+        string _actualPassword = "";
 
-        public frmEventRegistration(ref TcpClient client, Dictionary<string, string> tokens, List<PluginInfo> plugins)
+        public FrmEventRegistration(ref TcpClient client, Dictionary<string, string> tokens, List<PluginInfo> plugins)
         {
             InitializeComponent();
-            this.plugins = plugins;
-            this.client = client;
+            this._plugins = plugins;
+            this._client = client;
             foreach(KeyValuePair<string, string> token in tokens)
             {
                 cboTokens.Items.Add(token.Value + " - " + token.Key);
@@ -48,7 +48,7 @@ namespace CredentialRegistration
         private void cboPlugins_SelectedValueChanged(object sender, EventArgs e)
         {
             dgvParameters.Rows.Clear();
-            foreach (PluginInfo pi in plugins)
+            foreach (PluginInfo pi in _plugins)
             {
                 if (pi.Name == (string)cboPlugins.SelectedItem)
                 {
@@ -100,7 +100,7 @@ namespace CredentialRegistration
                         }
                         else if (dgvr.Cells["dgcName"].Value.ToString() == "Password")
                         {
-                            nm.Password = actualPassword;//dgvr.Cells["dgcValue"].Value.ToString(); // make this a single-hashed version of the token
+                            nm.Password = _actualPassword;//dgvr.Cells["dgcValue"].Value.ToString(); // make this a single-hashed version of the token
                         }
                     }
                 }
@@ -110,24 +110,24 @@ namespace CredentialRegistration
                 lblSwipeEncrypt.Visible = true;
                 pgbAwaitingToken.Visible = true;
                 // need to do a progress bar and ask for a ring to encrypt credential
-                if (ServiceCommunication.SendNetworkMessage(ref client, JsonConvert.SerializeObject(new NetworkMessage(MessageType.GetToken))) > 0)
+                if (ServiceCommunication.SendNetworkMessage(ref _client, JsonConvert.SerializeObject(new NetworkMessage(MessageType.GetToken))) > 0)
                 {
                     // swipe ring to encrypt
                     int value = 0;
-                    var task = Task<string>.Factory.StartNew(() => { return ServiceCommunication.ReadNetworkMessage(ref client); });
-                    t = new System.Threading.Timer((o) =>
+                    var task = Task<string>.Factory.StartNew(() => { return ServiceCommunication.ReadNetworkMessage(ref _client); });
+                    _t = new System.Threading.Timer((o) =>
                     {
                         Task<string> tsk = (Task<string>)o;
                         if (tsk.IsCompleted)
                         {
-                            t.Change(Timeout.Infinite, Timeout.Infinite); // stop the timer
+                            _t.Change(Timeout.Infinite, Timeout.Infinite); // stop the timer
                             ClientCommon.SetControlPropertyThreadSafe(pgbAwaitingToken, "Visible", false);
                             ClientCommon.SetControlPropertyThreadSafe(lblSwipeEncrypt, "Visible", false);
                             if (tsk.Result != "")
                             {
                                 string rawToken = JsonConvert.DeserializeObject<NetworkMessage>(tsk.Result).Token;
                                 nm.Password = NFCLoc.Service.Common.Crypto.Encrypt(nm.Password, rawToken);
-                                if (ServiceCommunication.SendNetworkMessage(ref client, JsonConvert.SerializeObject(nm)) > 0)
+                                if (ServiceCommunication.SendNetworkMessage(ref _client, JsonConvert.SerializeObject(nm)) > 0)
                                     Invoke(new Action(Close));
                             }
                             else
@@ -149,7 +149,7 @@ namespace CredentialRegistration
             else
             {
                 // This event doesnt have a password field
-                if (ServiceCommunication.SendNetworkMessage(ref client, JsonConvert.SerializeObject(nm)) > 0)
+                if (ServiceCommunication.SendNetworkMessage(ref _client, JsonConvert.SerializeObject(nm)) > 0)
                     Invoke(new Action(Close));
             }
         }
@@ -164,23 +164,23 @@ namespace CredentialRegistration
             {
                 if (e.KeyChar == (char)Keys.Back)
                 {
-                    if (actualPassword.Length > 0)
+                    if (_actualPassword.Length > 0)
                     {
-                        actualPassword = actualPassword.Substring(0, actualPassword.Length - 1);
+                        _actualPassword = _actualPassword.Substring(0, _actualPassword.Length - 1);
                     }
                 }
                 else
                 {
-                    actualPassword += e.KeyChar;
+                    _actualPassword += e.KeyChar;
                 }
                 string mask = "";
-                for (int i = 0; i < actualPassword.Length; i++)
+                for (int i = 0; i < _actualPassword.Length; i++)
                 {
                     mask += "*";
                 }
                 (sender as DataGridViewTextBoxEditingControl).Text = mask;
                 dgvParameters.SelectedCells[0].Value = mask;
-                (sender as DataGridViewTextBoxEditingControl).SelectionStart = actualPassword.Length;
+                (sender as DataGridViewTextBoxEditingControl).SelectionStart = _actualPassword.Length;
                 (sender as DataGridViewTextBoxEditingControl).SelectionLength = 0;
                 e.Handled = true;
             }

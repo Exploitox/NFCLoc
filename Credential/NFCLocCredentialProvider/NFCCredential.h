@@ -21,9 +21,9 @@
 #include "resource.h"
 #include "Reader.h"
 
-class Reader;
+class reader;
 
-class NFCCredential : public ICredentialProviderCredential2
+class nfc_credential : public ICredentialProviderCredential2
 {
 public:
 	// IUnknown
@@ -110,29 +110,29 @@ public:
 	HRESULT Initialize(CREDENTIAL_PROVIDER_USAGE_SCENARIO cpus,
 		const CREDENTIAL_PROVIDER_FIELD_DESCRIPTOR* rgcpfd,
 		const FIELD_STATE_PAIR* rgfsp,
-		Reader* _rdr
+		reader* _rdr
 		);
 
-	NFCCredential();
+	nfc_credential();
 
-	virtual ~NFCCredential();
+	virtual ~nfc_credential();
 
 private:
 	LONG                                  _cRef;
 	CREDENTIAL_PROVIDER_USAGE_SCENARIO    _cpus; // The usage scenario for which we were enumerated.
 
-	CREDENTIAL_PROVIDER_FIELD_DESCRIPTOR  _rgCredProvFieldDescriptors[SFI_NUM_FIELDS]; // An array holding the type and 
+	CREDENTIAL_PROVIDER_FIELD_DESCRIPTOR  _rgCredProvFieldDescriptors[SFI_NUM_FIELDS]{}; // An array holding the type and 
 	                                                                                   // name of each field in the tile.
 
-	FIELD_STATE_PAIR                      _rgFieldStatePairs[SFI_NUM_FIELDS];          // An array holding the state of 
+	FIELD_STATE_PAIR                      _rgFieldStatePairs[SFI_NUM_FIELDS]{};          // An array holding the state of 
 	                                                                                   // each field in the tile.
 
-	PWSTR                                 _rgFieldStrings[SFI_NUM_FIELDS];             // An array holding the string 
+	PWSTR                                 _rgFieldStrings[SFI_NUM_FIELDS]{};             // An array holding the string 
 	                                                                                   // value of each field. This is 
 	                                                                                   // different from the name of 
 	                                                                                   // the field held in 
 	                                                                                   // _rgCredProvFieldDescriptors.
 	ICredentialProviderCredentialEvents* _pCredProvCredentialEvents;        
-	Reader*								 _reader;
+	reader*								 _reader;
 
 };

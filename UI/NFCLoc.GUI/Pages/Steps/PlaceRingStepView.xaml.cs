@@ -17,7 +17,7 @@ namespace NFCLoc.GUI.Pages.Steps
     {
         private readonly ITokenService _tokenService;
         private readonly IDialogService _dialogService;
-        private static readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private static readonly CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
         
         public PlaceRingStepView()
         {
@@ -27,9 +27,9 @@ namespace NFCLoc.GUI.Pages.Steps
         public async Task InitializeAsync()
         {
         labelstart:
-            var token = await _tokenService.GetNewTokenAsync(_cancellationTokenSource.Token);
+            var token = await _tokenService.GetNewTokenAsync(CancellationTokenSource.Token);
 
-            if (_cancellationTokenSource.IsCancellationRequested)
+            if (CancellationTokenSource.IsCancellationRequested)
                 return;
 
             if (string.IsNullOrEmpty(token))
@@ -54,9 +54,9 @@ namespace NFCLoc.GUI.Pages.Steps
                 if (File.Exists(servicePath + @"\Application.config"))
                 {
                     string sc = File.ReadAllText(servicePath + @"\Application.config");
-                    Config ApplicationConfiguration = JsonConvert.DeserializeObject<Config>(sc);
+                    Config applicationConfiguration = JsonConvert.DeserializeObject<Config>(sc);
                     string hashedToken = Crypto.Hash(token);
-                    foreach (var item in ApplicationConfiguration.Users)
+                    foreach (var item in applicationConfiguration.Users)
                     {
                         foreach (var t in item.Tokens)
                         {

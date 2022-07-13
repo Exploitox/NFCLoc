@@ -9,16 +9,16 @@ namespace NFCLoc.UI.ViewModel.ViewModels
             
         }
 
-        private string _VersionInfo;
+        private string _versionInfo;
         public string VersionInfo
         {
             get
             {
-                return _VersionInfo;
+                return _versionInfo;
             }
             set
             {
-                _VersionInfo = value;
+                _versionInfo = value;
             }
         }
     }

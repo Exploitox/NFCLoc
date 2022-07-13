@@ -24,10 +24,10 @@ namespace NFCLoc.UI.ViewModel.ViewModels
         private RingItemViewModel _selectedItem;
         private bool _isBusy;
         private bool _serviceStarted;
-        private ObservableCollection<NFCDevice> devicesList;
-        private bool _IsDeviceNotAvailable = false;
-        private bool _IsDeviceAvailable = false;
-        private string gitVersion = "";
+        private ObservableCollection<NfcDevice> _devicesList;
+        private bool _isDeviceNotAvailable = false;
+        private bool _isDeviceAvailable = false;
+        private string _gitVersion = "";
 
         public ObservableCollection<RingItemViewModel> Items
         {
@@ -46,15 +46,15 @@ namespace NFCLoc.UI.ViewModel.ViewModels
             get { return _isBusy; }
             set { Set(ref _isBusy, value); }
         }
-        public ObservableCollection<NFCDevice> DevicesList
+        public ObservableCollection<NfcDevice> DevicesList
         {
-            get { return devicesList ?? (devicesList = new ObservableCollection<NFCDevice>()); }
+            get { return _devicesList ?? (_devicesList = new ObservableCollection<NfcDevice>()); }
             set
             {
-                Set(ref devicesList, value);
-                if (devicesList != null)
+                Set(ref _devicesList, value);
+                if (_devicesList != null)
                 {
-                    if (devicesList.Count > 0)
+                    if (_devicesList.Count > 0)
                     {
                         IsDeviceAvailable = true;
                         IsDeviceNotAvailable = false;
@@ -71,19 +71,19 @@ namespace NFCLoc.UI.ViewModel.ViewModels
 
         public bool IsDeviceNotAvailable
         {
-            get { return _IsDeviceNotAvailable; }
+            get { return _isDeviceNotAvailable; }
             set
             {
-                _IsDeviceNotAvailable = value;
+                _isDeviceNotAvailable = value;
                 RaisePropertyChanged();
             }
         }
         public bool IsDeviceAvailable
         {
-            get { return _IsDeviceAvailable; }
+            get { return _isDeviceAvailable; }
             set
             {
-                _IsDeviceAvailable = value;
+                _isDeviceAvailable = value;
                 RaisePropertyChanged();
             }
         }
@@ -145,7 +145,7 @@ namespace NFCLoc.UI.ViewModel.ViewModels
             {
                 try
                 {
-                    DevicesList = NFCWMQService.GetConnectedDevices();
+                    DevicesList = NfcwmqService.GetConnectedDevices();
                 }
                 catch (Exception)
                 {
@@ -166,12 +166,12 @@ namespace NFCLoc.UI.ViewModel.ViewModels
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             using (StreamReader reader = new StreamReader(stream))
             {
-                gitVersion = reader.ReadToEnd();
+                _gitVersion = reader.ReadToEnd();
             }
 
             Title = $"NFCLoc";
 #if DEBUG
-            Title = $"NFCLoc - Debug Build ({gitVersion})";
+            Title = $"NFCLoc - Debug Build ({_gitVersion})";
 #endif
 
             AddCommand = new RelayCommand(Add, () => AllowAdd);
@@ -239,7 +239,7 @@ namespace NFCLoc.UI.ViewModel.ViewModels
         
         private void AboutCommandMethod()
         {                       
-            string version = new Version(System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetEntryAssembly().Location).ProductVersion).ToString() + $" - {gitVersion}";
+            string version = new Version(System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetEntryAssembly().Location).ProductVersion).ToString() + $" - {_gitVersion}";
             Messenger.Default.Send(new AboutViewModel() { VersionInfo= version });
         }
 
@@ -277,7 +277,7 @@ namespace NFCLoc.UI.ViewModel.ViewModels
         {
             try
             {
-                DevicesList = await Task.Factory.StartNew(() => NFCWMQService.GetConnectedDevices());
+                DevicesList = await Task.Factory.StartNew(() => NfcwmqService.GetConnectedDevices());
             }
             catch
             {

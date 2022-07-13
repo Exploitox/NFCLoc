@@ -16,23 +16,23 @@ using System.Reflection;
 namespace CredentialRegistration
 {
 
-    public partial class frmNewToken : Form
+    public partial class FrmNewToken : Form
     {
-        TcpClient client;
-        System.Threading.Timer t;
-        public frmNewToken(ref TcpClient client)
+        TcpClient _client;
+        System.Threading.Timer _t;
+        public FrmNewToken(ref TcpClient client)
         {
-            this.client = client;
+            this._client = client;
             InitializeComponent();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            if(t != null)
-                t.Change(Timeout.Infinite, Timeout.Infinite); // stop the timer
+            if(_t != null)
+                _t.Change(Timeout.Infinite, Timeout.Infinite); // stop the timer
 
             // tell the service we dont care anymore
-            ServiceCommunication.SendNetworkMessage(ref client, JsonConvert.SerializeObject(new NetworkMessage(MessageType.CancelRegistration)));
+            ServiceCommunication.SendNetworkMessage(ref _client, JsonConvert.SerializeObject(new NetworkMessage(MessageType.CancelRegistration)));
             pgbAwaitingToken.Visible = false;
             pgbAwaitingToken.Value = 0;
             this.Close();
@@ -41,13 +41,13 @@ namespace CredentialRegistration
         private void frmNewToken_Load(object sender, EventArgs e)
         {
             int value = 0;
-            var task = Task<string>.Factory.StartNew(() => { return ServiceCommunication.ReadNetworkMessage(ref client); });
-            t = new System.Threading.Timer((o) =>
+            var task = Task<string>.Factory.StartNew(() => { return ServiceCommunication.ReadNetworkMessage(ref _client); });
+            _t = new System.Threading.Timer((o) =>
             {
                 Task<string> tsk = (Task<string>)o;
                 if (tsk.IsCompleted)
                 {
-                    t.Change(Timeout.Infinite, Timeout.Infinite); // stop the timer
+                    _t.Change(Timeout.Infinite, Timeout.Infinite); // stop the timer
                     ClientCommon.SetControlPropertyThreadSafe(pgbAwaitingToken, "Visible", false);
                     if (tsk.Result != "")
                     {
@@ -74,7 +74,7 @@ namespace CredentialRegistration
         private void btnRegister_Click(object sender, EventArgs e)
         {
             // this should take the token ID, friendly name, and the current username (with domain) and send it to the service
-            int res = ServiceCommunication.SendNetworkMessage(ref client, JsonConvert.SerializeObject(new NetworkMessage(MessageType.RegisterToken) { Token = txtToken.Text, TokenFriendlyName = txtFriendlyName.Text, Username = ClientCommon.GetCurrentUsername() }));
+            int res = ServiceCommunication.SendNetworkMessage(ref _client, JsonConvert.SerializeObject(new NetworkMessage(MessageType.RegisterToken) { Token = txtToken.Text, TokenFriendlyName = txtFriendlyName.Text, Username = ClientCommon.GetCurrentUsername() }));
             if (res > 0)
                 this.Close(); // we might have registered a token now?
         }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace NFCLoc.Service.Common
 {
-    public class ServiceCommunication
+    public static class ServiceCommunication
     {
         public static string ReadNetworkMessage(ref TcpClient client)
         {
@@ -20,11 +20,11 @@ namespace NFCLoc.Service.Common
             {
                 return "";
             }
-            byte[] buffer = new byte[10000];
+            var buffer = new byte[10000];
             try
             {
-                int len = client.GetStream().Read(buffer, 0, buffer.Length);
-                byte[] shortBuffer = new byte[len];
+                var len = client.GetStream().Read(buffer, 0, buffer.Length);
+                var shortBuffer = new byte[len];
                 Array.Copy(buffer, shortBuffer, len);
                 return Encoding.UTF8.GetString(shortBuffer);
             }

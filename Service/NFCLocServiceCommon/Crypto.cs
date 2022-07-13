@@ -111,9 +111,8 @@ namespace NFCLoc.Service.Common
 
         public static bool IsDomainJoined()
         {
-            Win32.NetJoinStatus status = Win32.NetJoinStatus.NetSetupUnknownStatus;
-            IntPtr pDomain = IntPtr.Zero;
-            int result = Win32.NetGetJoinInformation(null, out pDomain, out status);
+            var pDomain = IntPtr.Zero;
+            var result = Win32.NetGetJoinInformation(null, out pDomain, out var status);
             if (pDomain != IntPtr.Zero)
             {
                 Win32.NetApiBufferFree(pDomain);
@@ -129,7 +128,7 @@ namespace NFCLoc.Service.Common
         }
     }
 
-    internal class Win32
+    internal static class Win32
     {
         public const int ErrorSuccess = 0;
 
@@ -137,12 +136,11 @@ namespace NFCLoc.Service.Common
         public static extern int NetGetJoinInformation(string server, out IntPtr domain, out NetJoinStatus status);
 
         [DllImport("Netapi32.dll")]
-        public static extern int NetApiBufferFree(IntPtr Buffer);
+        public static extern int NetApiBufferFree(IntPtr buffer);
 
         public enum NetJoinStatus
         {
             NetSetupUnknownStatus = 0,
-            NetSetupUnjoined,
             NetSetupWorkgroupName,
             NetSetupDomainName
         }

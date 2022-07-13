@@ -17,7 +17,7 @@ namespace NFCLoc.Server
     /// </summary>
     public partial class MainWindow : Window
     {
-        private static bool dark = true;
+        private static bool _dark = true;
 
         public MainWindow()
         {
@@ -32,14 +32,14 @@ namespace NFCLoc.Server
 
         private void ChangeTheme(object sender, RoutedEventArgs e)
         {
-            if (dark)
+            if (_dark)
             {
                 Wpf.Ui.Appearance.Theme.Apply(
                     Wpf.Ui.Appearance.ThemeType.Light,            // Theme type
                     Wpf.Ui.Appearance.BackgroundType.Mica,        // Background type
                     true                                          // Whether to change accents automatically
                 );
-                dark = false;
+                _dark = false;
                 ChangeThemeBtn.Icon = Wpf.Ui.Common.SymbolRegular.WeatherSunny24;
             }
             else
@@ -49,34 +49,34 @@ namespace NFCLoc.Server
                     Wpf.Ui.Appearance.BackgroundType.Mica,        // Background type
                     true                                          // Whether to change accents automatically
                 );
-                dark = true;
+                _dark = true;
                 ChangeThemeBtn.Icon = Wpf.Ui.Common.SymbolRegular.WeatherMoon24;
             }
         }
 
         private void tbIPCopy_Click(object sender, RoutedEventArgs e)
         {
-            Clipboard.SetText(tbIP.Text);
+            Clipboard.SetText(TbIp.Text);
         }
         
         private void tbUserCopy_Click(object sender, RoutedEventArgs e)
         {
-            Clipboard.SetText(tbUser.Text);
+            Clipboard.SetText(TbUser.Text);
         }
         
         private void tbPWCopy_Click(object sender, RoutedEventArgs e)
         {
-            Clipboard.SetText(tbPW.Text);
+            Clipboard.SetText(TbPw.Text);
         }
         
         private void tbSMBCopy_Click(object sender, RoutedEventArgs e)
         {
-            Clipboard.SetText(tbSMB.Text);
+            Clipboard.SetText(TbSmb.Text);
         }
         
         private void tbConfCopy_Click(object sender, RoutedEventArgs e)
         {
-            Clipboard.SetText(tbConf.Text);
+            Clipboard.SetText(TbConf.Text);
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -89,21 +89,21 @@ namespace NFCLoc.Server
             if (ToggleSwitch.IsChecked == true)
             {
                 // Generate data
-                string Passwd = GeneratePassword(12);
-                string Username = $"NFCLoc_{GenerateUsername(5)}";
-                string ConfigPath = Path.Combine("C:", "NFCLOC");
-                string NTRights = Path.Combine(Path.GetTempPath(), "ntrights.exe");
+                var password = GeneratePassword(12);
+                var username = $"NFCLoc_{GenerateUsername(5)}";
+                var configPath = Path.Combine("C:", "NFCLOC");
+                var ntRights = Path.Combine(Path.GetTempPath(), "ntrights.exe");
 
-                tbIP.Text = GetLocalIPAddress();
-                tbUser.Text = Username;
-                tbPW.Text = Passwd;
-                tbSMB.Text = @$"\\{GetLocalIPAddress()}\NFCLOCCONF";
-                tbConf.Text = ConfigPath;
+                TbIp.Text = GetLocalIpAddress();
+                TbUser.Text = username;
+                TbPw.Text = password;
+                TbSmb.Text = @$"\\{GetLocalIpAddress()}\NFCLOCCONF";
+                TbConf.Text = configPath;
 
                 // Create SMB User
-                Process p = new Process();
+                var p = new Process();
                 p.StartInfo.FileName = "cmd.exe";
-                p.StartInfo.Arguments = $"/c \"net user {Username} /add {Passwd}\"";
+                p.StartInfo.Arguments = $"/c \"net user {username} /add {password}\"";
                 p.StartInfo.RedirectStandardOutput = true;
                 p.StartInfo.RedirectStandardError = true;
                 p.StartInfo.UseShellExecute = false;
@@ -113,13 +113,13 @@ namespace NFCLoc.Server
 
                 try
                 {
-                    File.WriteAllBytes(NTRights, Tools.ntrights);
-                    p.StartInfo.FileName = NTRights;
-                    p.StartInfo.Arguments = $"-u {Username} +r SeDenyInteractiveLogonRight";
+                    File.WriteAllBytes(ntRights, Tools.ntrights);
+                    p.StartInfo.FileName = ntRights;
+                    p.StartInfo.Arguments = $"-u {username} +r SeDenyInteractiveLogonRight";
                     p.Start();
                     p.WaitForExit();
 
-                    p.StartInfo.Arguments = $"-u {Username} +r SeDenyRemoteInteractiveLogonRight";
+                    p.StartInfo.Arguments = $"-u {username} +r SeDenyRemoteInteractiveLogonRight";
                     p.Start(); 
                     p.WaitForExit();
                 }
@@ -129,12 +129,14 @@ namespace NFCLoc.Server
                 }
 
                 // Create SMB Share
-                Process process = new Process();
-                ProcessStartInfo processInfo = new ProcessStartInfo();
-                processInfo.RedirectStandardError = true;
-                processInfo.RedirectStandardOutput = true;
-                processInfo.UseShellExecute = false;
-                processInfo.CreateNoWindow = true;
+                var process = new Process();
+                var processInfo = new ProcessStartInfo
+                {
+                    RedirectStandardError = true,
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
                 process.StartInfo = processInfo;
 
                 if (ExistsNetworkPath(@"NFCLOCCONF"))
@@ -153,7 +155,7 @@ namespace NFCLoc.Server
                 }
 
                 processInfo.FileName = @"powershell.exe";
-                processInfo.Arguments = $"& {{New-SmbShare -Name NFCLOCCONF -Path \"{ConfigPath}\" -EncryptData $True -FullAccess \"{Username}\"}}";
+                processInfo.Arguments = $"& {{New-SmbShare -Name NFCLOCCONF -Path \"{configPath}\" -EncryptData $True -FullAccess \"{username}\"}}";
 
                 process.Start();
                 process.WaitForExit();
@@ -169,68 +171,72 @@ namespace NFCLoc.Server
                 try
                 {
                     // Remove user
-                    Process process = new Process();
-                    ProcessStartInfo processInfo = new ProcessStartInfo();
-                    processInfo.RedirectStandardError = true;
-                    processInfo.RedirectStandardOutput = true;
-                    processInfo.UseShellExecute = false;
-                    processInfo.CreateNoWindow = true;
+                    var process = new Process();
+                    var processInfo = new ProcessStartInfo
+                    {
+                        RedirectStandardError = true,
+                        RedirectStandardOutput = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true
+                    };
                     process.StartInfo = processInfo;
 
                     processInfo.FileName = @"cmd.exe";
-                    processInfo.Arguments = $"/c \"net user {tbUser.Text} /delete\"";
+                    processInfo.Arguments = $"/c \"net user {TbUser.Text} /delete\"";
 
                     process.Start();
                     process.WaitForExit();
                 }
                 catch {;}
 
-                tbIP.Text = "";
-                tbUser.Text = "";
-                tbPW.Text = "";
-                tbSMB.Text = "";
-                tbConf.Text = "";
+                TbIp.Text = "";
+                TbUser.Text = "";
+                TbPw.Text = "";
+                TbSmb.Text = "";
+                TbConf.Text = "";
             }
         }
 
         private void ToggleSwitchOff_Click(object sender, RoutedEventArgs e)
         {
-            tbIP.Text = "";
-            tbUser.Text = "";
-            tbPW.Text = "";
-            tbSMB.Text = @"";
-            tbConf.Text = @"";
+            TbIp.Text = "";
+            TbUser.Text = "";
+            TbPw.Text = "";
+            TbSmb.Text = @"";
+            TbConf.Text = @"";
         }
 
         private void ResetPWButton_Click(object sender, RoutedEventArgs e)
         {
-            string bkg_pw = tbPW.Text;
-            tbPW.Text = GeneratePassword(16);
+            var bkgPw = TbPw.Text;
+            TbPw.Text = GeneratePassword(16);
 
-            Process process = new Process();
-            ProcessStartInfo processInfo = new ProcessStartInfo();
-            processInfo.RedirectStandardError = true;
-            processInfo.RedirectStandardOutput = true;
-            processInfo.UseShellExecute = false;
-            processInfo.CreateNoWindow = true;
+            var process = new Process();
+            var processInfo = new ProcessStartInfo
+            {
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
             process.StartInfo = processInfo;
 
             processInfo.FileName = @"cmd.exe";
-            processInfo.Arguments = $"/c \"net user {tbUser.Text} {tbPW.Text}\"";
+            processInfo.Arguments = $"/c \"net user {TbUser.Text} {TbPw.Text}\"";
 
             process.Start();
             process.WaitForExit();
 
             if (process.ExitCode != 0)
             {
-                RootSnackbar.Show("Cannot change password!", $"Failed to change password of user {tbUser.Text}.");
-                tbPW.Text = bkg_pw;
+                RootSnackbar.Show("Cannot change password!", $"Failed to change password of user {TbUser.Text}.");
+                TbPw.Text = bkgPw;
             }
         }
 
         private void ClearConfig_Click(object sender, RoutedEventArgs e)
         {
-            tbPW.Text = GeneratePassword(16);
+            TbPw.Text = GeneratePassword(16);
         }
 
         #region Modules
@@ -259,19 +265,19 @@ namespace NFCLoc.Server
             return false;
         }
 
-        public static string GetLocalIPAddress()
+        public static string GetLocalIpAddress()
         {
-            string localIP;
+            string localIp;
             using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
             {
                 socket.Connect("8.8.8.8", 65530);
                 IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
-                localIP = endPoint.Address.ToString();
+                localIp = endPoint.Address.ToString();
             }
-            if (String.IsNullOrEmpty(localIP))
+            if (String.IsNullOrEmpty(localIp))
                 return "No IPv4 address in the System!";
             else
-                return localIP;
+                return localIp;
         }
 
         public static string GeneratePassword(int length)

@@ -10,16 +10,16 @@ namespace NFCLoc.UI.ViewModel.ViewModels
 {
     public class AboutViewModel : ViewModelBase
     {
-        private string _VersionInfo;
+        private string _versionInfo;
         public string VersionInfo
         {
             get
             {
-                return _VersionInfo;
+                return _versionInfo;
             }
             set
             {
-                _VersionInfo = value;
+                _versionInfo = value;
                 RaisePropertyChanged();
             }
         }

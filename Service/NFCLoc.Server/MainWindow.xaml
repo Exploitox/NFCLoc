@@ -22,11 +22,11 @@
                             <TextBlock
                                 FontSize="13"
                                 FontWeight="Medium"
-                                Text="Authentification Server" />
+                                Text="Authentication Server" />
                             <TextBlock
                                 FontSize="12"
                                 Foreground="{DynamicResource TextFillColorTertiaryBrush}"
-                                Text="Enable global authentification management on this server." />
+                                Text="Enable global authentication management on this server." />
                         </StackPanel>
                     </wpfui:CardControl.Header>
                     <wpfui:ToggleSwitch ToggleButton.Checked="ToggleSwitchOn_Click" ToggleButton.Unchecked="ToggleSwitchOff_Click" x:Name="ToggleSwitch"/>
@@ -65,7 +65,7 @@
                             FontSize="14"
                             Margin="0,6,0,0"
                             Text="IP Address:" />
-                            <wpfui:TextBox x:Name="tbIP" Grid.Column="1" Icon="Server24" PlaceholderText="IP Address" IsEnabled="false" />
+                            <wpfui:TextBox x:Name="TbIp" Grid.Column="1" Icon="Server24" PlaceholderText="IP Address" IsEnabled="false" />
                             <wpfui:Button Grid.Column="2" Width="35" Height="35" Margin="5,0,0,0" Icon="Copy24" Click="tbIPCopy_Click"/>
                         </Grid>
 
@@ -80,7 +80,7 @@
                             FontSize="14"
                             Margin="0,6,0,0"
                             Text="Username:" />
-                            <wpfui:TextBox x:Name="tbUser" Grid.Column="1" Icon="Person20" PlaceholderText="Username" IsEnabled="false" />
+                            <wpfui:TextBox x:Name="TbUser" Grid.Column="1" Icon="Person20" PlaceholderText="Username" IsEnabled="false" />
                             <wpfui:Button Grid.Column="2" Width="35" Height="35" Margin="5,0,0,0" Icon="Copy24" Click="tbUserCopy_Click"/>
                         </Grid>
 
@@ -95,7 +95,7 @@
                                 FontSize="14"
                                 Margin="0,6,0,0"
                                 Text="Password: " />
-                            <wpfui:TextBox x:Name="tbPW" Grid.Column="1" Icon="Key24" PlaceholderText="Password" IsEnabled="false" />
+                            <wpfui:TextBox x:Name="TbPw" Grid.Column="1" Icon="Key24" PlaceholderText="Password" IsEnabled="false" />
                             <wpfui:Button Grid.Column="2" Width="35" Height="35" Margin="5,0,0,0" Icon="Copy24" Click="tbPWCopy_Click"/>
                         </Grid>
 
@@ -110,7 +110,7 @@
                             FontSize="14"
                             Margin="0,6,0,0"
                             Text="Configuration:" />
-                            <wpfui:TextBox x:Name="tbConf" Grid.Column="1" Icon="Folder24" PlaceholderText="Configuration Path" IsEnabled="false" />
+                            <wpfui:TextBox x:Name="TbConf" Grid.Column="1" Icon="Folder24" PlaceholderText="Configuration Path" IsEnabled="false" />
                             <wpfui:Button Grid.Column="2" Width="35" Height="35" Margin="5,0,0,0" Icon="Copy24" Click="tbConfCopy_Click"/>
                         </Grid>
 
@@ -125,7 +125,7 @@
                             FontSize="14"
                             Margin="0,6,0,0"
                             Text="SMB Share:" />
-                            <wpfui:TextBox x:Name="tbSMB" Grid.Column="1" Icon="VirtualNetwork20" PlaceholderText="SMB Share" IsEnabled="false" />
+                            <wpfui:TextBox x:Name="TbSmb" Grid.Column="1" Icon="VirtualNetwork20" PlaceholderText="SMB Share" IsEnabled="false" />
                             <wpfui:Button Grid.Column="2" Width="35" Height="35" Margin="5,0,0,0" Icon="Copy24" Click="tbSMBCopy_Click"/>
                         </Grid>
 

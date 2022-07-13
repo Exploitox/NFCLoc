@@ -14,61 +14,61 @@
 
 #pragma warning(disable : 4996)
 
-Reader::Reader(void)
+reader::reader(void)
 {
 	MAZ_LOG(LogMessageType::Information, "Reader::Constructor");
 
-	_hInst = NULL;
-	_pProvider = NULL;
+	h_inst_ = NULL;
+	p_provider_ = NULL;
 }
 
-Reader::~Reader(void)
+reader::~reader(void)
 {
 	MAZ_LOG(LogMessageType::Information, "Reader::Destructor");
-	Stop();
+	stop();
 
 	// make sure to release any reference we have to the provider.
-	if (_pProvider != NULL)
+	if (p_provider_ != NULL)
 	{
-		_pProvider->Release();
-		_pProvider = NULL;
+		p_provider_->Release();
+		p_provider_ = NULL;
 	}
 }
 
-void Reader::Stop()
+void reader::stop()
 {
 	MAZ_LOG(LogMessageType::Information, "Reader::Stop");
 
 	// end thread
-	_checkLoop = false;
-	closesocket(_soc);
+	check_loop_ = false;
+	closesocket(soc_);
 	MAZ_LOG(LogMessageType::Information, "Reader::Stop Socket closed");
 	WSACleanup();
-	if (_readerThread.joinable())
-		_readerThread.join();
+	if (reader_thread_.joinable())
+		reader_thread_.join();
 	MAZ_LOG(LogMessageType::Information, "Reader::Stop thread joined");
 }
 
-void Reader::Start()
+void reader::start()
 {
 	MAZ_LOG(LogMessageType::Information, "Reader::Start");
 
-	if (_checkLoop && _readerThread.joinable())
+	if (check_loop_ && reader_thread_.joinable())
 		return; // already running
 
 	// start listening thread for reader events
-	_checkLoop = true;
+	check_loop_ = true;
 
 	int result;
-	result = WSAStartup(MAKEWORD(2, 2), &wsaData);
+	result = WSAStartup(MAKEWORD(2, 2), &wsa_data_);
 	if (result != 0) {
 		MAZ_LOG(LogMessageType::Information, "Reader::Start WSAStartup failed");
 		printf("WSAStartup failed with error: %d\n", result);
 		//return 1;
 		return; //failed
 	}
-	_soc = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (_soc == INVALID_SOCKET)
+	soc_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (soc_ == INVALID_SOCKET)
 	{
 		MAZ_LOG(LogMessageType::Information, "Reader::Start Invalid socket");
 
@@ -78,15 +78,15 @@ void Reader::Start()
 		return;
 	}
 
-	_serviceFound = true;
+	service_found_ = true;
 	MAZ_LOG(LogMessageType::Information, "Reader::Start Service found");
 
 	// this is where we'd start the thread to check for a valid ring
-	_readerThread = std::thread(&Reader::CheckNFC, this);
+	reader_thread_ = std::thread(&reader::check_nfc, this);
 }
 
 // Performs the work required to spin off our message so we can listen for events.
-HRESULT Reader::Initialize(NFCCredentialProvider *pProvider)
+HRESULT reader::initialize(nfc_credential_provider *pProvider)
 {
 	MAZ_LOG(LogMessageType::Information, "Reader::Initialize");
 
@@ -94,37 +94,37 @@ HRESULT Reader::Initialize(NFCCredentialProvider *pProvider)
 
 	// Be sure to add a release any existing provider we might have, then add a reference
 	// to the provider we're working with now.
-	if (_pProvider != NULL)
+	if (p_provider_ != NULL)
 	{
-		_pProvider->Release();
+		p_provider_->Release();
 	}
-	_pProvider = pProvider;
-	_pProvider->AddRef();
+	p_provider_ = pProvider;
+	p_provider_->AddRef();
 
-	Start();
+	start();
 
 	return hr;
 }
 
-void Reader::CheckNFC()
+void reader::check_nfc()
 {
 	MAZ_LOG(LogMessageType::Information, "Reader::CheckNFC");
 	
-	struct sockaddr_in destination;
+	struct sockaddr_in destination{};
 	destination.sin_family = AF_INET;
 	destination.sin_port = htons(28416);
 	destination.sin_addr.s_addr = inet_addr("127.0.0.1");
-	while (_checkLoop)
+	while (check_loop_)
 	{
-		MAZ_LOG(LogMessageType::Information, std::to_string((int)_soc));
+		MAZ_LOG(LogMessageType::Information, std::to_string((int)soc_));
 
-		int result = connect(_soc, (struct sockaddr *)&destination, sizeof(destination));
+		int result = connect(soc_, (struct sockaddr *)&destination, sizeof(destination));
 		MAZ_LOG(LogMessageType::Information, std::string("Reader::CheckNFC result ").append(std::to_string(result)));
 		for (int i = 0; i < 5; i++)
 		{
-			if (result != 0 && _checkLoop)
+			if (result != 0 && check_loop_)
 			{
-				result = connect(_soc, (struct sockaddr *)&destination, sizeof(destination));
+				result = connect(soc_, (struct sockaddr *)&destination, sizeof(destination));
 				MAZ_LOG(LogMessageType::Information, std::string("Reader::CheckNFC result ").append(std::to_string(result)));
 			}
 			else
@@ -134,32 +134,32 @@ void Reader::CheckNFC()
 		}
 		char buffer[1000];
 		int newData = 0;
-		if (_soc != INVALID_SOCKET)
+		if (soc_ != INVALID_SOCKET)
 		{
 
 			try
 			{
-				newData = recv(_soc, buffer, 1000, 0); 
+				newData = recv(soc_, buffer, 1000, 0); 
 				if (newData > 0)
 				{
-					_username = std::string(buffer, newData);
-					if (_username == " ")
+					username_ = std::string(buffer, newData);
+					if (username_ == " ")
 					{
-						_username = "";
+						username_ = "";
 						continue;
 					}
-					newData = recv(_soc, buffer, 1000, 0);
+					newData = recv(soc_, buffer, 1000, 0);
 					if (newData > 0)
 					{
-						_password = std::string(buffer, newData);
-						newData = recv(_soc, buffer, 1000, 0);
-						_domain = std::string(buffer, newData);
-						_kerbrosCredentialRetrieved = true;
+						password_ = std::string(buffer, newData);
+						newData = recv(soc_, buffer, 1000, 0);
+						domain_ = std::string(buffer, newData);
+						kerbros_credential_retrieved_ = true;
 						// did we get both parts of the credential?
 						// fire "CredentialsChanged" event
 
-						if (_pProvider != NULL)
-							_pProvider->OnNFCStatusChanged();
+						if (p_provider_ != NULL)
+							p_provider_->OnNFCStatusChanged();
 					}
 					else
 					{
@@ -181,21 +181,21 @@ void Reader::CheckNFC()
 	}
 }
 
-bool Reader::HasLogin()
+bool reader::has_login()
 {
 	MAZ_LOG(LogMessageType::Information, "Reader::HasLogin");
 
-	return _kerbrosCredentialRetrieved;
+	return kerbros_credential_retrieved_;
 }
 
-void Reader::ClearLogin()
+void reader::clear_login()
 {
 	MAZ_LOG(LogMessageType::Information, "Reader::ClearLogin");
 
-	_username = "";
-	_password = "";
-	_domain = "";
-	_kerbrosCredentialRetrieved = false;
+	username_ = "";
+	password_ = "";
+	domain_ = "";
+	kerbros_credential_retrieved_ = false;
 }
 
 std::wstring StringToWString(const std::string& s)
@@ -207,7 +207,7 @@ std::wstring StringToWString(const std::string& s)
 	return temp;
 }
 
-HRESULT Reader::GetLogin(
+HRESULT reader::get_login(
 	CREDENTIAL_PROVIDER_GET_SERIALIZATION_RESPONSE* pcpgsr,
 	CREDENTIAL_PROVIDER_CREDENTIAL_SERIALIZATION* pcpcs,
 	PWSTR* ppwszOptionalStatusText,
@@ -217,21 +217,21 @@ HRESULT Reader::GetLogin(
 {
 	MAZ_LOG(LogMessageType::Information, "Reader::GetLogin");
 
-	if (!_kerbrosCredentialRetrieved)
+	if (!kerbros_credential_retrieved_)
 		return E_FAIL;
 
-	if (_username == "" || _password == "") // might help?
+	if (username_ == "" || password_ == "") // might help?
 		return E_FAIL;
 
-	std::wstring un = StringToWString(_username);
-	std::wstring pw = StringToWString(_password);
-	std::wstring dm = StringToWString(_domain);
+	std::wstring un = StringToWString(username_);
+	std::wstring pw = StringToWString(password_);
+	std::wstring dm = StringToWString(domain_);
 
-	_username = "";
-	_password = "";
-	_domain = "";
+	username_ = "";
+	password_ = "";
+	domain_ = "";
 
-	_kerbrosCredentialRetrieved = false;
+	kerbros_credential_retrieved_ = false;
 
 	HRESULT hr = S_OK;
 	WCHAR wsz[MAX_COMPUTERNAME_LENGTH + 1];

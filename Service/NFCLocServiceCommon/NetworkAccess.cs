@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace NFCLoc.Service.Common
 {
-    public class NetworkConnection : IDisposable
+    public sealed class NetworkConnection : IDisposable
     {
-        string _networkName;
+        private readonly string _networkName;
 
         public NetworkConnection(string networkName,
             NetworkCredential credentials)
@@ -22,13 +22,13 @@ namespace NFCLoc.Service.Common
             {
                 Scope = ResourceScope.GlobalNetwork,
                 ResourceType = ResourceType.Disk,
-                DisplayType = ResourceDisplaytype.Share,
+                DisplayType = ResourceDisplayType.Share,
                 RemoteName = networkName
             };
 
             var userName = string.IsNullOrEmpty(credentials.Domain)
                 ? credentials.UserName
-                : string.Format(@"{0}\{1}", credentials.Domain, credentials.UserName);
+                : $@"{credentials.Domain}\{credentials.UserName}";
 
             var result = WNetAddConnection2(
                 netResource,
@@ -53,7 +53,7 @@ namespace NFCLoc.Service.Common
             GC.SuppressFinalize(this);
         }
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             WNetCancelConnection2(_networkName, 0, true);
         }
@@ -72,7 +72,7 @@ namespace NFCLoc.Service.Common
     {
         public ResourceScope Scope;
         public ResourceType ResourceType;
-        public ResourceDisplaytype DisplayType;
+        public ResourceDisplayType DisplayType;
         public int Usage;
         public string LocalName;
         public string RemoteName;
@@ -97,7 +97,7 @@ namespace NFCLoc.Service.Common
         Reserved = 8,
     }
 
-    public enum ResourceDisplaytype : int
+    public enum ResourceDisplayType : int
     {
         Generic = 0x0,
         Domain = 0x01,
@@ -107,9 +107,7 @@ namespace NFCLoc.Service.Common
         Group = 0x05,
         Network = 0x06,
         Root = 0x07,
-        Shareadmin = 0x08,
         Directory = 0x09,
-        Tree = 0x0a,
-        Ndscontainer = 0x0b
+        Tree = 0x0a
     }
 }

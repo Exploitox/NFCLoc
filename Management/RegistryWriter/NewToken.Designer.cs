@@ -1,6 +1,6 @@
 ﻿namespace CredentialRegistration
 {
-    partial class frmNewToken
+    partial class FrmNewToken
     {
         /// <summary>
         /// Required designer variable.
@@ -120,7 +120,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtFriendlyName);
             this.Controls.Add(this.txtToken);
-            this.Name = "frmNewToken";
+            this.Name = "FrmNewToken";
             this.Text = "NewToken";
             this.Load += new System.EventHandler(this.frmNewToken_Load);
             this.ResumeLayout(false);

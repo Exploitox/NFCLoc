@@ -21,18 +21,18 @@
 
 #pragma comment(lib, "Ws2_32.lib")
 
-class Reader
+class reader
 {
 public:
-	Reader(void);
-	~Reader(void);
-	HRESULT Initialize(NFCCredentialProvider *pProvider);
-	void Stop();
-	void Start();
+	reader(void);
+	~reader(void);
+	HRESULT initialize(nfc_credential_provider *pProvider);
+	void stop();
+	void start();
 
-	bool HasLogin();
-	void ClearLogin();
-	HRESULT GetLogin(
+	bool has_login();
+	void clear_login();
+	HRESULT get_login(
 		CREDENTIAL_PROVIDER_GET_SERIALIZATION_RESPONSE* pcpgsr,
 		CREDENTIAL_PROVIDER_CREDENTIAL_SERIALIZATION* pcpcs,
 		PWSTR* ppwszOptionalStatusText,
@@ -41,17 +41,17 @@ public:
 		);
 
 private:
-	void CheckNFC();
+	void check_nfc();
 
-	std::thread					_readerThread;
-	bool						_checkLoop = false;
-	bool						_kerbrosCredentialRetrieved = false;
-	SOCKET						_soc;
-	bool						_serviceFound = false;
-	WSADATA						wsaData;
-	NFCCredentialProvider       *_pProvider;        // Pointer to our owner.
-	HINSTANCE                    _hInst;                // Current instance
-	std::string					_username;
-	std::string					_password;
-	std::string					_domain;
+	std::thread					reader_thread_;
+	bool						check_loop_ = false;
+	bool						kerbros_credential_retrieved_ = false;
+	SOCKET						soc_{};
+	bool						service_found_ = false;
+	WSADATA						wsa_data_{};
+	nfc_credential_provider     *p_provider_;				// Pointer to our owner.
+	HINSTANCE                   h_inst_;					// Current instance
+	std::string					username_;
+	std::string					password_;
+	std::string					domain_;
 };

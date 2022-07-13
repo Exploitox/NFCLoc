@@ -16,7 +16,7 @@ namespace CredentialRegistration
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmRegistrationApp());
+            Application.Run(new FrmRegistrationApp());
         }
     }
 }

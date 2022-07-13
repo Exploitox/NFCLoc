@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 
 namespace NFCLoc.Service.Common
 {
-    public interface INFCLocServicePlugin
+    public interface INfcLocServicePlugin
     {
         // runs when the plugin is first loaded
         void PluginLoad();
         // rungs when the plugin is disposed. i.e. on service shutdown
         void PluginUnload();
         // token down - id
-        void NCFRingDown(string id, Dictionary<string, object> parameters, SystemState state);
+        void NcfRingDown(string id, Dictionary<string, object> parameters, SystemState state);
         // token up - id
-        void NCFRingUp(string id, Dictionary<string, object> parameters, SystemState state);
+        void NcfRingUp(string id, Dictionary<string, object> parameters, SystemState state);
         // data read - id, data
-        void NFCLocDataRead(string id, byte[] data, Dictionary<string, object> parameters, SystemState state);
+        void NfcLocDataRead(string id, byte[] data, Dictionary<string, object> parameters, SystemState state);
         // this should return the name for the plugin so that users can tell what they're registering
         string GetPluginName();
         // returns a list of the parameters and types that we need to provide when activating this plugin

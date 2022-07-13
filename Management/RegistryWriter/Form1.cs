@@ -19,7 +19,7 @@ using Newtonsoft.Json;
 
 namespace CredentialRegistration
 {
-    public partial class frmRegistrationApp : Form
+    public partial class FrmRegistrationApp : Form
     {
 
         [DllImport("WinAPIWrapper", CallingConvention = CallingConvention.Cdecl)]
@@ -27,10 +27,10 @@ namespace CredentialRegistration
         //[DllImport("WinAPIWrapper", CallingConvention = CallingConvention.Cdecl)]
         //public static extern int CredProtectWrapper(IntPtr inputBuffer, int inputLength, [In, Out]IntPtr outputBuffer);
 
-        TcpClient client;
-        UserServerState uss;
+        TcpClient _client;
+        UserServerState _uss;
 
-        public frmRegistrationApp()
+        public FrmRegistrationApp()
         {
             InitializeComponent();
         }
@@ -70,22 +70,22 @@ namespace CredentialRegistration
             Marshal.FreeHGlobal(errloc);
         }
 
-        static byte[] EncryptStringToBytes(string plainText, byte[] Key, byte[] IV)
+        static byte[] EncryptStringToBytes(string plainText, byte[] key, byte[] iv)
         {
             // Check arguments. 
             if (plainText == null || plainText.Length <= 0)
                 throw new ArgumentNullException("plainText");
-            if (Key == null || Key.Length <= 0)
-                throw new ArgumentNullException("Key");
-            if (IV == null || IV.Length <= 0)
-                throw new ArgumentNullException("IV");
+            if (key == null || key.Length <= 0)
+                throw new ArgumentNullException("key");
+            if (iv == null || iv.Length <= 0)
+                throw new ArgumentNullException("iv");
             byte[] encrypted;
             // Create an RijndaelManaged object 
             // with the specified key and IV. 
             using (RijndaelManaged rijAlg = new RijndaelManaged())
             {
-                rijAlg.Key = Key;
-                rijAlg.IV = IV;
+                rijAlg.Key = key;
+                rijAlg.IV = iv;
 
                 // Create a decryptor to perform the stream transform.
                 ICryptoTransform encryptor = rijAlg.CreateEncryptor(rijAlg.Key, rijAlg.IV);
@@ -112,15 +112,15 @@ namespace CredentialRegistration
 
         }
 
-        static string DecryptStringFromBytes(byte[] cipherText, byte[] Key, byte[] IV)
+        static string DecryptStringFromBytes(byte[] cipherText, byte[] key, byte[] iv)
         {
             // Check arguments. 
             if (cipherText == null || cipherText.Length <= 0)
                 throw new ArgumentNullException("cipherText");
-            if (Key == null || Key.Length <= 0)
-                throw new ArgumentNullException("Key");
-            if (IV == null || IV.Length <= 0)
-                throw new ArgumentNullException("IV");
+            if (key == null || key.Length <= 0)
+                throw new ArgumentNullException("key");
+            if (iv == null || iv.Length <= 0)
+                throw new ArgumentNullException("iv");
 
             // Declare the string used to hold 
             // the decrypted text. 
@@ -130,8 +130,8 @@ namespace CredentialRegistration
             // with the specified key and IV. 
             using (RijndaelManaged rijAlg = new RijndaelManaged())
             {
-                rijAlg.Key = Key;
-                rijAlg.IV = IV;
+                rijAlg.Key = key;
+                rijAlg.IV = iv;
 
                 // Create a decrytor to perform the stream transform.
                 ICryptoTransform decryptor = rijAlg.CreateDecryptor(rijAlg.Key, rijAlg.IV);
@@ -287,9 +287,9 @@ namespace CredentialRegistration
 
         private void btnNetworkRegistrationStart_Click(object sender, EventArgs e)
         {
-            if(ServiceCommunication.SendNetworkMessage(ref client, JsonConvert.SerializeObject(new NetworkMessage(MessageType.GetToken))) > 0)
+            if(ServiceCommunication.SendNetworkMessage(ref _client, JsonConvert.SerializeObject(new NetworkMessage(MessageType.GetToken))) > 0)
             {
-                frmNewToken nt = new frmNewToken(ref client);
+                FrmNewToken nt = new FrmNewToken(ref _client);
                 nt.ShowDialog();
                 LoadConfig();
             }
@@ -329,10 +329,10 @@ namespace CredentialRegistration
         private void LoadConfig()
         {
             startAgain:
-            ServiceCommunication.SendNetworkMessage(ref client, JsonConvert.SerializeObject(new NetworkMessage(MessageType.GetState) { Username = ClientCommon.GetCurrentUsername() }));
+            ServiceCommunication.SendNetworkMessage(ref _client, JsonConvert.SerializeObject(new NetworkMessage(MessageType.GetState) { Username = ClientCommon.GetCurrentUsername() }));
             var task = Task<string>.Factory.StartNew(() =>
             {
-                return ServiceCommunication.ReadNetworkMessage(ref client);
+                return ServiceCommunication.ReadNetworkMessage(ref _client);
             });
             if (task.Result == "")
             {
@@ -346,12 +346,12 @@ namespace CredentialRegistration
             else
             {
                 tvwConfig.Nodes.Clear();
-                uss = JsonConvert.DeserializeObject<UserServerState>(task.Result);
-                TreeNode user = tvwConfig.Nodes.Add(uss.UserConfiguration.Username);
+                _uss = JsonConvert.DeserializeObject<UserServerState>(task.Result);
+                TreeNode user = tvwConfig.Nodes.Add(_uss.UserConfiguration.Username);
                 TreeNode tokens = user.Nodes.Add("Tokens");
-                if(uss.UserConfiguration.Tokens != null)
+                if(_uss.UserConfiguration.Tokens != null)
                 {
-                    foreach (KeyValuePair<string, string> tok in uss.UserConfiguration.Tokens)
+                    foreach (KeyValuePair<string, string> tok in _uss.UserConfiguration.Tokens)
                     {
 
                         TreeNode tokenNode = tokens.Nodes.Add(tok.Value + " - " + tok.Key);
@@ -359,18 +359,18 @@ namespace CredentialRegistration
                     }
                 }
                 TreeNode plugins = user.Nodes.Add("Plugins");
-                if (uss.Plugins != null)
+                if (_uss.Plugins != null)
                 {
-                    foreach (PluginInfo p in uss.Plugins)
+                    foreach (PluginInfo p in _uss.Plugins)
                     {
                         TreeNode aPlugin = plugins.Nodes.Add(p.Name);
                         aPlugin.Tag = "Plugin";
                     }
                 }
                 TreeNode events = user.Nodes.Add("Events");
-                if (uss.UserConfiguration.Events != null)
+                if (_uss.UserConfiguration.Events != null)
                 {
-                    foreach (Event ev in uss.UserConfiguration.Events)
+                    foreach (Event ev in _uss.UserConfiguration.Events)
                     {
                         TreeNode eventNode = events.Nodes.Add(ev.PluginName + " - " + ev.Token);
                         eventNode.Tag = "Event";
@@ -384,7 +384,7 @@ namespace CredentialRegistration
                         }
                     }
                 }
-                if((uss.UserConfiguration.Tokens != null && uss.UserConfiguration.Tokens.Count > 0) && (uss.Plugins != null && uss.Plugins.Count > 0))
+                if((_uss.UserConfiguration.Tokens != null && _uss.UserConfiguration.Tokens.Count > 0) && (_uss.Plugins != null && _uss.Plugins.Count > 0))
                 {
                     btnAddEvent.Enabled = true;
                 }
@@ -394,7 +394,7 @@ namespace CredentialRegistration
 
         private void btnAddEvent_Click(object sender, EventArgs e)
         {
-            frmEventRegistration er = new frmEventRegistration(ref client, uss.UserConfiguration.Tokens, uss.Plugins);
+            FrmEventRegistration er = new FrmEventRegistration(ref _client, _uss.UserConfiguration.Tokens, _uss.Plugins);
             er.ShowDialog();
             LoadConfig();
         }
@@ -403,9 +403,9 @@ namespace CredentialRegistration
         {
             if(tvwConfig.SelectedNode.Tag.ToString() == "Token")
             {
-                string tokenId = uss.UserConfiguration.Tokens.Keys.ToList()[tvwConfig.SelectedNode.Index];
-                NetworkMessage nm = new NetworkMessage(MessageType.Delete) { Username = uss.UserConfiguration.Username, Token = tokenId };
-                ServiceCommunication.SendNetworkMessage(ref client, JsonConvert.SerializeObject(nm));
+                string tokenId = _uss.UserConfiguration.Tokens.Keys.ToList()[tvwConfig.SelectedNode.Index];
+                NetworkMessage nm = new NetworkMessage(MessageType.Delete) { Username = _uss.UserConfiguration.Username, Token = tokenId };
+                ServiceCommunication.SendNetworkMessage(ref _client, JsonConvert.SerializeObject(nm));
                 LoadConfig();
             }
             btnDeleteToken.Enabled = false;
@@ -415,9 +415,9 @@ namespace CredentialRegistration
         {
             if (tvwConfig.SelectedNode.Tag.ToString() == "Event")
             {
-                Event ev = uss.UserConfiguration.Events[tvwConfig.SelectedNode.Index];
-                NetworkMessage nm = new NetworkMessage(MessageType.Delete) { Username = uss.UserConfiguration.Username, Token = ev.Token, PluginName = ev.PluginName };
-                ServiceCommunication.SendNetworkMessage(ref client, JsonConvert.SerializeObject(nm));
+                Event ev = _uss.UserConfiguration.Events[tvwConfig.SelectedNode.Index];
+                NetworkMessage nm = new NetworkMessage(MessageType.Delete) { Username = _uss.UserConfiguration.Username, Token = ev.Token, PluginName = ev.PluginName };
+                ServiceCommunication.SendNetworkMessage(ref _client, JsonConvert.SerializeObject(nm));
                 LoadConfig();
             }
             btnDeleteEvent.Enabled = false;

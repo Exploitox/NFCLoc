@@ -1,6 +1,6 @@
 ﻿namespace CredentialRegistration
 {
-    partial class frmEventRegistration
+    partial class FrmEventRegistration
     {
         /// <summary>
         /// Required designer variable.
@@ -168,7 +168,7 @@
             this.Controls.Add(this.cboTokens);
             this.Controls.Add(this.lblSwipeEncrypt);
             this.Controls.Add(this.dgvParameters);
-            this.Name = "frmEventRegistration";
+            this.Name = "FrmEventRegistration";
             this.Text = "EventRegistration";
             ((System.ComponentModel.ISupportInitialize)(this.dgvParameters)).EndInit();
             this.ResumeLayout(false);

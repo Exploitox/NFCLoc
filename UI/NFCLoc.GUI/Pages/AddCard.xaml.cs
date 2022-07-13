@@ -21,8 +21,8 @@ namespace NFCLoc.GUI.Pages
     /// </summary>
     public partial class AddCard : Page
     {
-        Steps.HelloStepView HSV = new Steps.HelloStepView();
-        Steps.PlaceRingStepView PRSV = new Steps.PlaceRingStepView();
+        Steps.HelloStepView _hsv = new Steps.HelloStepView();
+        Steps.PlaceRingStepView _prsv = new Steps.PlaceRingStepView();
         //Steps.LoginStepView LSV = new Steps.LoginStepView();
         //Steps.RemoveRingStepView RRSV = new Steps.RemoveRingStepView();
         //Steps.SuccessfullyStepView SSV = new Steps.SuccessfullyStepView();
@@ -32,7 +32,7 @@ namespace NFCLoc.GUI.Pages
         {
             InitializeComponent();
 
-            FrameWindow.Content = HSV;
+            FrameWindow.Content = _hsv;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -43,9 +43,9 @@ namespace NFCLoc.GUI.Pages
             {
                 case NFCLoc.GUI.Pages.Steps.HelloStepView:
                     Debug.WriteLine("HSV -> PRSV");
-                    FrameWindow.Content = PRSV;
+                    FrameWindow.Content = _prsv;
                     NextBtn.Visibility = Visibility.Hidden;
-                    PRSV.InitializeAsync();
+                    _prsv.InitializeAsync();
                     break;
                 case NFCLoc.GUI.Pages.Steps.PlaceRingStepView:
                     Debug.WriteLine("PRS -> LSV");
@@ -70,7 +70,7 @@ namespace NFCLoc.GUI.Pages
 
         private void CancelBtn_Click(object sender, RoutedEventArgs e)
         {
-            FrameWindow.Content = HSV;
+            FrameWindow.Content = _hsv;
             NextBtn.Visibility = Visibility.Visible;
 
         }

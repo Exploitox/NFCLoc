@@ -17,10 +17,10 @@
 #include "NFCCredential.h"
 #include "helpers.h"
 
-class Reader;
-class NFCCredential;
+class reader;
+class nfc_credential;
 
-class NFCCredentialProvider : public ICredentialProvider
+class nfc_credential_provider final : public ICredentialProvider
 {
 public:
 	// IUnknown
@@ -46,34 +46,34 @@ public:
 			IID_ICredentialProvider == riid)
 		{
 			*ppv = this;
-			reinterpret_cast<IUnknown*>(*ppv)->AddRef();
+			static_cast<IUnknown*>(*ppv)->AddRef();
 			hr = S_OK;
 		}
 		else
 		{
-			*ppv = NULL;
+			*ppv = nullptr;
 			hr = E_NOINTERFACE;
 		}
 		return hr;
 	}
 
 public:
-	IFACEMETHODIMP SetUsageScenario(CREDENTIAL_PROVIDER_USAGE_SCENARIO cpus, DWORD dwFlags);
-	IFACEMETHODIMP SetSerialization(const CREDENTIAL_PROVIDER_CREDENTIAL_SERIALIZATION* pcpcs);
+	IFACEMETHODIMP SetUsageScenario(CREDENTIAL_PROVIDER_USAGE_SCENARIO cpus, DWORD dwFlags) override;
+	IFACEMETHODIMP SetSerialization(const CREDENTIAL_PROVIDER_CREDENTIAL_SERIALIZATION* pcpcs) override;
 
-	IFACEMETHODIMP Advise(__in ICredentialProviderEvents* pcpe, UINT_PTR upAdviseContext);
-	IFACEMETHODIMP UnAdvise();
+	IFACEMETHODIMP Advise(__in ICredentialProviderEvents* pcpe, UINT_PTR upAdviseContext) override;
+	IFACEMETHODIMP UnAdvise() override;
 
-	IFACEMETHODIMP GetFieldDescriptorCount(__out DWORD* pdwCount);
-	IFACEMETHODIMP GetFieldDescriptorAt(DWORD dwIndex,  __deref_out CREDENTIAL_PROVIDER_FIELD_DESCRIPTOR** ppcpfd);
+	IFACEMETHODIMP GetFieldDescriptorCount(__out DWORD* pdwCount) override;
+	IFACEMETHODIMP GetFieldDescriptorAt(DWORD dwIndex,  __deref_out CREDENTIAL_PROVIDER_FIELD_DESCRIPTOR** ppcpfd) override;
 
 	IFACEMETHODIMP GetCredentialCount(
 		__out DWORD* pdwCount,
 		__out DWORD* pdwDefault,
-		__out BOOL* pbAutoLogonWithDefault);
+		__out BOOL* pbAutoLogonWithDefault) override;
 	IFACEMETHODIMP GetCredentialAt(
 		DWORD dwIndex, 
-		__out ICredentialProviderCredential** ppcpc);
+		__out ICredentialProviderCredential** ppcpc) override;
 
 	friend HRESULT NFCLocCredentialProvider_CreateInstance(REFIID riid, __deref_out void** ppv);
 
@@ -81,15 +81,15 @@ public:
 	void OnNFCStatusChanged();
 
 protected:
-	NFCCredentialProvider();
-	__override ~NFCCredentialProvider();
+	nfc_credential_provider();
+	__override ~nfc_credential_provider();
 
 private:
 	LONG              _cRef;
-	NFCCredential*							_pCredential;          // Our "connected" credential.
+	nfc_credential*							_pCredential;          // Our "connected" credential.
 	BOOL									_defaultProvider = CREDENTIAL_PROVIDER_NO_DEFAULT;
 	CREDENTIAL_PROVIDER_USAGE_SCENARIO      _cpus;
-	ICredentialProviderEvents*				_credentialProviderEvents = NULL;
+	ICredentialProviderEvents*				_credentialProviderEvents = nullptr;
 	UINT_PTR								_adviseContext = -1;
-	Reader*									_reader;
+	reader*									_reader;
 };

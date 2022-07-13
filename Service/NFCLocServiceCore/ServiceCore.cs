@@ -21,27 +21,27 @@ namespace NFCLoc.Service.Core
     public class ServiceCore
     {
         private static bool _debug = true;
-        public static string _logFile = "";
-        private CompositionContainer container;
-        protected static string appPath = new System.IO.FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location).DirectoryName;
-        private ServiceState state = ServiceState.Stopped;
+        public static string LogFile = "";
+        private CompositionContainer _container;
+        protected static string AppPath = new System.IO.FileInfo(System.Reflection.Assembly.GetEntryAssembly()?.Location ?? string.Empty).DirectoryName;
+        private ServiceState _state = ServiceState.Stopped;
         public static SystemState SystemStatus = new SystemState();
-        private Config ApplicationConfiguration;
+        private Config _applicationConfiguration;
 
-        TcpListener credentialListener;
-        Thread credentialListenThread;
-        TcpListener registrationListener;
-        Thread registrationListenThread;
-        bool runListenLoops = false;
+        TcpListener _credentialListener;
+        Thread _credentialListenThread;
+        TcpListener _registrationListener;
+        Thread _registrationListenThread;
+        bool _runListenLoops = false;
         //private List<Client> Connections = new List<Client>();
 
         //[DllImport("WinAPIWrapper", CallingConvention = CallingConvention.Cdecl)]
         //public static extern int PCSC_GetID([In, Out] IntPtr id, [In, Out] IntPtr err);
 
         [ImportMany]
-        IEnumerable<Lazy<INFCLocServicePlugin>> plugins;
+        IEnumerable<Lazy<INfcLocServicePlugin>> _plugins;
 
-        Thread readerThread = null;
+        Thread _readerThread = null;
 
         public ServiceCore(bool isDebug)
         {
@@ -49,13 +49,13 @@ namespace NFCLoc.Service.Core
             if (isDebug)
                 try
                 {
-                    if (File.Exists(appPath + "\\log-old.txt"))
+                    if (File.Exists(AppPath + "\\log-old.txt"))
                     {
-                        File.Delete(appPath + "\\log-old.txt");
+                        File.Delete(AppPath + "\\log-old.txt");
                     }
-                    if (File.Exists(appPath + "\\log.txt"))
+                    if (File.Exists(AppPath + "\\log.txt"))
                     {
-                        File.Move(appPath + "\\log.txt", appPath + "\\log-old.txt");
+                        File.Move(AppPath + "\\log.txt", AppPath + "\\log-old.txt");
                     }
                 }
                 catch { }
@@ -64,12 +64,12 @@ namespace NFCLoc.Service.Core
         public void InitLog()
         {
             string currentDateTime = DateTime.Now.ToString("ddMMyy-HHmmss");
-            _logFile = Path.Combine(appPath, "logs", $"log-{currentDateTime}.txt");
-            if (!Directory.Exists(Path.Combine(appPath, "logs")))
+            LogFile = Path.Combine(AppPath, "logs", $"log-{currentDateTime}.txt");
+            if (!Directory.Exists(Path.Combine(AppPath, "logs")))
             {
-                Directory.CreateDirectory(Path.Combine(appPath, "logs"));
+                Directory.CreateDirectory(Path.Combine(AppPath, "logs"));
             }
-            File.Create(_logFile).Close();
+            File.Create(LogFile).Close();
         }
 
         // load plugins
@@ -81,21 +81,21 @@ namespace NFCLoc.Service.Core
                 // load extension catalog
                 var catalog = new AggregateCatalog();
                 //Adds all the parts found in the same assembly as the Program class
-                catalog.Catalogs.Add(new DirectoryCatalog(appPath + @"\Plugins\"));
-                Log("Plugin directory: " + appPath + @"\Plugins\");
+                catalog.Catalogs.Add(new DirectoryCatalog(AppPath + @"\Plugins\"));
+                Log("Plugin directory: " + AppPath + @"\Plugins\");
                 //Create the CompositionContainer with the parts in the catalog
-                container = new CompositionContainer(catalog);
+                _container = new CompositionContainer(catalog);
 
                 //Fill the imports of this object
                 try
                 {
-                    this.container.ComposeParts(this);
+                    this._container.ComposeParts(this);
                 }
                 catch
                 {
                     //LogEntry(ex, "Unable to load extensions");
                 }
-                foreach (Lazy<INFCLocServicePlugin> plugin in plugins)
+                foreach (Lazy<INfcLocServicePlugin> plugin in _plugins)
                 {
                     try
                     {
@@ -105,7 +105,7 @@ namespace NFCLoc.Service.Core
                     }
                     catch
                     {
-                        Log("Plugin threw an excception on Load event");
+                        Log("Plugin threw an exception on Load event");
                     }
                 }
             }
@@ -113,12 +113,11 @@ namespace NFCLoc.Service.Core
             {
                 Log("Exception loading plugins: " + ex.Message);
             }
-            Log(plugins.Count().ToString() + " Plugin(s) loaded");
-            if (plugins.Count() == 0)
-            {
-                Log("No plugins loaded. Closing service ...");
-                Environment.Exit(1);
-            }
+            Log(_plugins.Count().ToString() + " Plugin(s) loaded");
+            if (_plugins.Any()) return;
+            
+            Log("No plugins loaded. Closing service ...");
+            Environment.Exit(1);
         }
 
         // thread to monitor nfc reader
@@ -126,11 +125,11 @@ namespace NFCLoc.Service.Core
         {
             Log("NFC Reading started");
             //Thread.Sleep(10000);
-            List<string> currentTokens = new List<string>();
-            SCardContext sCardContext = new SCardContext();
-            SerialContext serialContext = new SerialContext();
+            var currentTokens = new List<string>();
+            var sCardContext = new SCardContext();
+            var serialContext = new SerialContext();
             // basically keep running until we're told to stop
-            while(state == ServiceState.Starting || state == ServiceState.Running)
+            while(_state == ServiceState.Starting || _state == ServiceState.Running)
             {
                 // start dll and just call it 
                 //IntPtr idloc = Marshal.AllocHGlobal(100);
@@ -145,9 +144,9 @@ namespace NFCLoc.Service.Core
 
                 //Marshal.FreeHGlobal(idloc);
                 //Marshal.FreeHGlobal(errloc);
-                List<string> ls = sCardContext.GetIds();
+                var ls = sCardContext.GetIds();
                 ls = ls.Concat(serialContext.GetIds()).ToList();
-                foreach (string id in ls)
+                foreach (var id in ls)
                 {
                     //string id = ls.FirstOrDefault() ?? "";
                     // check the id of the token
@@ -162,7 +161,7 @@ namespace NFCLoc.Service.Core
                             // this is where we capture it and show the next screen
                             if (SystemStatus.RegistrationClient != null)
                             {
-                                TcpClient c = SystemStatus.RegistrationClient;
+                                var c = SystemStatus.RegistrationClient;
                                 ServiceCommunication.SendNetworkMessage(ref c, JsonConvert.SerializeObject(new NetworkMessage() { Type = MessageType.Token, Token = id }));
                                 SystemStatus.RegistrationClient = c;
                             }
@@ -170,22 +169,18 @@ namespace NFCLoc.Service.Core
                         else
                         {
                             // check config
-                            foreach (User u in ApplicationConfiguration.Users)
+                            foreach (var u in _applicationConfiguration.Users)
                             {
-                                string hashedToken = Crypto.Hash(Crypto.Hash(id) + u.Salt);
-                                foreach (Event e in u.Events)
+                                var hashedToken = Crypto.Hash(Crypto.Hash(id) + u.Salt);
+                                foreach (var e in u.Events)
                                 {
-                                    if (hashedToken == e.Token)
+                                    if (hashedToken != e.Token) continue;
+                                    foreach (var plugin in _plugins)
                                     {
-                                        foreach (Lazy<INFCLocServicePlugin> plugin in plugins)
-                                        {
-                                            if (plugin.Value.GetPluginName() == e.PluginName)
-                                            {
-                                                plugin.Value.NCFRingDown(id, e.Parameters, SystemStatus);
+                                        if (plugin.Value.GetPluginName() != e.PluginName) continue;
+                                        plugin.Value.NcfRingDown(id, e.Parameters, SystemStatus);
 
-                                                Log("Plugin " + plugin.Value.GetPluginName() + " passed TagDown event");
-                                            }
-                                        }
+                                        Log("Plugin " + plugin.Value.GetPluginName() + " passed TagDown event");
                                     }
                                 }
                             }
@@ -193,7 +188,7 @@ namespace NFCLoc.Service.Core
                     }
                     currentTokens.Remove(id);
                 }
-                foreach (string id in currentTokens)
+                foreach (var id in currentTokens)
                 {
                     Log("NFCTagUpEvent");
                     // we just lost the token (state change)
@@ -205,21 +200,17 @@ namespace NFCLoc.Service.Core
                     else
                     {
                         // check config
-                        foreach (User u in ApplicationConfiguration.Users)
+                        foreach (var u in _applicationConfiguration.Users)
                         {
-                            string hashedToken = Crypto.Hash(Crypto.Hash(id) + u.Salt);
-                            foreach (Event e in u.Events)
+                            var hashedToken = Crypto.Hash(Crypto.Hash(id) + u.Salt);
+                            foreach (var e in u.Events)
                             {
-                                if (hashedToken == e.Token)
+                                if (hashedToken != e.Token) continue;
+                                foreach (var plugin in _plugins)
                                 {
-                                    foreach (Lazy<INFCLocServicePlugin> plugin in plugins)
-                                    {
-                                        if (plugin.Value.GetPluginName() == e.PluginName)
-                                        {
-                                            plugin.Value.NCFRingUp(id, e.Parameters, SystemStatus);
-                                            Log("Plugin " + plugin.Value.GetPluginName() + " passed TagUp event");
-                                        }
-                                    }
+                                    if (plugin.Value.GetPluginName() != e.PluginName) continue;
+                                    plugin.Value.NcfRingUp(id, e.Parameters, SystemStatus);
+                                    Log("Plugin " + plugin.Value.GetPluginName() + " passed TagUp event");
                                 }
                             }
                         }
@@ -236,19 +227,19 @@ namespace NFCLoc.Service.Core
         public void Stop()
         {
             Log("Core stopping");
-            state = ServiceState.Stopping;
+            _state = ServiceState.Stopping;
             // give the reader loop a chance to exit
             Thread.Sleep(200);
             // the NFC thread will stop by itself now
-            if(readerThread != null)
+            if(_readerThread != null)
             {
-                if (readerThread.IsAlive)
-                    readerThread.Join();
-                readerThread = null;
+                if (_readerThread.IsAlive)
+                    _readerThread.Join();
+                _readerThread = null;
             }
             StopNetwork();
             // we need to unload plugins now
-            foreach (Lazy<INFCLocServicePlugin> plugin in plugins)
+            foreach (Lazy<INfcLocServicePlugin> plugin in _plugins)
             {
                 try
                 {
@@ -258,12 +249,12 @@ namespace NFCLoc.Service.Core
                 }
                 catch (Exception ex)
                 {
-                    Log("Plugin threw an excception on Unload event: " + ex.Message);
+                    Log("Plugin threw an exception on Unload event: " + ex.Message);
                 }
             }
 
             SaveConfig();
-            state = ServiceState.Stopped;
+            _state = ServiceState.Stopped;
             Log("Core stopped");
         }
 
@@ -273,55 +264,55 @@ namespace NFCLoc.Service.Core
             Log("Core starting");
             //System.Threading.Thread.Sleep(10000);
             LoadConfig();
-            state = ServiceState.Starting;
+            _state = ServiceState.Starting;
             InitialiseNetwork();
-            readerThread = new Thread(new ThreadStart(ScanForId));
-            readerThread.Start();
-            state = ServiceState.Running;
+            _readerThread = new Thread(new ThreadStart(ScanForId));
+            _readerThread.Start();
+            _state = ServiceState.Running;
             Log("Core started");
         }
 
         private void InitialiseNetwork()
         {
-            Log("Initialising Network");
-            if (registrationListener != null)
+            Log("Initializing Network");
+            if (_registrationListener != null)
             {
-                registrationListener.Stop();
-                registrationListener = null;
+                _registrationListener.Stop();
+                _registrationListener = null;
             }
-            if (credentialListener != null)
+            if (_credentialListener != null)
             {
-                credentialListener.Stop();
-                credentialListener = null;
+                _credentialListener.Stop();
+                _credentialListener = null;
             }
 
-            credentialListener = new TcpListener(IPAddress.Loopback, 28416); // no reason
-            registrationListener = new TcpListener(IPAddress.Loopback, 28417); // no reason
+            _credentialListener = new TcpListener(IPAddress.Loopback, 28416); // no reason
+            _registrationListener = new TcpListener(IPAddress.Loopback, 28417); // no reason
 
-            runListenLoops = true;
+            _runListenLoops = true;
             // credential provider listener
-            credentialListenThread = new Thread(new ThreadStart(listenForCredentialProvider));
-            credentialListenThread.Start();
+            _credentialListenThread = new Thread(new ThreadStart(ListenForCredentialProvider));
+            _credentialListenThread.Start();
 
             // need to use another thread to listen for incoming connections
-            registrationListenThread = new Thread(new ThreadStart(listenForRegistration));
-            registrationListenThread.Start();
+            _registrationListenThread = new Thread(new ThreadStart(ListenForRegistration));
+            _registrationListenThread.Start();
         }
 
         private void StopNetwork()
         {
             Log("Network Shutting Down");
-            runListenLoops = false;
+            _runListenLoops = false;
             try
             {
                 SystemStatus.CredentialData.ProviderActive = false;
                 SystemStatus.CredentialData.Client = null;
                 SystemStatus.AwaitingToken = false;
                 SystemStatus.RegistrationClient = null;
-                credentialListener.Stop();
-                credentialListener = null;
-                registrationListener.Stop();
-                registrationListener = null;
+                _credentialListener.Stop();
+                _credentialListener = null;
+                _registrationListener.Stop();
+                _registrationListener = null;
             }
             catch (Exception ex)
             {
@@ -330,16 +321,16 @@ namespace NFCLoc.Service.Core
         }
 
         
-        private void listenForCredentialProvider()
+        private void ListenForCredentialProvider()
         {
             Log("Credential Network Active");
-            if (credentialListener != null)
-                credentialListener.Start(3);
-            while (runListenLoops && credentialListener != null && (state == ServiceState.Running || state == ServiceState.Starting))
+            if (_credentialListener != null)
+                _credentialListener.Start(3);
+            while (_runListenLoops && _credentialListener != null && (_state == ServiceState.Running || _state == ServiceState.Starting))
             {
                 try
                 {
-                    TcpClient tc = credentialListener.AcceptTcpClient();
+                    TcpClient tc = _credentialListener.AcceptTcpClient();
                     // save the client to call it when an event happens (that we're listening for)
                     Log("TCP: credential client connected");
 
@@ -363,16 +354,16 @@ namespace NFCLoc.Service.Core
             Log("Credential Network Inactive");
         }
 
-        private void listenForRegistration()
+        private void ListenForRegistration()
         {
             Log("Registration Network Active");
-            if (registrationListener != null)
-                registrationListener.Start(3);
-            while (runListenLoops && registrationListener != null && (state == ServiceState.Running || state == ServiceState.Starting))
+            if (_registrationListener != null)
+                _registrationListener.Start(3);
+            while (_runListenLoops && _registrationListener != null && (_state == ServiceState.Running || _state == ServiceState.Starting))
             {
                 try
                 {
-                    TcpClient tc = registrationListener.AcceptTcpClient();
+                    TcpClient tc = _registrationListener.AcceptTcpClient();
                     // save the client to call it when an event happens (that we're listening for)
                     Log("TCP: registration client connected");
 
@@ -398,7 +389,7 @@ namespace NFCLoc.Service.Core
         public void ReadNetwork(object tc)
         {
             TcpClient client = tc as TcpClient;
-            while ((state == ServiceState.Running || state == ServiceState.Starting) && client != null && client.Connected)
+            while ((_state == ServiceState.Running || _state == ServiceState.Starting) && client != null && client.Connected)
             {
                 // do a read
                 try
@@ -449,9 +440,9 @@ namespace NFCLoc.Service.Core
                                     // return the current configuration for this user
                                     bool userfound = false;
                                     UserServerState uss = new UserServerState();
-                                    if (ApplicationConfiguration.Users != null)
+                                    if (_applicationConfiguration.Users != null)
                                     {
-                                        foreach (User u in ApplicationConfiguration.Users)
+                                        foreach (User u in _applicationConfiguration.Users)
                                         {
                                             if (u.Username == nm.Username)
                                             {
@@ -465,7 +456,7 @@ namespace NFCLoc.Service.Core
                                     if (!userfound)
                                         uss.UserConfiguration = new User();
                                     uss.Plugins = new List<PluginInfo>();
-                                    foreach(Lazy<INFCLocServicePlugin> p in plugins)
+                                    foreach(Lazy<INfcLocServicePlugin> p in _plugins)
                                     {
                                         uss.Plugins.Add(new PluginInfo() { Name = p.Value.GetPluginName(), Parameters = p.Value.GetParameters() });
                                     }
@@ -519,7 +510,7 @@ namespace NFCLoc.Service.Core
                                 {
                                     Log("Registering new token against all plugins");
                                     string dht = RegisterToken(nm.Username, nm.Token, nm.TokenFriendlyName);
-                                    foreach(Lazy<INFCLocServicePlugin> p in plugins)
+                                    foreach(Lazy<INfcLocServicePlugin> p in _plugins)
                                     {
                                         RegisterCredential(nm.Username, nm.Password, dht, p.Value.GetPluginName());
                                     }
@@ -565,9 +556,9 @@ namespace NFCLoc.Service.Core
 
             var isUpdated = false;
 
-            if (ApplicationConfiguration.Users != null)
+            if (_applicationConfiguration.Users != null)
             {
-                foreach (var user in ApplicationConfiguration.Users)
+                foreach (var user in _applicationConfiguration.Users)
                 {
                     var existToken = user.Tokens.FirstOrDefault(x => x.Key == token);
                     if (Equals(existToken, default(KeyValuePair<string, string>)))
@@ -592,7 +583,7 @@ namespace NFCLoc.Service.Core
             // Read local database config
             try
             {
-                var db = new IniFile(appPath + @"\Database.ini");
+                var db = new IniFile(AppPath + @"\Database.ini");
                 string ip = db.Read("IP", "Login");
                 string user = db.Read("User", "Login");
                 string pass = db.Read("Password", "Login");
@@ -604,7 +595,7 @@ namespace NFCLoc.Service.Core
                     using (new NetworkConnection($@"\\{ip}\NFCLOCCONF", cred))
                     {
                         string sc = File.ReadAllText($@"\\{ip}\NFCLOCCONF\Application.config");
-                        ApplicationConfiguration = JsonConvert.DeserializeObject<Config>(sc);
+                        _applicationConfiguration = JsonConvert.DeserializeObject<Config>(sc);
                         Log($@"Configuration loaded from \\{ip}\NFCLOCCONF\Application.config");
                         return true;
                     }
@@ -617,19 +608,19 @@ namespace NFCLoc.Service.Core
 
             try
             {
-                if (File.Exists(appPath + @"\Application.config"))
+                if (File.Exists(AppPath + @"\Application.config"))
                 {
-                    string sc = File.ReadAllText(appPath + @"\Application.config");
-                    ApplicationConfiguration = JsonConvert.DeserializeObject<Config>(sc);
-                    Log("Configuration loaded from " + appPath + @"\Application.config");
+                    string sc = File.ReadAllText(AppPath + @"\Application.config");
+                    _applicationConfiguration = JsonConvert.DeserializeObject<Config>(sc);
+                    Log("Configuration loaded from " + AppPath + @"\Application.config");
                     return true;
                 }
                 else
                 {
                     Log("No configuration file to read");
-                    ApplicationConfiguration = new Config();
-                    ApplicationConfiguration.Users = new List<User>();
-                    ApplicationConfiguration.Users.Add(new User()
+                    _applicationConfiguration = new Config();
+                    _applicationConfiguration.Users = new List<User>();
+                    _applicationConfiguration.Users.Add(new User()
                     {
                         Username = GetCurrentUsername(),
                         Events = new List<Event>(),
@@ -648,8 +639,8 @@ namespace NFCLoc.Service.Core
 
         private bool SaveConfig()
         {
-            File.WriteAllText(appPath + @"\Application.config", JsonConvert.SerializeObject(ApplicationConfiguration));
-            Log("Configuration saved to " + appPath + @"\Application.config");
+            File.WriteAllText(AppPath + @"\Application.config", JsonConvert.SerializeObject(_applicationConfiguration));
+            Log("Configuration saved to " + AppPath + @"\Application.config");
             return true;
         }
 
@@ -657,7 +648,7 @@ namespace NFCLoc.Service.Core
         {
             //string hashedToken = Crypto.Hash(rawToken);
 
-            foreach (User u in ApplicationConfiguration.Users)
+            foreach (User u in _applicationConfiguration.Users)
             {
                 //string token = Crypto.Hash(hashedToken + u.Salt);
                 if (u.Username.ToLower() == user.ToLower())
@@ -682,7 +673,7 @@ namespace NFCLoc.Service.Core
 
         private void RemoveEvent(string user, string token, string pluginName)
         {
-            foreach (User u in ApplicationConfiguration.Users)
+            foreach (User u in _applicationConfiguration.Users)
             {
                 if (u.Username.ToLower() == user.ToLower())
                 {
@@ -709,9 +700,9 @@ namespace NFCLoc.Service.Core
             User target = null;
             string hashedToken = Crypto.Hash(rawToken);
 
-            if (ApplicationConfiguration.Users != null)
+            if (_applicationConfiguration.Users != null)
             {
-                foreach(User u in ApplicationConfiguration.Users)
+                foreach(User u in _applicationConfiguration.Users)
                 {
                     if (u.Tokens.ContainsKey(Crypto.Hash(hashedToken + u.Salt)))
                         RemoveToken(u.Username, rawToken);
@@ -721,7 +712,7 @@ namespace NFCLoc.Service.Core
             }
             else
             {
-                ApplicationConfiguration.Users = new List<User>();
+                _applicationConfiguration.Users = new List<User>();
             }
             if(target == null)
             {
@@ -730,7 +721,7 @@ namespace NFCLoc.Service.Core
                 u.Events = new List<Event>();
                 u.Tokens = new Dictionary<string, string>();
                 u.Salt = new Random().Next(1000000, 9999999).ToString();
-                ApplicationConfiguration.Users.Add(u);
+                _applicationConfiguration.Users.Add(u);
                 target = u;
             }
             string dht = Crypto.Hash(hashedToken + target.Salt);
@@ -752,11 +743,11 @@ namespace NFCLoc.Service.Core
                 // check to see if there is a domain?
 
                 // password is already encoded
-                foreach(User u in ApplicationConfiguration.Users)
+                foreach(User u in _applicationConfiguration.Users)
                 {
                     if(u.Username.ToLower() == GetCurrentUsername().ToLower())
                     {
-                        Lazy<INFCLocServicePlugin> lp = plugins.Where(x => x.Value.GetPluginName() == pluginName).FirstOrDefault();
+                        Lazy<INfcLocServicePlugin> lp = _plugins.Where(x => x.Value.GetPluginName() == pluginName).FirstOrDefault();
                         if (lp == null)
                             break;
                         Dictionary<string, object> p = new Dictionary<string, object>();
@@ -786,7 +777,7 @@ namespace NFCLoc.Service.Core
         {
             try
             {
-                File.AppendAllText(_logFile, DateTime.Now.ToString("[dd-MM-yy HH:mm:ss] ") + message + Environment.NewLine);
+                File.AppendAllText(LogFile, DateTime.Now.ToString("[dd-MM-yy HH:mm:ss] ") + message + Environment.NewLine);
             }
             catch { }
         }

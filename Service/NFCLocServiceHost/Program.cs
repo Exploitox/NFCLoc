@@ -24,13 +24,13 @@ namespace NFCLoc.Service.Host
                         break;
                 }
 #if DEBUG
-                NFCLocServiceHost service1 = new NFCLocServiceHost();
+                NfcLocServiceHost service1 = new NfcLocServiceHost();
                 service1.TestStartupAndStop(args);
 #endif
             }
             else
             {
-                ServiceBase.Run(new NFCLocServiceHost());
+                ServiceBase.Run(new NfcLocServiceHost());
             }
         }
     }

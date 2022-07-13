@@ -7,11 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public class NFCReader
+public class NfcReader
 {
-    public int retCode, hCard, Protocol;
-    int hContext;
-    public bool connActive = false;
+    public int RetCode, HCard, Protocol;
+    private int _hContext;
+    public bool ConnActive = false;
     public byte[] SendBuff = new byte[263];
     public byte[] RecvBuff = new byte[263];
     public int SendLen, RecvLen;
@@ -27,37 +27,37 @@ public class NFCReader
     public event CardEventHandler CardEjected;
     public event CardEventHandler DeviceDisconnected;
     private BackgroundWorker _worker;
-    private Card.SCARD_READERSTATE RdrState;
-    private string readername;
-    private Card.SCARD_READERSTATE[] states;
+    private Card.ScardReaderstate _rdrState;
+    private string _readername;
+    private Card.ScardReaderstate[] _states;
     private void WaitChangeStatus(object sender, DoWorkEventArgs e)
     {
         while (!e.Cancel)
         {
-            int nErrCode = Card.SCardGetStatusChange(hContext, 1000, ref states[0], 1);
+            int nErrCode = Card.SCardGetStatusChange(_hContext, 1000, ref _states[0], 1);
 
-            if (nErrCode == Card.SCARD_E_SERVICE_STOPPED)
+            if (nErrCode == Card.ScardEServiceStopped)
             {
                 DeviceDisconnected();
                 e.Cancel = true;
             }
 
             //Check if the state changed from the last time.
-            if ((this.states[0].RdrEventState & 2) == 2)
+            if ((this._states[0].RdrEventState & 2) == 2)
             {
                 //Check what changed.
                 SmartcardState state = SmartcardState.None;
-                if ((this.states[0].RdrEventState & 32) == 32 && (this.states[0].RdrCurrState & 32) != 32)
+                if ((this._states[0].RdrEventState & 32) == 32 && (this._states[0].RdrCurrState & 32) != 32)
                 {
                     //The card was inserted. 
                     state = SmartcardState.Inserted;
                 }
-                else if ((this.states[0].RdrEventState & 16) == 16 && (this.states[0].RdrCurrState & 16) != 16)
+                else if ((this._states[0].RdrEventState & 16) == 16 && (this._states[0].RdrCurrState & 16) != 16)
                 {
                     //The card was ejected.
                     state = SmartcardState.Ejected;
                 }
-                if (state != SmartcardState.None && this.states[0].RdrCurrState != 0)
+                if (state != SmartcardState.None && this._states[0].RdrCurrState != 0)
                 {
                     switch (state)
                     {
@@ -81,18 +81,18 @@ public class NFCReader
                     }
                 }
                 //Update the current state for the next time they are checked.
-                this.states[0].RdrCurrState = this.states[0].RdrEventState;
+                this._states[0].RdrCurrState = this._states[0].RdrEventState;
             }
         }
     }
-    public Card.SCARD_IO_REQUEST pioSendRequest;
-    private int SendAPDUandDisplay(int reqType)
+    public Card.ScardIoRequest PioSendRequest;
+    private int SendApdUandDisplay(int reqType)
     {
         int indx;
         string tmpStr = "";
 
-        pioSendRequest.dwProtocol = Protocol;
-        pioSendRequest.cbPciLength = 8;
+        PioSendRequest.dwProtocol = Protocol;
+        PioSendRequest.cbPciLength = 8;
 
         //Display Apdu In
         for (indx = 0; indx <= SendLen - 1; indx++)
@@ -100,12 +100,12 @@ public class NFCReader
             tmpStr = tmpStr + " " + string.Format("{0:X2}", SendBuff[indx]);
         }
 
-        retCode = Card.SCardTransmit(hCard, ref pioSendRequest, ref SendBuff[0],
-                             SendLen, ref pioSendRequest, ref RecvBuff[0], ref RecvLen);
+        RetCode = Card.SCardTransmit(HCard, ref PioSendRequest, ref SendBuff[0],
+                             SendLen, ref PioSendRequest, ref RecvBuff[0], ref RecvLen);
 
-        if (retCode != Card.SCARD_S_SUCCESS)
+        if (RetCode != Card.ScardSSuccess)
         {
-            return retCode;
+            return RetCode;
         }
 
         else
@@ -167,7 +167,7 @@ public class NFCReader
                 return -200;
             }
         }
-        return retCode;
+        return RetCode;
     }
     private void ClearBuffers()
     {
@@ -196,9 +196,9 @@ public class NFCReader
         SendLen = 0x0A;
         RecvLen = 0x02;
 
-        retCode = SendAPDUandDisplay(0);
+        RetCode = SendApdUandDisplay(0);
 
-        if (retCode != Card.SCARD_S_SUCCESS)
+        if (RetCode != Card.ScardSSuccess)
         {
             //MessageBox.Show("FAIL Authentication! No:" + retCode.ToString());
             return false;
@@ -206,53 +206,53 @@ public class NFCReader
 
         return true;
     }
-    public string GetCardUID()
+    public string GetCardUid()
     {
-        string cardUID = "";
-        byte[] receivedUID = new byte[256];
-        Card.SCARD_IO_REQUEST request = new Card.SCARD_IO_REQUEST();
-        request.dwProtocol = Card.SCARD_PROTOCOL_T1;
-        request.cbPciLength = System.Runtime.InteropServices.Marshal.SizeOf(typeof(Card.SCARD_IO_REQUEST));
+        string cardUid = "";
+        byte[] receivedUid = new byte[256];
+        Card.ScardIoRequest request = new Card.ScardIoRequest();
+        request.dwProtocol = Card.ScardProtocolT1;
+        request.cbPciLength = System.Runtime.InteropServices.Marshal.SizeOf(typeof(Card.ScardIoRequest));
         byte[] sendBytes = new byte[] { 0xFF, 0xCA, 0x00, 0x00, 0x00 };
-        int outBytes = receivedUID.Length;
-        int status = Card.SCardTransmit(hCard, ref request, ref sendBytes[0], sendBytes.Length, ref request, ref receivedUID[0], ref outBytes);
+        int outBytes = receivedUid.Length;
+        int status = Card.SCardTransmit(HCard, ref request, ref sendBytes[0], sendBytes.Length, ref request, ref receivedUid[0], ref outBytes);
 
-        if (status != Card.SCARD_S_SUCCESS)
-            cardUID = "";
+        if (status != Card.ScardSSuccess)
+            cardUid = "";
         else
-            cardUID = BitConverter.ToString(receivedUID.Take(4).ToArray()).Replace("-", string.Empty).ToLower();
-        return cardUID;
+            cardUid = BitConverter.ToString(receivedUid.Take(4).ToArray()).Replace("-", string.Empty).ToLower();
+        return cardUid;
     }
     public List<string> GetReadersList()
     {
-        string ReaderList = "" + Convert.ToChar(0);
+        string readerList = "" + Convert.ToChar(0);
         int indx;
         int pcchReaders = 0;
         string rName = "";
         List<string> lstReaders = new List<string>();
         //Establish Context
-        retCode = Card.SCardEstablishContext(Card.SCARD_SCOPE_USER, 0, 0, ref hContext);
+        RetCode = Card.SCardEstablishContext(Card.ScardScopeUser, 0, 0, ref _hContext);
 
-        if (retCode != Card.SCARD_S_SUCCESS)
+        if (RetCode != Card.ScardSSuccess)
         {
             throw new Exception("Error SCardEstablishContext");
         }
 
         // 2. List PC/SC card readers installed in the system
 
-        retCode = Card.SCardListReaders(this.hContext, null, null, ref pcchReaders);
+        RetCode = Card.SCardListReaders(this._hContext, null, null, ref pcchReaders);
 
-        if (retCode != Card.SCARD_S_SUCCESS)
+        if (RetCode != Card.ScardSSuccess)
         {
             throw new Exception("Error SCardListReaders");
         }
 
-        byte[] ReadersList = new byte[pcchReaders];
+        byte[] readersList = new byte[pcchReaders];
 
         // Fill reader list
-        retCode = Card.SCardListReaders(this.hContext, null, ReadersList, ref pcchReaders);
+        RetCode = Card.SCardListReaders(this._hContext, null, readersList, ref pcchReaders);
 
-        if (retCode != Card.SCARD_S_SUCCESS)
+        if (RetCode != Card.ScardSSuccess)
         {
             throw new Exception("Error SCardListReaders");
         }
@@ -261,12 +261,12 @@ public class NFCReader
         indx = 0;
 
 
-        while (ReadersList[indx] != 0)
+        while (readersList[indx] != 0)
         {
 
-            while (ReadersList[indx] != 0)
+            while (readersList[indx] != 0)
             {
-                rName += (char)ReadersList[indx];
+                rName += (char)readersList[indx];
                 indx++;
             }
 
@@ -291,18 +291,18 @@ public class NFCReader
         return true;
     }
     */
-    public bool WriteBlock(String Text, String Block)
+    public bool WriteBlock(String text, String block)
     {
 
-        char[] tmpStr = Text.ToArray();
+        char[] tmpStr = text.ToArray();
         int indx;
-        if (AuthBlock(Block))
+        if (AuthBlock(block))
         {
             ClearBuffers();
             SendBuff[0] = 0xFF;                             // CLA
             SendBuff[1] = 0xD6;                             // INS
             SendBuff[2] = 0x00;                             // P1
-            SendBuff[3] = (byte)int.Parse(Block);           // P2 : Starting Block No.
+            SendBuff[3] = (byte)int.Parse(block);           // P2 : Starting Block No.
             SendBuff[4] = (byte)int.Parse("16");            // P3 : Data length
 
             for (indx = 0; indx <= (tmpStr).Length - 1; indx++)
@@ -312,9 +312,9 @@ public class NFCReader
             SendLen = SendBuff[4] + 5;
             RecvLen = 0x02;
 
-            retCode = SendAPDUandDisplay(2);
+            RetCode = SendApdUandDisplay(2);
 
-            if (retCode != Card.SCARD_S_SUCCESS)
+            if (RetCode != Card.ScardSSuccess)
                 return false;
             else
                 return true;
@@ -352,36 +352,36 @@ public class NFCReader
         return true;
     }
     */
-    public byte[] ReadBlock(String Block)
+    public byte[] ReadBlock(String block)
     {
         byte[] tmpStr;
         int indx;
 
-        if (AuthBlock(Block))
+        if (AuthBlock(block))
         {
             ClearBuffers();
             SendBuff[0] = 0xFF; // CLA 
             SendBuff[1] = 0xB0;// INS
             SendBuff[2] = 0x00;// P1
-            SendBuff[3] = (byte)int.Parse(Block);// P2 : Block No.
+            SendBuff[3] = (byte)int.Parse(block);// P2 : Block No.
             SendBuff[4] = (byte)int.Parse("16");// Le
 
             SendLen = 5;
             RecvLen = SendBuff[4] + 2;
 
-            retCode = SendAPDUandDisplay(2);
+            RetCode = SendApdUandDisplay(2);
 
-            if (retCode == -200)
+            if (RetCode == -200)
             {
                 return new byte[] { };
             }
 
-            if (retCode == -202)
+            if (RetCode == -202)
             {
                 return new byte[] { };
             }
 
-            if (retCode != Card.SCARD_S_SUCCESS)
+            if (RetCode != Card.ScardSSuccess)
             {
                 return new byte[] { };
             }
@@ -400,12 +400,12 @@ public class NFCReader
     public bool Connect()
     {
         string readerName = GetReadersList()[0];
-        connActive = true;
-        retCode = Card.SCardConnect(hContext, readerName, Card.SCARD_SHARE_SHARED,
-                             Card.SCARD_PROTOCOL_T0 | Card.SCARD_PROTOCOL_T1, ref hCard, ref Protocol);
-        if (retCode != Card.SCARD_S_SUCCESS)
+        ConnActive = true;
+        RetCode = Card.SCardConnect(_hContext, readerName, Card.ScardShareShared,
+                             Card.ScardProtocolT0 | Card.ScardProtocolT1, ref HCard, ref Protocol);
+        if (RetCode != Card.ScardSSuccess)
         {
-            connActive = false;
+            ConnActive = false;
             return false;
         }
         else
@@ -413,9 +413,9 @@ public class NFCReader
     }
     public void Disconnect()
     {
-        if (connActive)
+        if (ConnActive)
         {
-            retCode = Card.SCardDisconnect(hCard, Card.SCARD_UNPOWER_CARD);
+            RetCode = Card.SCardDisconnect(HCard, Card.ScardUnpowerCard);
         }
         //retCode = Card.SCardReleaseContext(hCard);
     }
@@ -433,7 +433,7 @@ public class NFCReader
         SendLen = 5;
         RecvLen = SendBuff[SendBuff.Length - 1] + 2;
 
-        retCode = SendAPDUandDisplay(2);
+        RetCode = SendApdUandDisplay(2);
 
 
         // Display data in text format
@@ -446,24 +446,24 @@ public class NFCReader
     }
     public void Watch()
     {
-        this.RdrState = new Card.SCARD_READERSTATE();
-        readername = GetReadersList()[0];
-        this.RdrState.RdrName = readername;
+        this._rdrState = new Card.ScardReaderstate();
+        _readername = GetReadersList()[0];
+        this._rdrState.RdrName = _readername;
 
-        states = new Card.SCARD_READERSTATE[1];
-        states[0] = new Card.SCARD_READERSTATE();
-        states[0].RdrName = readername;
-        states[0].UserData = 0;
-        states[0].RdrCurrState = Card.SCARD_STATE_EMPTY;
-        states[0].RdrEventState = 0;
-        states[0].ATRLength = 0;
-        states[0].ATRValue = null;
+        _states = new Card.ScardReaderstate[1];
+        _states[0] = new Card.ScardReaderstate();
+        _states[0].RdrName = _readername;
+        _states[0].UserData = 0;
+        _states[0].RdrCurrState = Card.ScardStateEmpty;
+        _states[0].RdrEventState = 0;
+        _states[0].ATRLength = 0;
+        _states[0].ATRValue = null;
         this._worker = new BackgroundWorker();
         this._worker.WorkerSupportsCancellation = true;
         this._worker.DoWork += WaitChangeStatus;
         this._worker.RunWorkerAsync();
     }
-    public NFCReader()
+    public NfcReader()
     {
     }
 }

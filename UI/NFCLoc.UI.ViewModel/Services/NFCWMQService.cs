@@ -6,19 +6,19 @@ using System.Management;
 
 namespace NFCLoc.UI.ViewModel.Services
 {
-    public class NFCWMQService
+    public class NfcwmqService
     {
-        public static ObservableCollection<NFCDevice> GetConnectedDevices()
+        public static ObservableCollection<NfcDevice> GetConnectedDevices()
         {
-            ObservableCollection<NFCDevice> devices = new ObservableCollection<NFCDevice>();
+            ObservableCollection<NfcDevice> devices = new ObservableCollection<NfcDevice>();
 
             IList<ManagementBaseObject> smartCardDevices = GetSmartCardReaders();
 
             foreach (ManagementBaseObject smartCardDevice in smartCardDevices)
             {
-                devices.Add(new NFCDevice()
+                devices.Add(new NfcDevice()
                 {
-                    ID = devices.Count + 1,
+                    Id = devices.Count + 1,
                     DeviceName = smartCardDevice.GetPropertyValue("Caption").ToString(),
                     DeviceAddress = smartCardDevice.GetPropertyValue("PNPDeviceID").ToString(),
                     DeviceManufac = smartCardDevice.GetPropertyValue("Manufacturer").ToString(),
@@ -89,27 +89,27 @@ namespace NFCLoc.UI.ViewModel.Services
             return result;
         }
     }
-    public class NFCDevice : ViewModelBase
+    public class NfcDevice : ViewModelBase
     {
-        private int _ID;
-        private string _DeviceName;
-        private string _DeviceAddress;
-        private string _DeviceManufac;
+        private int _id;
+        private string _deviceName;
+        private string _deviceAddress;
+        private string _deviceManufac;
 
 
-        public NFCDevice()
+        public NfcDevice()
         {
 
         }
-        public int ID
+        public int Id
         {
             get
             {
-                return _ID;
+                return _id;
             }
             set
             {
-                _ID = value;
+                _id = value;
                 RaisePropertyChanged();
             }
         }
@@ -117,12 +117,12 @@ namespace NFCLoc.UI.ViewModel.Services
         {
             get
             {
-                return _DeviceName;
+                return _deviceName;
             }
 
             set
             {
-                _DeviceName = value;
+                _deviceName = value;
                 RaisePropertyChanged();
             }
         }
@@ -130,12 +130,12 @@ namespace NFCLoc.UI.ViewModel.Services
         {
             get
             {
-                return _DeviceAddress;
+                return _deviceAddress;
             }
 
             set
             {
-                _DeviceAddress = value;
+                _deviceAddress = value;
                 RaisePropertyChanged();
             }
         }
@@ -143,12 +143,12 @@ namespace NFCLoc.UI.ViewModel.Services
         {
             get
             {
-                return _DeviceManufac;
+                return _deviceManufac;
             }
 
             set
             {
-                _DeviceManufac = value;
+                _deviceManufac = value;
                 RaisePropertyChanged();
             }
         }

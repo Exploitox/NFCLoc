@@ -23,11 +23,11 @@ namespace NFCLoc.UI.View.Views
     /// </summary>
     public partial class MedatixxManager : Window
     {
-        private NFCReader NFC = new NFCReader();
+        private NfcReader _nfc = new NfcReader();
 
         // Get appdata folder
-        private static string AppDataPath = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "NFCLoc");
-        private static string ListFile = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "NFCLoc", "idlist.cfg");
+        private static string _appDataPath = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "NFCLoc");
+        private static string _listFile = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "NFCLoc", "idlist.cfg");
 
         public MedatixxManager()
         {
@@ -50,13 +50,13 @@ namespace NFCLoc.UI.View.Views
 
         private void SetCurrentUserDatabase()
         {
-            if (!File.Exists(ListFile))
+            if (!File.Exists(_listFile))
             {
-                try { Directory.CreateDirectory(AppDataPath); File.WriteAllText(ListFile, ""); }
-                catch { MessageBox.Show("Cannot create file " + ListFile); Environment.Exit(1); }
+                try { Directory.CreateDirectory(_appDataPath); File.WriteAllText(_listFile, ""); }
+                catch { MessageBox.Show("Cannot create file " + _listFile); Environment.Exit(1); }
             }
 
-            string listpath = File.ReadAllText(ListFile);
+            string listpath = File.ReadAllText(_listFile);
             listBox.Items.Clear();
 
             // Write every line into listBox
@@ -77,7 +77,7 @@ namespace NFCLoc.UI.View.Views
                 return;
             }
             
-            foreach (string line in File.ReadLines(ListFile))
+            foreach (string line in File.ReadLines(_listFile))
             {
                 if (line.Contains(cID.Text))
                 {
@@ -96,7 +96,7 @@ namespace NFCLoc.UI.View.Views
                 persistence: CredentialPersistence.LocalMachine);
 
 
-            StreamWriter file = new StreamWriter(ListFile, append: true);
+            StreamWriter file = new StreamWriter(_listFile, append: true);
             file.WriteLine($"{username.Text} | {cID.Text}");
             file.Close();
 
@@ -111,18 +111,18 @@ namespace NFCLoc.UI.View.Views
                 return;
             }
             string tmpUsername = listBox.SelectedItem.ToString().Split('|')[0];
-            string Username = tmpUsername.Remove(tmpUsername.Length - 1);
+            string username = tmpUsername.Remove(tmpUsername.Length - 1);
             string cid = listBox.SelectedItem.ToString().Split('|')[1].Trim();
 
             var tempFile = System.IO.Path.GetTempFileName();
-            var linesToKeep = File.ReadLines(ListFile).Where(l => l != $"{Username} | {cid}");
+            var linesToKeep = File.ReadLines(_listFile).Where(l => l != $"{username} | {cid}");
 
             // Remove credentials from Windows Database
             CredentialManager.DeleteCredential(applicationName: $"NFCLoc_{cid}");
 
             File.WriteAllLines(tempFile, linesToKeep);
-            File.Delete(ListFile);
-            File.Move(tempFile, ListFile);
+            File.Delete(_listFile);
+            File.Move(tempFile, _listFile);
 
             // Refresh
             SetCurrentUserDatabase();
@@ -132,9 +132,9 @@ namespace NFCLoc.UI.View.Views
         {
             try
             {
-                if (NFC.Connect())
+                if (_nfc.Connect())
                 {
-                    string id = NFC.GetCardUID();
+                    string id = _nfc.GetCardUid();
                     string id2 = id.ToUpper();
                     cID.Text = $"{id2}9000";
                 }
@@ -156,11 +156,11 @@ namespace NFCLoc.UI.View.Views
                 try
                 {
                     string tmpUsername = listBox.SelectedItem.ToString().Split('|')[0];
-                    string Username = tmpUsername.Remove(tmpUsername.Length - 1);
+                    string username = tmpUsername.Remove(tmpUsername.Length - 1);
                     string cid = listBox.SelectedItem.ToString().Split('|')[1].Trim();
                     var cred = CredentialManager.ReadCredential(applicationName: $"NFCLoc_{cid}");
 
-                    username.Text = Username;
+                    this.username.Text = username;
                     cID.Text = cid;
                 }
                 catch {;}

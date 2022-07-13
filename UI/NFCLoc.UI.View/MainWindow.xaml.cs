@@ -13,7 +13,7 @@ namespace NFCLoc.UI.View
     /// </summary>
     public partial class MainWindow
     {
-        System.Windows.Forms.NotifyIcon nIcon = new System.Windows.Forms.NotifyIcon();
+        System.Windows.Forms.NotifyIcon _nIcon = new System.Windows.Forms.NotifyIcon();
         [DllImport("user32.dll")]
         private static extern
         bool SetForegroundWindow(IntPtr hWnd);
@@ -24,13 +24,13 @@ namespace NFCLoc.UI.View
         private static extern
             bool IsIconic(IntPtr hWnd);
 
-        private const int SW_HIDE = 0;
-        private const int SW_SHOWNORMAL = 1;
-        private const int SW_SHOWMINIMIZED = 2;
-        private const int SW_SHOWMAXIMIZED = 3;
-        private const int SW_SHOWNOACTIVATE = 4;
-        private const int SW_RESTORE = 9;
-        private const int SW_SHOWDEFAULT = 10;
+        private const int SwHide = 0;
+        private const int SwShownormal = 1;
+        private const int SwShowminimized = 2;
+        private const int SwShowmaximized = 3;
+        private const int SwShownoactivate = 4;
+        private const int SwRestore = 9;
+        private const int SwShowdefault = 10;
         
         public MainWindow()
         {
@@ -61,7 +61,7 @@ namespace NFCLoc.UI.View
                 // if iconic, we need to restore the window
                 if (IsIconic(hWnd))
                 {
-                    ShowWindowAsync(hWnd, SW_RESTORE);
+                    ShowWindowAsync(hWnd, SwRestore);
                 }
                 // bring it to the foreground
                 SetForegroundWindow(hWnd);
@@ -70,9 +70,9 @@ namespace NFCLoc.UI.View
             }
 
             InitializeComponent();
-            nIcon.Icon = new Icon("icon.ico");
-            nIcon.Visible = true;
-            nIcon.Click += nIcon_Click;
+            _nIcon.Icon = new Icon("icon.ico");
+            _nIcon.Visible = true;
+            _nIcon.Click += nIcon_Click;
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -137,13 +137,13 @@ namespace NFCLoc.UI.View
         static extern IntPtr SendMessage(IntPtr hwnd, uint msg,
             IntPtr wParam, IntPtr lParam);
 
-        const int GWL_EXSTYLE = -20;
-        const int WS_EX_DLGMODALFRAME = 0x0001;
-        const int SWP_NOSIZE = 0x0001;
-        const int SWP_NOMOVE = 0x0002;
-        const int SWP_NOZORDER = 0x0004;
-        const int SWP_FRAMECHANGED = 0x0020;
-        const uint WM_SETICON = 0x0080;
+        const int GwlExstyle = -20;
+        const int WsExDlgmodalframe = 0x0001;
+        const int SwpNosize = 0x0001;
+        const int SwpNomove = 0x0002;
+        const int SwpNozorder = 0x0004;
+        const int SwpFramechanged = 0x0020;
+        const uint WmSeticon = 0x0080;
 
         public static void RemoveIcon(Window window)
         {
@@ -151,12 +151,12 @@ namespace NFCLoc.UI.View
             IntPtr hwnd = new WindowInteropHelper(window).Handle;
 
             // Change the extended window style to not show a window icon
-            int extendedStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
-            SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle | WS_EX_DLGMODALFRAME);
+            int extendedStyle = GetWindowLong(hwnd, GwlExstyle);
+            SetWindowLong(hwnd, GwlExstyle, extendedStyle | WsExDlgmodalframe);
 
             // Update the window's non-client area to reflect the changes
-            SetWindowPos(hwnd, IntPtr.Zero, 0, 0, 0, 0, SWP_NOMOVE |
-                                                        SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+            SetWindowPos(hwnd, IntPtr.Zero, 0, 0, 0, 0, SwpNomove |
+                                                        SwpNosize | SwpNozorder | SwpFramechanged);
         }
 
     }

@@ -19,35 +19,34 @@
 
 // NFCCredentialProvider ////////////////////////////////////////////////////////
 
-NFCCredentialProvider::NFCCredentialProvider() :
+nfc_credential_provider::nfc_credential_provider() :
 	_cRef(1)
 {
 	MAZ_LOG(LogMessageType::Information, "NFCCredentialProvider::Constructor");
 	DllAddRef();
-	_reader = NULL;
-	_pCredential = NULL;
-	_credentialProviderEvents = NULL;
+	_reader = nullptr;
+	_pCredential = nullptr;
+	_credentialProviderEvents = nullptr;
 }
 
-NFCCredentialProvider::~NFCCredentialProvider()
+nfc_credential_provider::~nfc_credential_provider()
 {
 	MAZ_LOG(LogMessageType::Information, "NFCCredentialProvider::Destructor");
 
-	if (_pCredential != NULL)
+	if (_pCredential != nullptr)
 		_pCredential->Release();
-	_pCredential = NULL;
+	_pCredential = nullptr;
 
-	if (_reader != NULL)
-		delete _reader;
+	delete _reader;
 
 	DllRelease();
 }
 
-void NFCCredentialProvider::OnNFCStatusChanged()
+void nfc_credential_provider::OnNFCStatusChanged()
 {
 	MAZ_LOG(LogMessageType::Information, "NFCCredentialProvider::OnNFCStatusChanged");
 
-	if (_credentialProviderEvents != NULL)
+	if (_credentialProviderEvents != nullptr)
 	{
 		_defaultProvider = 0;
 		_credentialProviderEvents->CredentialsChanged(_adviseContext);
@@ -59,7 +58,7 @@ void NFCCredentialProvider::OnNFCStatusChanged()
 // for the usage scenario passed in cpus instead of saving off cpus and only creating
 // the credentials when we're asked to.
 // This sample only handles the logon and unlock scenarios as those are the most common.
-HRESULT NFCCredentialProvider::SetUsageScenario(
+HRESULT nfc_credential_provider::SetUsageScenario(
 	CREDENTIAL_PROVIDER_USAGE_SCENARIO cpus,
 	DWORD dwFlags
 )
@@ -67,7 +66,7 @@ HRESULT NFCCredentialProvider::SetUsageScenario(
 	UNREFERENCED_PARAMETER(dwFlags);
 	MAZ_LOG(LogMessageType::Information, "NFCCredentialProvider::SetUsageScenario");
 
-	HRESULT hr;
+	HRESULT hr = 0;
 	_cpus = cpus;
 
 	// Decide which scenarios to support here. Returning E_NOTIMPL simply tells the caller
@@ -78,13 +77,13 @@ HRESULT NFCCredentialProvider::SetUsageScenario(
 	case CPUS_UNLOCK_WORKSTATION:
 		if (!_pCredential && !_reader)
 		{
-			_pCredential = new NFCCredential();
-			if (_pCredential != NULL)
+			_pCredential = new nfc_credential();
+			if (_pCredential != nullptr)
 			{
-				_reader = new Reader();
-				if (_reader != NULL)
+				_reader = new reader();
+				if (_reader != nullptr)
 				{
-					hr = _reader->Initialize(this);
+					hr = _reader->initialize(this);
 
 					if (SUCCEEDED(hr))
 					{
@@ -106,15 +105,15 @@ HRESULT NFCCredentialProvider::SetUsageScenario(
 			}
 			if (FAILED(hr))
 			{
-				if (_reader != NULL)
+				if (_reader != nullptr)
 				{
 					delete _reader;
-					_reader = NULL;
+					_reader = nullptr;
 				}
-				if (_pCredential != NULL)
+				if (_pCredential != nullptr)
 				{
 					_pCredential->Release();
-					_pCredential = NULL;
+					_pCredential = nullptr;
 				}
 			}
 		}
@@ -127,6 +126,9 @@ HRESULT NFCCredentialProvider::SetUsageScenario(
 	case CPUS_CHANGE_PASSWORD:
 		hr = E_NOTIMPL;
 		break;
+
+	case CPUS_INVALID:
+	case CPUS_PLAP: break;
 
 	default:
 		hr = E_INVALIDARG;
@@ -149,7 +151,7 @@ HRESULT NFCCredentialProvider::SetUsageScenario(
 //
 // Since this sample doesn't support CPUS_CREDUI, we have not implemented the credui specific
 // pieces of this function.  For information on that, please see the credUI sample.
-STDMETHODIMP NFCCredentialProvider::SetSerialization(
+STDMETHODIMP nfc_credential_provider::SetSerialization(
 	const CREDENTIAL_PROVIDER_CREDENTIAL_SERIALIZATION* pcpcs
 )
 {
@@ -161,7 +163,7 @@ STDMETHODIMP NFCCredentialProvider::SetSerialization(
 
 // Called by LogonUI to give you a callback.  Providers often use the callback if they
 // some event would cause them to need to change the set of tiles that they enumerated
-HRESULT NFCCredentialProvider::Advise(
+HRESULT nfc_credential_provider::Advise(
 	ICredentialProviderEvents* pcpe,
 	UINT_PTR upAdviseContext
 )
@@ -173,7 +175,7 @@ HRESULT NFCCredentialProvider::Advise(
 	//fprintf(filesd,"tater\n");
 	//fclose(filesd);	
 
-	if (_credentialProviderEvents != NULL)
+	if (_credentialProviderEvents != nullptr)
 	{
 		_credentialProviderEvents->Release();
 	}
@@ -182,14 +184,14 @@ HRESULT NFCCredentialProvider::Advise(
 
 	_adviseContext = upAdviseContext;
 
-	if (_reader != NULL)
-		_reader->Start();
+	if (_reader != nullptr)
+		_reader->start();
 
 	return S_OK;
 }
 
 // Called by LogonUI when the ICredentialProviderEvents callback is no longer valid.
-HRESULT NFCCredentialProvider::UnAdvise()
+HRESULT nfc_credential_provider::UnAdvise()
 {
 	//FILE *filesd;
 	//filesd = fopen("C:\\cplog.txt", "a+");
@@ -197,13 +199,13 @@ HRESULT NFCCredentialProvider::UnAdvise()
 	//fclose(filesd);	
 	MAZ_LOG(LogMessageType::Information, "NFCCredentialProvider::UnAdvise");
 	_defaultProvider = CREDENTIAL_PROVIDER_NO_DEFAULT;
-	if (_credentialProviderEvents != NULL)
+	if (_credentialProviderEvents != nullptr)
 		_credentialProviderEvents->Release();
 
-	_credentialProviderEvents = NULL;
+	_credentialProviderEvents = nullptr;
 
-	if (_reader != NULL)
-		_reader->Stop();
+	if (_reader != nullptr)
+		_reader->stop();
 
 	return S_OK;
 }
@@ -214,7 +216,7 @@ HRESULT NFCCredentialProvider::UnAdvise()
 // to have different fields from the other tiles you enumerate for a given usage
 // scenario you must include them all in this count and then hide/show them as desired 
 // using the field descriptors.
-HRESULT NFCCredentialProvider::GetFieldDescriptorCount(
+HRESULT nfc_credential_provider::GetFieldDescriptorCount(
 	DWORD* pdwCount
 )
 {
@@ -226,7 +228,7 @@ HRESULT NFCCredentialProvider::GetFieldDescriptorCount(
 }
 
 // Gets the field descriptor for a particular field
-HRESULT NFCCredentialProvider::GetFieldDescriptorAt(
+HRESULT nfc_credential_provider::GetFieldDescriptorAt(
 	DWORD dwIndex,
 	CREDENTIAL_PROVIDER_FIELD_DESCRIPTOR** ppcpfd
 )
@@ -258,7 +260,7 @@ HRESULT NFCCredentialProvider::GetFieldDescriptorAt(
 // If *pbAutoLogonWithDefault is TRUE, LogonUI will immediately call GetSerialization
 // on the credential you've specified as the default and will submit that credential
 // for authentication without showing any further UI.
-HRESULT NFCCredentialProvider::GetCredentialCount(
+HRESULT nfc_credential_provider::GetCredentialCount(
 	DWORD* pdwCount,
 	DWORD* pdwDefault,
 	BOOL* pbAutoLogonWithDefault
@@ -277,7 +279,7 @@ HRESULT NFCCredentialProvider::GetCredentialCount(
 
 // Returns the credential at the index specified by dwIndex. This function is called by logonUI to enumerate
 // the tiles.
-HRESULT NFCCredentialProvider::GetCredentialAt(
+HRESULT nfc_credential_provider::GetCredentialAt(
 	DWORD dwIndex,
 	ICredentialProviderCredential** ppcpc
 )
@@ -306,7 +308,7 @@ HRESULT NFCLocCredentialProvider_CreateInstance(REFIID riid, void** ppv)
 
 	HRESULT hr;
 
-	NFCCredentialProvider* pProvider = new NFCCredentialProvider();
+	auto* pProvider = new nfc_credential_provider();
 
 	if (pProvider)
 	{

@@ -45,25 +45,25 @@ namespace NFCLoc.GUI.Pages
 
         public class Cards
         {
-            private string nameValue;
+            private string _nameValue;
 
             public string Name
             {
-                get { return nameValue; }
-                set { nameValue = value; }
+                get { return _nameValue; }
+                set { _nameValue = value; }
             }
 
-            private double idValue;
+            private double _idValue;
 
-            public double ID
+            public double Id
             {
-                get { return idValue; }
+                get { return _idValue; }
 
                 set
                 {
-                    if (value != idValue)
+                    if (value != _idValue)
                     {
-                        idValue = value;
+                        _idValue = value;
                     }
                 }
             }

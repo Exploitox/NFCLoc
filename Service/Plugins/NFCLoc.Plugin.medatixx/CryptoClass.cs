@@ -11,10 +11,10 @@ namespace NFCLoc.Plugin.medatixx
 {
     public class CryptoUtils
     {
-        private const CipherMode cipherMode = CipherMode.CBC;
-        private const PaddingMode paddingMode = PaddingMode.ISO10126;
-        private const string defaultVector = "fdsah123456789";
-        private const int iterations = 2;
+        private const CipherMode CipherMode = System.Security.Cryptography.CipherMode.CBC;
+        private const PaddingMode PaddingMode = System.Security.Cryptography.PaddingMode.ISO10126;
+        private const string DefaultVector = "fdsah123456789";
+        private const int Iterations = 2;
 
         public static string CreateSalt()
         {
@@ -78,12 +78,12 @@ namespace NFCLoc.Plugin.medatixx
         private static Rijndael GetCrypto(string passphrase)
         {
             var crypt = Rijndael.Create();
-            crypt.Mode = cipherMode;
-            crypt.Padding = paddingMode;
+            crypt.Mode = CipherMode;
+            crypt.Padding = PaddingMode;
             crypt.BlockSize = 256;
             crypt.KeySize = 256;
-            crypt.Key = new Rfc2898DeriveBytes(passphrase, Encoding.Unicode.GetBytes(defaultVector), iterations).GetBytes(32);
-            crypt.IV = new Rfc2898DeriveBytes(passphrase, Encoding.Unicode.GetBytes(defaultVector), iterations).GetBytes(32);
+            crypt.Key = new Rfc2898DeriveBytes(passphrase, Encoding.Unicode.GetBytes(DefaultVector), Iterations).GetBytes(32);
+            crypt.IV = new Rfc2898DeriveBytes(passphrase, Encoding.Unicode.GetBytes(DefaultVector), Iterations).GetBytes(32);
             return crypt;
         }
     }

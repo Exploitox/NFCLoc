@@ -58,9 +58,9 @@ namespace NFCLoc.UI.ViewModel.ViewModels
                 if (File.Exists(servicePath + @"\Application.config"))
                 {
                     string sc = File.ReadAllText(servicePath + @"\Application.config");
-                    Config ApplicationConfiguration = JsonConvert.DeserializeObject<Config>(sc);
+                    Config applicationConfiguration = JsonConvert.DeserializeObject<Config>(sc);
                     string hashedToken = Crypto.Hash(token);
-                    foreach (var item in ApplicationConfiguration.Users)
+                    foreach (var item in applicationConfiguration.Users)
                     {
                         foreach (var t in item.Tokens)
                         {

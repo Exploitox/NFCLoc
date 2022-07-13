@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-static class Helper
+internal static class Helper
 {
 	public static IEnumerable<string> SplitByLength(this string str, int maxLength)
 	{

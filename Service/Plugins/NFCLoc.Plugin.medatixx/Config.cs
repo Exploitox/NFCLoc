@@ -10,13 +10,13 @@
         #region Debug Config
 
 #if DEBUG
-        public static bool debug = true;
+        public static bool Debug = true;
 #else
         public static bool debug = false;
 #endif
-        public static bool skipWait = false;
+        public static bool SkipWait = false;
 
-        public static string IsDebug() { if (debug) { return "Debug Build"; } return "Production Build"; }
+        public static string IsDebug() { if (Debug) { return "Debug Build"; } return "Production Build"; }
 
         #endregion
     }
