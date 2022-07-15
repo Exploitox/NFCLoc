@@ -9,6 +9,7 @@
     <system:String x:Key="next">Weiter</system:String>
     <system:String x:Key="finish">Fertig</system:String>
     <system:String x:Key="remove">Löschen</system:String>
+    <system:String x:Key="settings">Einstellungen</system:String>
 
     <!-- Login -->
     <system:String x:Key="login_manageNFC">NFC Karten verwalten</system:String>
@@ -19,8 +20,10 @@
     <!-- About -->
     <system:String x:Key="about_abouttext">Über NFCLoc</system:String>
     <system:String x:Key="about_text">NFCLoc provides NFC based login and logout functionality for the Microsoft Windows Operating System. The NFCLoc can be used to make payments, access control, unlock &amp; control mobile devices, transfer information, link people and much more.</system:String>
+    <system:String x:Key="about_authentication">Autorisierungsserver</system:String>
+    <system:String x:Key="about_authstatus">Lokale Autorisierung</system:String>
 
-    <!-- FinishedStepView -->
+<!-- FinishedStepView -->
     <system:String x:Key="fsv_header">Fertig!</system:String>
     <system:String x:Key="fsv_h2">Du kannst nun deine Karte zum Sperren und Entsperren deines PC's verwenden. Lege einfach deine Karte auf das Lesegerät.</system:String>
     <system:String x:Key="fsv_h3">Auf der nächsten Seite können Sie auch weitere Karten für andere Benutzer hinzufügen oder den Zugang sperren.</system:String>

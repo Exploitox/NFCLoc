@@ -9,6 +9,7 @@
     <system:String x:Key="next">Next</system:String>
     <system:String x:Key="finish">Finish</system:String>
     <system:String x:Key="remove">Remove</system:String>
+    <system:String x:Key="settings">Settings</system:String>
 
     <!-- Login -->
     <system:String x:Key="login_manageNFC">Manage NFC Cards</system:String>
@@ -19,7 +20,9 @@
     <!-- About -->
     <system:String x:Key="about_abouttext">About NFCLoc</system:String>
     <system:String x:Key="about_text">NFCLoc provides NFC based login and logout functionality for the Microsoft Windows Operating System. The NFCLoc can be used to make payments, access control, unlock &amp; control mobile devices, transfer information, link people and much more.</system:String>
-    
+    <system:String x:Key="about_authentication">Authentication server</system:String>
+    <system:String x:Key="about_authstatus">Local authentication</system:String>
+
     <!-- FinishedStepView -->
     <system:String x:Key="fsv_header">Finished!</system:String>
     <system:String x:Key="fsv_h2">You can now use your card to lock and unlock your computer. Just tap your card on the reader!</system:String>

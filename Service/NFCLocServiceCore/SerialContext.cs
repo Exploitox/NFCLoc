@@ -10,19 +10,19 @@ namespace NFCLoc.Service.Core
 {
     public class SerialContext
     {
-        private static Dictionary<string, double> _currentIds = new Dictionary<string, double>();
-        static object _idSyncRoot = new object();
-        const int TagTimeoutMs = 500;
+        private static readonly Dictionary<string, double> CurrentIds = new Dictionary<string, double>();
+        private static readonly object IdSyncRoot = new object();
+        private const int TagTimeoutMs = 500;
 
-        private static Dictionary<string, SerialConnection> _openPorts = new Dictionary<string, SerialConnection>();
-        static object _readerSyncRoot = new object();
+        private static readonly Dictionary<string, SerialConnection> OpenPorts = new Dictionary<string, SerialConnection>();
+        private static readonly object ReaderSyncRoot = new object();
 
-        private static Dictionary<string, int> _inaccessiblePorts = new Dictionary<string, int>();
+        private static readonly Dictionary<string, int> InaccessiblePorts = new Dictionary<string, int>();
 
-        DateTime _startTime = DateTime.Now;
+        private readonly DateTime _startTime = DateTime.Now;
 
-        Timer _reEnumeratePortsTimer = null;
-        Timer _clearFailedPortsTimer = null;
+        private readonly Timer _reEnumeratePortsTimer = null;
+        private readonly Timer _clearFailedPortsTimer = null;
 
         public SerialContext()
         {
@@ -34,18 +34,18 @@ namespace NFCLoc.Service.Core
 
         private void ClearFailedPorts(object state)
         {
-            lock (_readerSyncRoot)
+            lock (ReaderSyncRoot)
             {
-                _inaccessiblePorts.Clear();
+                InaccessiblePorts.Clear();
             }
         }
 
         private void CheckPorts(object state)
         {
-            lock(_readerSyncRoot)
+            lock(ReaderSyncRoot)
             {
                 List<string> deadReaders = new List<string>();
-                foreach(KeyValuePair<string, SerialConnection> kvp in _openPorts)
+                foreach(KeyValuePair<string, SerialConnection> kvp in OpenPorts)
                 {
                     if(!kvp.Value.Port.IsOpen)
                     {
@@ -54,7 +54,7 @@ namespace NFCLoc.Service.Core
                 }
                 foreach(string s in deadReaders)
                 {
-                    _openPorts.Remove(s);
+                    OpenPorts.Remove(s);
                 }
                 EnumeratePorts();
             }
@@ -64,65 +64,78 @@ namespace NFCLoc.Service.Core
         {
             _reEnumeratePortsTimer.Change(Timeout.Infinite, Timeout.Infinite);
             _clearFailedPortsTimer.Change(Timeout.Infinite, Timeout.Infinite);
-            lock (_readerSyncRoot)
+            lock (ReaderSyncRoot)
             {
-                foreach (SerialConnection sp in _openPorts.Values)
+                foreach (var sp in OpenPorts.Values.Where(sp => sp.Port.IsOpen))
                 {
-                    if (sp.Port.IsOpen)
-                    {
-                        sp.Port.Write("STOP\n");
-                    }
+                    sp.Port.Write("STOP\n");
                 }
                 Thread.Sleep(500);
-                foreach (SerialConnection sp in _openPorts.Values)
+                foreach (SerialConnection sp in OpenPorts.Values)
                 {
                     sp.Port.DataReceived -= P_DataReceived;
                     if (sp.Port.IsOpen)
                         sp.Port.Close();
                 }
-                _openPorts.Clear();
+                OpenPorts.Clear();
             }
 
-            lock (_idSyncRoot)
+            lock (IdSyncRoot)
             {                
-                _currentIds.Clear();
+                CurrentIds.Clear();
             }
         }
 
         public List<string> GetReaders()
         {
-            return _openPorts.Keys.ToList();
+            return OpenPorts.Keys.ToList();
         }
 
         // I need to re-run this occasionally in case a new device has been added?
         private void EnumeratePorts()
         {
-            lock (_readerSyncRoot)
+            lock (ReaderSyncRoot)
             {
-                string[] ports = SerialPort.GetPortNames();
-                List<string> devices = new List<string>();
-                foreach (string portName in ports)
+                var ports = SerialPort.GetPortNames();
+                var devices = new List<string>();
+                foreach (var portName in ports)
                 {
-                    if (_openPorts.ContainsKey(portName))
+                    if (OpenPorts.ContainsKey(portName))
                     {
                         continue;
                     }
-                    if(_inaccessiblePorts.ContainsKey(portName) && _inaccessiblePorts[portName] > 3)
+                    if(InaccessiblePorts.ContainsKey(portName) && InaccessiblePorts[portName] > 3)
                     {
                         continue;
                     }
-                    SerialPort p = new SerialPort(portName, 115200);
-                    if (!p.IsOpen)
+                    var p = new SerialPort(portName, 115200);
+                    if (p.IsOpen) continue;
+                    try
                     {
-                        try
+                        p.Open();
+                        if (p.IsOpen)
                         {
-                            p.Open();
-                            if (p.IsOpen)
+                            Thread.Sleep(500);
+                            p.Write("SHAKE\n");
+                            var i = 0;
+                            while(p.BytesToRead <= 0 && i < 30)
                             {
-                                Thread.Sleep(500);
-                                p.Write("SHAKE\n");
-                                int i = 0;
-                                while(p.BytesToRead <= 0 && i < 30)
+                                Thread.Sleep(10);
+                                i++;
+                            }
+                            if (p.BytesToRead <= 0)
+                            {
+                                p.Close();
+                                continue;
+                            }
+                            var s = p.ReadLine();
+                            if (s.Trim() == "NFC READER")
+                            {
+                                if (InaccessiblePorts.ContainsKey(portName))
+                                    InaccessiblePorts.Remove(portName);
+                                p.Write("IDENT\n");
+                                i = 0;
+                                while (p.BytesToRead <= 0 && i < 25)
                                 {
                                     Thread.Sleep(10);
                                     i++;
@@ -132,55 +145,37 @@ namespace NFCLoc.Service.Core
                                     p.Close();
                                     continue;
                                 }
-                                string s = p.ReadLine();
-                                if (s.Trim() == "NFC READER")
+                                s = p.ReadLine();
+                                p.Write("START\n");
+                                i = 0;
+                                while (p.BytesToRead <= 0 && i < 25)
                                 {
-                                    if (_inaccessiblePorts.ContainsKey(portName))
-                                        _inaccessiblePorts.Remove(portName);
-                                    p.Write("IDENT\n");
-                                    i = 0;
-                                    while (p.BytesToRead <= 0 && i < 25)
-                                    {
-                                        Thread.Sleep(10);
-                                        i++;
-                                    }
-                                    if (p.BytesToRead <= 0)
-                                    {
-                                        p.Close();
-                                        continue;
-                                    }
-                                    s = p.ReadLine();
-                                    p.Write("START\n");
-                                    i = 0;
-                                    while (p.BytesToRead <= 0 && i < 25)
-                                    {
-                                        Thread.Sleep(10);
-                                        i++;
-                                    }
-                                    if (p.BytesToRead <= 0)
-                                    {
-                                        p.Close();
-                                        continue;
-                                    }
-                                    s = p.ReadLine();
-                                    devices.Add(s.Trim());
-                                    p.DataReceived += P_DataReceived;
-                                    _openPorts.Add(portName, new SerialConnection() { Port = p, ReaderName = s });
+                                    Thread.Sleep(10);
+                                    i++;
                                 }
-                                else
+                                if (p.BytesToRead <= 0)
                                 {
                                     p.Close();
+                                    continue;
                                 }
+                                s = p.ReadLine();
+                                devices.Add(s.Trim());
+                                p.DataReceived += P_DataReceived;
+                                OpenPorts.Add(portName, new SerialConnection() { Port = p, ReaderName = s });
+                            }
+                            else
+                            {
+                                p.Close();
                             }
                         }
-                        catch
-                        {
-                            // couldnt open the port for some reason. already open elsewhere?
-                            if (_inaccessiblePorts.ContainsKey(portName))
-                                _inaccessiblePorts[portName] = _inaccessiblePorts[portName] + 1;
-                            else
-                                _inaccessiblePorts.Add(portName, 1);
-                        }
+                    }
+                    catch
+                    {
+                        // couldnt open the port for some reason. already open elsewhere?
+                        if (InaccessiblePorts.ContainsKey(portName))
+                            InaccessiblePorts[portName] = InaccessiblePorts[portName] + 1;
+                        else
+                            InaccessiblePorts.Add(portName, 1);
                     }
                 }
             }
@@ -188,29 +183,29 @@ namespace NFCLoc.Service.Core
 
         private void P_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            string s = (sender as SerialPort)?.ReadLine();
+            var s = (sender as SerialPort)?.ReadLine();
             s = s.Trim();
             if (s == "OK")
                 return;
-            lock (_idSyncRoot)
+            lock (IdSyncRoot)
             {
-                if (_currentIds.ContainsKey(s))
+                if (CurrentIds.ContainsKey(s))
                 {
-                    _currentIds[s] = (DateTime.Now - _startTime).TotalMilliseconds;
+                    CurrentIds[s] = (DateTime.Now - _startTime).TotalMilliseconds;
                 }
                 else
                 {
-                    _currentIds.Add(s, (DateTime.Now - _startTime).TotalMilliseconds);
+                    CurrentIds.Add(s, (DateTime.Now - _startTime).TotalMilliseconds);
                 }
             }
         }
 
-        public List<string> GetIds()
+        public IEnumerable<string> GetIds()
         {
-            lock(_idSyncRoot)
+            lock(IdSyncRoot)
             {
                 List<string> deadTokens = new List<string>();
-                foreach(KeyValuePair<string, double> kvp in _currentIds)
+                foreach(KeyValuePair<string, double> kvp in CurrentIds)
                 {
                     if((DateTime.Now - _startTime).TotalMilliseconds > (kvp.Value + 200))
                     {
@@ -218,13 +213,13 @@ namespace NFCLoc.Service.Core
                     }
                 }
                 foreach (string id in deadTokens)
-                    _currentIds.Remove(id);
-                return _currentIds.Keys.ToList();
+                    CurrentIds.Remove(id);
+                return CurrentIds.Keys.ToList();
             }
         }
     }
 
-    class SerialConnection
+    internal class SerialConnection
     {
         public SerialPort Port { get; set; }
         public string ReaderName { get; set; }

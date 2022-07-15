@@ -101,6 +101,11 @@ namespace NFCLoc.UI.ViewModel.ViewModels
         public RelayCommand MedatixxCommand { get; }
 
         /// <summary>
+        /// Settings window command.
+        /// </summary>
+        public RelayCommand SettingsCommand { get; }
+
+        /// <summary>
         /// About command.
         /// </summary>
         public RelayCommand AboutCommand { get; }
@@ -176,6 +181,7 @@ namespace NFCLoc.UI.ViewModel.ViewModels
 
             AddCommand = new RelayCommand(Add, () => AllowAdd);
             MedatixxCommand = new RelayCommand(MedatixxManager);
+            SettingsCommand = new RelayCommand(SettingsWindow);
             RemoveCommand = new RelayCommand<RingItemViewModel>(Remove);
             SelectImageCommand = new RelayCommand<string>(SelectImage);
             SaveNameCommand = new RelayCommand<object>(SaveName, x => !string.IsNullOrEmpty(Items.FirstOrDefault(y => Equals(x, y.Token))?.Name));
@@ -230,6 +236,11 @@ namespace NFCLoc.UI.ViewModel.ViewModels
         private void MedatixxManager()
         {
             Messenger.Default.Send(new MedatixxManagerViewModel());
+        }
+
+        private void SettingsWindow()
+        {
+            Messenger.Default.Send(new SettingsViewModel());
         }
 
         private void Close()

@@ -20,9 +20,9 @@ using NFCLoc.UI.View.NFC;
 namespace NFCLoc.UI.View.Views
 {
     /// <summary>
-    /// Interaction logic for MedatixxManager.xaml
+    /// Interaction logic for SettingsWindow.xaml
     /// </summary>
-    public partial class MedatixxManager : Window
+    public partial class SettingsWindow : Window
     {
         private NfcReader _nfc = new NfcReader();
 
@@ -30,7 +30,7 @@ namespace NFCLoc.UI.View.Views
         private static string _appDataPath = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "NFCLoc");
         private static string _listFile = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "NFCLoc", "idlist.cfg");
 
-        public MedatixxManager()
+        public SettingsWindow()
         {
             InitializeComponent();
             SetCurrentUserDatabase();

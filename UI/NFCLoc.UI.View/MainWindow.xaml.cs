@@ -13,24 +13,19 @@ namespace NFCLoc.UI.View
     /// </summary>
     public partial class MainWindow
     {
-        System.Windows.Forms.NotifyIcon _nIcon = new System.Windows.Forms.NotifyIcon();
+        private readonly System.Windows.Forms.NotifyIcon _nIcon = new System.Windows.Forms.NotifyIcon();
         [DllImport("user32.dll")]
         private static extern
         bool SetForegroundWindow(IntPtr hWnd);
         [DllImport("user32.dll")]
         private static extern
             bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
+
         [DllImport("user32.dll")]
         private static extern
             bool IsIconic(IntPtr hWnd);
 
-        private const int SwHide = 0;
-        private const int SwShownormal = 1;
-        private const int SwShowminimized = 2;
-        private const int SwShowmaximized = 3;
-        private const int SwShownoactivate = 4;
         private const int SwRestore = 9;
-        private const int SwShowdefault = 10;
         
         public MainWindow()
         {
@@ -137,13 +132,12 @@ namespace NFCLoc.UI.View
         static extern IntPtr SendMessage(IntPtr hwnd, uint msg,
             IntPtr wParam, IntPtr lParam);
 
-        const int GwlExstyle = -20;
-        const int WsExDlgmodalframe = 0x0001;
-        const int SwpNosize = 0x0001;
-        const int SwpNomove = 0x0002;
-        const int SwpNozorder = 0x0004;
-        const int SwpFramechanged = 0x0020;
-        const uint WmSeticon = 0x0080;
+        private const int GwlExStyle = -20;
+        private const int WsExDlgModalFrame = 0x0001;
+        private const int SwpNoSize = 0x0001;
+        private const int SwpNoMove = 0x0002;
+        private const int SwpNozOrder = 0x0004;
+        private const int SwpFrameChanged = 0x0020;
 
         public static void RemoveIcon(Window window)
         {
@@ -151,12 +145,12 @@ namespace NFCLoc.UI.View
             IntPtr hwnd = new WindowInteropHelper(window).Handle;
 
             // Change the extended window style to not show a window icon
-            int extendedStyle = GetWindowLong(hwnd, GwlExstyle);
-            SetWindowLong(hwnd, GwlExstyle, extendedStyle | WsExDlgmodalframe);
+            int extendedStyle = GetWindowLong(hwnd, GwlExStyle);
+            SetWindowLong(hwnd, GwlExStyle, extendedStyle | WsExDlgModalFrame);
 
             // Update the window's non-client area to reflect the changes
-            SetWindowPos(hwnd, IntPtr.Zero, 0, 0, 0, 0, SwpNomove |
-                                                        SwpNosize | SwpNozorder | SwpFramechanged);
+            SetWindowPos(hwnd, IntPtr.Zero, 0, 0, 0, 0, SwpNoMove |
+                                                        SwpNoSize | SwpNozOrder | SwpFrameChanged);
         }
 
     }

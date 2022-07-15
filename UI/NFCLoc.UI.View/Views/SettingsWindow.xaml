@@ -1,0 +1,74 @@
+﻿<Window x:Class="NFCLoc.UI.View.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NFCLoc.UI.View.Views"
+        mc:Ignorable="d"
+        WindowStyle="ToolWindow"
+        WindowStartupLocation="CenterScreen"
+        
+        Title="NFCLoc - Settings" Height="420" Width="600" Closing="Window_Closing">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Image 
+            Source="/NFCLoc.UI.View;component/Assets/Wolkenhof-Logo.png" Stretch="Uniform"
+            Margin="130,10,130,0"/>
+
+        <Grid Grid.Row="1" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="200"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="240"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="40"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="1" Grid.Column="0">
+                <ListBox x:Name="listBox" Height="240" SelectionChanged="listBox_SelectionChanged"/>
+            </StackPanel>
+
+            <StackPanel Grid.Row="1" Grid.Column="1">
+                <Label Content="test" Margin="2,0,2,0"/>
+                <TextBox x:Name="username" Margin="8,0,8,0"/>
+
+                <Label Content="{DynamicResource lsv_Password}" Margin="2,0,2,0"/>
+                <TextBox x:Name="password" Margin="8,0,8,0"/>
+
+                <Label Content="{DynamicResource mcm_cardid}" Margin="2,0,2,0"/>
+                <TextBox x:Name="cID" Margin="8,0,8,8"/>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Button Grid.Row="0" Content="{DynamicResource mcm_read_card}" x:Name="addButton" Margin="8,0,8,8" Click="ReadCard"/>
+
+                    <Grid Grid.Row="1" Margin="0,51,0,-51">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0" Content="{DynamicResource mcm_remove}" Margin="8,0,8,0" Click="RemoveCard"/>
+                        <Button Grid.Column="1" Content="{DynamicResource mcm_add}" Margin="8,0,8,0" Click="RegisterCard"/>
+                    </Grid>
+
+                </Grid>
+            </StackPanel>
+
+            <DockPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
+                <Button IsDefault="True" IsCancel="True" Content="{DynamicResource close}" VerticalAlignment="Center" HorizontalAlignment="Right" Width="60" Height="25" Margin="0,0,8,0" />
+            </DockPanel>
+        </Grid>
+    </Grid>
+</Window>

@@ -192,8 +192,8 @@ namespace NFCLoc.Plugin.Unlock
             private const uint TokenDuplicate = 0x0002;
             private const uint TokenAssignPrimary = 0x0001;
             private const int GenericAllAccess = 0x10000000;
-            private const int StartfUseshowwindow = 0x00000001;
-            private const int StartfForceonfeedback = 0x00000040;
+            private const int StartFUseShowWindow = 0x00000001;
+            private const int StartFForceOnFeedback = 0x00000040;
             private const uint CreateUnicodeEnvironment = 0x00000400;
 
             private static bool LaunchProcessAsUser(string cmdLine, IntPtr token, IntPtr envBlock)
@@ -220,7 +220,7 @@ namespace NFCLoc.Plugin.Unlock
                 //existing desktop. 
 
                 si.lpDesktop = @"WinSta0\Default"; //Modify as needed 
-                si.dwFlags = StartfUseshowwindow | StartfForceonfeedback;
+                si.dwFlags = StartFUseShowWindow | StartFForceOnFeedback;
                 si.wShowWindow = SwShow;
                 //Set other si properties as required. 
 

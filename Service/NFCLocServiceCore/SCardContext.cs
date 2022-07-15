@@ -10,42 +10,42 @@ namespace NFCLoc.Libraries
     public class SCardContext
     {
         [DllImport("Winscard.dll", CallingConvention = CallingConvention.StdCall, ExactSpelling = true, CharSet = CharSet.Unicode)]
-        public static extern Hresult SCardEstablishContext(ScardScope scope, IntPtr reserved1, IntPtr reserved2, [Out] out IntPtr hContext);
+        private static extern Hresult SCardEstablishContext(ScardScope scope, IntPtr reserved1, IntPtr reserved2, [Out] out IntPtr hContext);
 
         [DllImport("Winscard.dll", CallingConvention = CallingConvention.StdCall, ExactSpelling = true, CharSet = CharSet.Unicode)]
-        public static extern Hresult SCardListReadersW(IntPtr hContext, IntPtr group, IntPtr readers, [Out] out uint len);
+        private static extern Hresult SCardListReadersW(IntPtr hContext, IntPtr group, IntPtr readers, [Out] out uint len);
 
         [DllImport("Winscard.dll", CallingConvention = CallingConvention.StdCall, ExactSpelling = true, CharSet = CharSet.Unicode)]
-        public static extern Hresult SCardConnectW(IntPtr hContext, string reader, ScardShareMode shareMode, ScardProtocol preferredProtocolFlags, [Out] out IntPtr hCard, [Out] out ScardProtocol activeProtocol);
+        private static extern Hresult SCardConnectW(IntPtr hContext, string reader, ScardShareMode shareMode, ScardProtocol preferredProtocolFlags, [Out] out IntPtr hCard, [Out] out ScardProtocol activeProtocol);
 
         [DllImport("Winscard.dll", CallingConvention = CallingConvention.StdCall, ExactSpelling = true, CharSet = CharSet.Unicode)]
-        public static extern Hresult SCardTransmit(IntPtr hCard, IntPtr sendPci, IntPtr buffer, uint bufferLen, IntPtr recvPci, IntPtr receiveBuffer, [Out] out uint receiveBufferLen);
+        private static extern Hresult SCardTransmit(IntPtr hCard, IntPtr sendPci, IntPtr buffer, uint bufferLen, IntPtr recvPci, IntPtr receiveBuffer, [Out] out uint receiveBufferLen);
 
         [DllImport("Winscard.dll", CallingConvention = CallingConvention.StdCall, ExactSpelling = true, CharSet = CharSet.Unicode)]
-        public static extern Hresult SCardDisconnect(IntPtr hCard, ScardDisconnect options);
+        private static extern Hresult SCardDisconnect(IntPtr hCard, ScardDisconnect options);
 
         [DllImport("Winscard.dll", CallingConvention = CallingConvention.StdCall, ExactSpelling = true, CharSet = CharSet.Unicode)]
         public static extern Hresult SCardFreeMemory(IntPtr hContext, string reader);
 
         [DllImport("Winscard.dll", CallingConvention = CallingConvention.StdCall, ExactSpelling = true, CharSet = CharSet.Unicode)]
-        public static extern Hresult SCardReleaseContext(IntPtr hContext);
+        private static extern Hresult SCardReleaseContext(IntPtr hContext);
 
         [DllImport("Kernel32.dll", CallingConvention = CallingConvention.StdCall, ExactSpelling = true, CharSet = CharSet.Unicode)]
-        public static extern IntPtr LoadLibraryW(string fileName);
+        private static extern IntPtr LoadLibraryW(string fileName);
 
         [DllImport("Kernel32.dll", CallingConvention = CallingConvention.StdCall, ExactSpelling = true, CharSet = CharSet.Unicode)]
-        public static extern IntPtr FreeLibrary(IntPtr hModule);
+        private static extern IntPtr FreeLibrary(IntPtr hModule);
 
         [DllImport("Kernel32.dll", CallingConvention = CallingConvention.StdCall, ExactSpelling = true, CharSet = CharSet.Ansi)]
-        public static extern IntPtr GetProcAddress(IntPtr hModule, string objName);
+        private static extern IntPtr GetProcAddress(IntPtr hModule, string objName);
 
         [DllImport("Kernel32.dll", EntryPoint = "CopyMemory")]
-        public static extern void CopyMemory(IntPtr dest, IntPtr src, uint count);
+        private static extern void CopyMemory(IntPtr dest, IntPtr src, uint count);
 
         private IntPtr _context = IntPtr.Zero;
-        private IntPtr _sCardT0Pci;
-        private IntPtr _sCardT1Pci;
-        private IntPtr _requestIdCommand;
+        private readonly IntPtr _sCardT0Pci;
+        private readonly IntPtr _sCardT1Pci;
+        private readonly IntPtr _requestIdCommand;
 
         public SCardContext()
         {
@@ -74,7 +74,7 @@ namespace NFCLoc.Libraries
             }
         }
 
-        public List<string> GetReaders()
+        private List<string> GetReaders()
         {
             Hresult hr = Hresult.ScardFUnknownError;
             List<string> readers = new List<string>();
@@ -98,7 +98,7 @@ namespace NFCLoc.Libraries
                 }
                 catch
                 {
-
+                    // ignored
                 }
                 finally
                 {
