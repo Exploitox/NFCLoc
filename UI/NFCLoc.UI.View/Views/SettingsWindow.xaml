@@ -7,8 +7,7 @@
         mc:Ignorable="d"
         WindowStyle="ToolWindow"
         WindowStartupLocation="CenterScreen"
-        
-        Title="NFCLoc - Settings" Height="420" Width="600" Closing="Window_Closing">
+        Title="NFCLoc - Settings" Height="420" Width="600">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="80"/>
@@ -18,11 +17,7 @@
             Source="/NFCLoc.UI.View;component/Assets/Wolkenhof-Logo.png" Stretch="Uniform"
             Margin="130,10,130,0"/>
 
-        <Grid Grid.Row="1" Margin="10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="200"/>
-            </Grid.ColumnDefinitions>
+        <Grid Grid.Row="1" Margin="10" ShowGridLines="false">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -31,44 +26,53 @@
                 <RowDefinition Height="40"/>
             </Grid.RowDefinitions>
 
-            <StackPanel Grid.Row="1" Grid.Column="0">
-                <ListBox x:Name="listBox" Height="240" SelectionChanged="listBox_SelectionChanged"/>
+            <StackPanel>
+                <StackPanel.Resources>
+                    <Style TargetType="{x:Type CheckBox}">
+                        <Setter Property="Margin" Value="0,10,0,0"/>
+                    </Style>
+                </StackPanel.Resources>
+
+                <CheckBox Content="Show on startup"/> 
+                <GroupBox Header="Authentication Server Information" Margin="0,10,0,0">
+                    <StackPanel>
+                        <CheckBox x:Name="a" Content="Use Authentication Server" Margin="0,10,0,0"/>
+                        <Grid Margin="0,10,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                FontSize="12"
+                                Margin="0,0,0,0"
+                                Text="IP Address:" />
+                            <TextBox x:Name="TbIp" Grid.Column="1" IsEnabled="false" />
+                        </Grid>
+                        <Grid Margin="0,10,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                FontSize="12"
+                                Margin="0,0,0,0"
+                                Text="Username:" />
+                            <TextBox x:Name="TbUser" Grid.Column="1" IsEnabled="false" />
+                        </Grid>
+                        <Grid Margin="0,10,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                FontSize="12"
+                                Margin="0,0,0,0"
+                                Text="Password:" />
+                            <TextBox x:Name="TbPW" Grid.Column="1" IsEnabled="false" />
+                        </Grid>
+                    </StackPanel>
+                </GroupBox>
             </StackPanel>
-
-            <StackPanel Grid.Row="1" Grid.Column="1">
-                <Label Content="test" Margin="2,0,2,0"/>
-                <TextBox x:Name="username" Margin="8,0,8,0"/>
-
-                <Label Content="{DynamicResource lsv_Password}" Margin="2,0,2,0"/>
-                <TextBox x:Name="password" Margin="8,0,8,0"/>
-
-                <Label Content="{DynamicResource mcm_cardid}" Margin="2,0,2,0"/>
-                <TextBox x:Name="cID" Margin="8,0,8,8"/>
-
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <Button Grid.Row="0" Content="{DynamicResource mcm_read_card}" x:Name="addButton" Margin="8,0,8,8" Click="ReadCard"/>
-
-                    <Grid Grid.Row="1" Margin="0,51,0,-51">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Button Grid.Column="0" Content="{DynamicResource mcm_remove}" Margin="8,0,8,0" Click="RemoveCard"/>
-                        <Button Grid.Column="1" Content="{DynamicResource mcm_add}" Margin="8,0,8,0" Click="RegisterCard"/>
-                    </Grid>
-
-                </Grid>
-            </StackPanel>
-
-            <DockPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
-                <Button IsDefault="True" IsCancel="True" Content="{DynamicResource close}" VerticalAlignment="Center" HorizontalAlignment="Right" Width="60" Height="25" Margin="0,0,8,0" />
-            </DockPanel>
         </Grid>
     </Grid>
 </Window>
