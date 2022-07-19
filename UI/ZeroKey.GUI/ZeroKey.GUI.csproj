@@ -1,0 +1,72 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <Platforms>AnyCPU;x64</Platforms>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\nfc_reader_1x.png" />
+    <None Remove="Assets\nfc_reader_2x.png" />
+    <None Remove="Assets\Wolkenhof-Logo.png" />
+    <None Remove="logo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\nfc_reader_2x.png" />
+    <Content Include="Icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\nfc_reader_1x.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Wolkenhof-Logo.png" />
+    <Resource Include="logo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="WPF-UI" Version="1.2.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ZeroKey.UI.ViewModel\ZeroKey.UI.ViewModel.csproj" />
+    <ProjectReference Include="..\ZeroKey.UI.View\ZeroKey.UI.View.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Pages\Steps\FinishedStepView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Pages\Steps\HelloStepView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Pages\Steps\LoginStepView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Pages\Steps\PlaceRingStepView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Pages\Steps\RemoveRingStepView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Pages\Steps\SuccessfullyRingStepView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\StringResources.de-DE.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Resources\StringResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+</Project>

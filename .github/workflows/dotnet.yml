@@ -26,13 +26,13 @@ jobs:
       uses: NuGet/setup-nuget@v1.0.6
         
     - name: Restore dependencies
-      run: nuget restore NFCLoc.sln
+      run: nuget restore ZeroKey.sln
       
     - name: Build
-      run: msbuild.exe NFCLoc.sln /p:platform="x64" /p:configuration="Release"
+      run: msbuild.exe ZeroKey.sln /p:platform="x64" /p:configuration="Release"
       
     - name: Copy resources
-      run: copy Credential\NFCLocCredentialProvider\tileimage.bmp bin\Release\Credential
+      run: copy Credential\ZeroKeyCredentialProvider\tileimage.bmp bin\Release\Credential
       
     - name: Create Setup file
       run: |
@@ -43,5 +43,5 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
-        name: NFCLoc
+        name: ZeroKey
         path: Setup\Result\

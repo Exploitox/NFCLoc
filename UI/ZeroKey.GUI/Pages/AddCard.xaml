@@ -1,0 +1,46 @@
+﻿<Page x:Class="ZeroKey.GUI.Pages.AddCard"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:ZeroKey.GUI.Pages"
+      xmlns:pages="clr-namespace:ZeroKey.GUI.Pages.Steps"
+      xmlns:viewModels="clr-namespace:ZeroKey.UI.ViewModel.ViewModels;assembly=ZeroKey.UI.ViewModel"
+      d:DataContext="{d:DesignInstance viewModels:WizardViewModel}"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="AddCard">
+
+    <Grid Margin="19,20,19,20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- step content -->
+        <!--<ContentPresenter Grid.Row="1" Content="{Binding StepViewModel}"/>-->
+        <ContentControl x:Name="FrameWindow"/>
+
+        <!-- buttons -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Content="Cancel"
+                    x:Name="CancelBtn"
+                    IsCancel="True"
+                    Click="CancelBtn_Click"
+                    Visibility="{Binding StepViewModel.CancelIsVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            <Button Grid.Column="2"
+                    Content="Next"
+                    x:Name="NextBtn"
+                    Visibility="{Binding StepViewModel.NextIsVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Click="Button_Click"
+                    IsDefault="True"/>
+        </Grid>
+    </Grid>
+</Page>

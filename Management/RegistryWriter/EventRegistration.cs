@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using NFCLoc.Service.Common;
+using ZeroKey.Service.Common;
 using System.Net.Sockets;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
@@ -126,7 +126,7 @@ namespace CredentialRegistration
                             if (tsk.Result != "")
                             {
                                 string rawToken = JsonConvert.DeserializeObject<NetworkMessage>(tsk.Result).Token;
-                                nm.Password = NFCLoc.Service.Common.Crypto.Encrypt(nm.Password, rawToken);
+                                nm.Password = ZeroKey.Service.Common.Crypto.Encrypt(nm.Password, rawToken);
                                 if (ServiceCommunication.SendNetworkMessage(ref _client, JsonConvert.SerializeObject(nm)) > 0)
                                     Invoke(new Action(Close));
                             }

@@ -1,24 +1,24 @@
-# Codename NFCLoc
+# ZeroKey
 
-<img align="right" src="https://github.com/Wolkenhof/NFCLoc/blob/master/UI/NFCLoc.UI.View/Icon.png" width="150">
+<img align="right" src="https://github.com/Wolkenhof/ZeroKey/blob/master/UI/ZeroKey.UI.View/Icon.png" width="150">
 
 [![License](https://img.shields.io/badge/license-GNU%20General%20Public%20License-purple)](/LICENSE)
-[![.NET](https://github.com/Exploitox/NFCLoc/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Exploitox/NFCLoc/actions/workflows/dotnet.yml)
+[![.NET](https://github.com/Exploitox/ZeroKey/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Exploitox/ZeroKey/actions/workflows/dotnet.yml)
 
 <p align="center">
    <strong>Status: Maintained (preview)</strong>
    <br />
    <strong>Version: </strong>2.0.0
    <br />
-   <a href="https://github.com/Wolkenhof/NFCLoc/issues">Report Bug</a>
+   <a href="https://github.com/Wolkenhof/ZeroKey/issues">Report Bug</a>
    ·
-   <a href="https://github.com/Wolkenhof/NFCLoc/blob/main/CHANGELOG.md">View Changelog</a>
+   <a href="https://github.com/Wolkenhof/ZeroKey/blob/main/CHANGELOG.md">View Changelog</a>
   </p>
 </p>
 </br>
 
-## 🔔 About NFCLoc
-Codename NFCLoc provides NFC based login and logout functionality for the Microsoft Windows Operating System.  
+## 🔔 About ZeroKey
+ZeroKey provides NFC based login and logout functionality for the Microsoft Windows Operating System.  
 
 ## ℹ️ Prerequisites
 * Windows 7, 8, 8.1 or 10 64-bit Windows (It will not work on a 32-bit system).
@@ -32,7 +32,7 @@ There are three separate parts to this, if any fails then you will need to check
 
 ### Building the binaries (If you have downloaded the source)
 
-1. Open ``NFCLoc.sln`` with Visual Studio 2022.
+1. Open ``ZeroKey.sln`` with Visual Studio 2022.
 2. Build the entire solution (Release or debug, but only x64). This creates a ``\bin\`` folder in the root Sesame directory.
 3. For the rest of the instructions, I'll assume you built for Release. If you chose Debug instead, then replace "Release" in the following instructions with "Debug".
 4. Make sure your NFC reader is connected to the PC.
@@ -46,14 +46,14 @@ There are three separate parts to this, if any fails then you will need to check
 
 ### Registering the credential provider
 
-1. Copy ``\bin\Release\Credential\NFCLocCredentialProvider.dll`` to ``C:\Windows\System32``.
+1. Copy ``\bin\Release\Credential\ZeroKeyCredentialProvider.dll`` to ``C:\Windows\System32``.
 
 1. Run ``\bin\Release\Credential\Register.reg``. You may need to run it as Administrator. Allow the UAC prompt if it pops up. If unsuccessful, run "regedit.exe" as administrator and select "File -> Import" and browse to "Register.reg"
 
 
 ### Registering a token
 
-1. Run ``\bin\Release\UI\NFCLoc.UI.View.exe``.
+1. Run ``\bin\Release\UI\ZeroKey.UI.View.exe``.
 
 1. Start by selecting "Add new NFC Card" and follow the wizard steps.
 

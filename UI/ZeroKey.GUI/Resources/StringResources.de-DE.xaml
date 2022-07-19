@@ -1,0 +1,70 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <system:String x:Key="close">Beenden</system:String>
+    <system:String x:Key="about">Über</system:String>
+    <system:String x:Key="wait">Bitte Warten ...</system:String>
+    <system:String x:Key="cancel">Abbrechen</system:String>
+    <system:String x:Key="next">Weiter</system:String>
+    <system:String x:Key="finish">Fertig</system:String>
+    <system:String x:Key="remove">Löschen</system:String>
+
+    <!-- Login -->
+    <system:String x:Key="login_manageNFC">NFC Karten verwalten</system:String>
+    <system:String x:Key="login_addNFC">NFC Karte hinzufügen</system:String>
+    <system:String x:Key="login_availableReaders">Verfügbare NFC Lesegeräte: </system:String>
+    <system:String x:Key="login_manageMedatixx">medatixx verwalten</system:String>
+
+    <!-- About -->
+    <system:String x:Key="about_abouttext">Über ZeroKey</system:String>
+    <system:String x:Key="about_text">ZeroKey provides NFC based login and logout functionality for the Microsoft Windows Operating System. The ZeroKey can be used to make payments, access control, unlock &amp; control mobile devices, transfer information, link people and much more.</system:String>
+
+    <!-- FinishedStepView -->
+    <system:String x:Key="fsv_header">Fertig!</system:String>
+    <system:String x:Key="fsv_h2">Du kannst nun deine Karte zum Sperren und Entsperren deines PC's verwenden. Lege einfach deine Karte auf das Lesegerät.</system:String>
+    <system:String x:Key="fsv_h3">Auf der nächsten Seite können Sie auch weitere Karten für andere Benutzer hinzufügen oder den Zugang sperren.</system:String>
+
+    <!-- HelloStepView -->
+    <system:String x:Key="hsv_header">Windows-Login Einrichtung</system:String>
+    <system:String x:Key="hsv_t1">Richten wir nun deine Karte ein, um Ihren Computer mit der NFC-Karte zu sperren und zu entsperren. Sie benötigen ein kompatibles NFC-Lesegerät und Ihre Karte.</system:String>
+    <system:String x:Key="hsv_t2">Während des Vorgangs werden Sie aufgefordert, Ihre Anmeldedaten einzugeben. Diese Anmeldedaten werden auf Ihrem Computer in einer sicheren Form gespeichert und niemals über das Internet übertragen.</system:String>
+
+    <!-- LoginStepView -->
+    <system:String x:Key="lsv_header">Geben Sie Ihre Windows-Anmeldedaten ein</system:String>
+    <system:String x:Key="lsv_UserName">Benutername</system:String>
+    <system:String x:Key="lsv_Password">Kennwort</system:String>
+    <system:String x:Key="lsv_note">Hinweis: Wenn Sie eine Karte für einen anderen Benutzer registrieren möchten, melden Sie sich bitte zuerst an.</system:String>
+    <system:String x:Key="lsv_ignoreWarning">Trotzdem fortfahren</system:String>
+
+    <system:String x:Key="PRSV_header">Legen Sie Ihre NFC-Karte auf das Lesegerät.</system:String>
+    <system:String x:Key="RRSV_header">Legen Sie die Karte zur Bestätigung erneut auf das Lesegerät</system:String>
+    <system:String x:Key="SRSV_header">Karte erfolgreich registriert!</system:String>
+
+    <!-- medatixx Credential Manager -->
+    <system:String x:Key="mcm_read_card">Karte lesen</system:String>
+    <system:String x:Key="mcm_add">Hinzufügen</system:String>
+    <system:String x:Key="mcm_remove">Entfernen</system:String>
+    <system:String x:Key="mcm_cardid">Kartennummer</system:String>
+
+    <!-- Error Handling -->
+    <system:String x:Key="error_header">Fehler</system:String>
+    <system:String x:Key="question_header">Frage</system:String>
+    <system:String x:Key="warning_header">Warnung</system:String>
+
+    <system:String x:Key="remove_item_text">Soll dieses Objekt gelöscht werden: </system:String>
+    <system:String x:Key="service_not_available">Windows-Dienst nicht erreichbar!</system:String>
+    <system:String x:Key="file_not_found">Datei nicht gefunden.</system:String>
+    <system:String x:Key="file_too_big">Datei ist zu groß. Maximale Dateigröße:</system:String>
+    <system:String x:Key="invalid_credentials">Bitte geben Sie gültige Anmeldedaten ein.</system:String>
+    <system:String x:Key="no_username">Bitte geben Sie einen Benutzernamen ein.</system:String>
+    <system:String x:Key="no_password">Ein Benutzerkonto ohne Passwort ist nicht zulässig!</system:String>
+    <system:String x:Key="missing_reader">Kein kompatibles NFC-Lesegerät gefunden.</system:String>
+    <system:String x:Key="cannot_start_service">Der Windows-Dienst kann nicht gestartet werden.</system:String>
+    <system:String x:Key="cannot_stop_service">Der Windows-Dienst kann nicht beendet werden.</system:String>
+    <system:String x:Key="connection_failed">Die Verbindung ist fehlgeschlagen. Versuche es erneut.</system:String>
+    <system:String x:Key="already_registered">Diese Karte wurde bereits registriert.</system:String>
+    <system:String x:Key="no_card_selected">Es wurde keine Karte ausgewählt.</system:String>
+    <system:String x:Key="data_empty">Bitte füllen Sie alle Werte aus.</system:String>
+
+</ResourceDictionary>

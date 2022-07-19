@@ -1,0 +1,49 @@
+﻿<Window x:Class="ZeroKey.UI.View.Views.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ZeroKey.UI.View.Views"
+        mc:Ignorable="d"
+        WindowStyle="ToolWindow"
+        WindowStartupLocation="CenterScreen"
+        
+        Title="About ZeroKey" Height="400" Width="600">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Image 
+            Source="/ZeroKey.UI.View;component/Assets/Wolkenhof-Logo.png" 
+            Margin="{StaticResource ContentMarginSmallLeftRight}"/>
+
+        <Grid Grid.Row="1" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="40"/>
+            </Grid.RowDefinitions>
+
+            <Label Content="ZeroKey Version:" FontWeight="Bold" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="18"></Label>
+            <Label Content="{Binding VersionInfo}" FontWeight="Bold" Name="lblVersionInfo" Grid.Row="0" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="18"></Label>
+
+            <Label Content="{DynamicResource about_authentication}" FontWeight="Bold" Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="18"/>
+            <Label Content="{DynamicResource about_authstatus}" FontWeight="Bold" Name="lbAuthStatus" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="18"/>
+            
+            <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+                <Label Content="{DynamicResource about_abouttext}" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="18"></Label>
+                <TextBlock Text="{DynamicResource about_text}" TextWrapping="Wrap" Margin="10" FontSize="16"></TextBlock>
+            </StackPanel>
+            <DockPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
+                <TextBlock Text="Copyright © 2022 Wolkenhof GmbH." TextWrapping="Wrap" Margin="10" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Left"></TextBlock>
+                <Button IsDefault="True" IsCancel="True" Content="{DynamicResource close}" VerticalAlignment="Center" HorizontalAlignment="Right" Width="50" Height="25" Margin="0,0,10,0" />
+            </DockPanel>
+        </Grid>
+    </Grid>
+</Window>
