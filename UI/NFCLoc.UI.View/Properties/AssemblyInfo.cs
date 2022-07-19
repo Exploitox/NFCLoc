@@ -5,12 +5,12 @@ using System.Windows;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("NFCLoc")]
+[assembly: AssemblyTitle("ZeroKey")]
 [assembly: AssemblyDescription("Lock and Unlock your computer with NFC/RFID cards.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Wolkenhof")]
-[assembly: AssemblyProduct("NFCLoc")]
-[assembly: AssemblyCopyright("Copyright © 2018 - 2022 valnoxy.")]
+[assembly: AssemblyProduct("ZeroKey")]
+[assembly: AssemblyCopyright("Copyright © 2022 Wolkenhof.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -171,12 +171,12 @@ namespace NFCLoc.UI.ViewModel.ViewModels
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             using (StreamReader reader = new StreamReader(stream))
             {
-                _gitVersion = reader.ReadToEnd();
+                _gitVersion = reader.ReadLine();
             }
 
-            Title = $"NFCLoc";
+            Title = $"ZeroKey";
 #if DEBUG
-            Title = $"NFCLoc - Debug Build ({_gitVersion})";
+            Title = $"ZeroKey - Debug Build (" + _gitVersion + ")";
 #endif
 
             AddCommand = new RelayCommand(Add, () => AllowAdd);

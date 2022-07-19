@@ -18,8 +18,8 @@
     <system:String x:Key="login_manageMedatixx">medatixx verwalten</system:String>
 
     <!-- About -->
-    <system:String x:Key="about_abouttext">Über NFCLoc</system:String>
-    <system:String x:Key="about_text">NFCLoc provides NFC based login and logout functionality for the Microsoft Windows Operating System. The NFCLoc can be used to make payments, access control, unlock &amp; control mobile devices, transfer information, link people and much more.</system:String>
+    <system:String x:Key="about_abouttext">Über ZeroKey</system:String>
+    <system:String x:Key="about_text">ZeroKey provides NFC based login and logout functionality for the Microsoft Windows Operating System. The ZeroKey can be used to make payments, access control, unlock &amp; control mobile devices, transfer information, link people and much more.</system:String>
     <system:String x:Key="about_authentication">Autorisierungsserver</system:String>
     <system:String x:Key="about_authstatus">Lokale Autorisierung</system:String>
 

@@ -8,7 +8,7 @@
         WindowStyle="ToolWindow"
         WindowStartupLocation="CenterScreen"
         
-        Title="NFCLoc - medatixx Credential Manager" Height="420" Width="600" Closing="Window_Closing">
+        Title="ZeroKey - medatixx Credential Manager" Height="420" Width="600" Closing="Window_Closing">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="80"/>

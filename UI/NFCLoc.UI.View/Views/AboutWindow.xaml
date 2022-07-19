@@ -8,7 +8,7 @@
         WindowStyle="ToolWindow"
         WindowStartupLocation="CenterScreen"
         
-        Title="About NFCLoc" Height="400" Width="600">
+        Title="About ZeroKey" Height="400" Width="600">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="80"/>
@@ -30,7 +30,7 @@
                 <RowDefinition Height="40"/>
             </Grid.RowDefinitions>
 
-            <Label Content="NFCLoc Version:" FontWeight="Bold" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="18"></Label>
+            <Label Content="ZeroKey Version:" FontWeight="Bold" Grid.Row="0" Grid.Column="0" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="18"></Label>
             <Label Content="{Binding VersionInfo}" FontWeight="Bold" Name="lblVersionInfo" Grid.Row="0" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="18"></Label>
 
             <Label Content="{DynamicResource about_authentication}" FontWeight="Bold" Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="18"/>
