@@ -642,6 +642,32 @@ namespace NFCLoc.Service.Core
 
         private bool SaveConfig()
         {
+            try
+            {
+                var db = new IniFile(AppPath + @"\Database.ini");
+                string ip = db.Read("IP", "Login");
+                string user = db.Read("User", "Login");
+                string pass = db.Read("Password", "Login");
+                string boolIsEnabled = db.Read("Enabled", "Login");
+                bool IsEnabled = false || boolIsEnabled.Equals("Enabled", StringComparison.CurrentCultureIgnoreCase);
+
+                if (ip != null || user != null || pass != null)
+                {
+                    // Using network based configuration
+                    NetworkCredential cred = new NetworkCredential(user, pass);
+                    using (new NetworkConnection($@"\\{ip}\NFCLOCCONF", cred))
+                    {
+                        File.WriteAllText($@"\\{ip}\NFCLOCCONF\Application.config", JsonConvert.SerializeObject(_applicationConfiguration));
+                        Log($@"Configuration saved to \\{ip}\NFCLOCCONF\Application.config");
+                        return true;
+                    }
+                }
+            }
+            catch
+            {
+                Log("Failed to connect with remote authentication server.");
+            }
+
             File.WriteAllText(AppPath + @"\Application.config", JsonConvert.SerializeObject(_applicationConfiguration));
             Log("Configuration saved to " + AppPath + @"\Application.config");
             return true;

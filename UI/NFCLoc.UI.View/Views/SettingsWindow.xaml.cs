@@ -2,6 +2,7 @@
 using NFCLoc.UI.ViewModel.Services;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.ServiceProcess;
@@ -27,6 +28,26 @@ namespace NFCLoc.UI.View.Views
         public SettingsWindow()
         {
             InitializeComponent();
+        }
+
+        private void UseAuthServer_OnChecked(object sender, RoutedEventArgs e)
+        {
+            TbUser.IsEnabled = true;
+            TbIp.IsEnabled = true;
+            TbPW.IsEnabled = true;
+        }
+
+        private void UseAuthServer_OnUnchecked(object sender, RoutedEventArgs e)
+        {
+            TbUser.IsEnabled = false;
+            TbIp.IsEnabled = false;
+            TbPW.IsEnabled = false;
+        }
+
+        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        {
+            Debug.WriteLine("Saved.");
+            this.Close();
         }
     }
 }

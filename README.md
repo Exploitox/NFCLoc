@@ -1,6 +1,6 @@
 # Codename NFCLoc
 
-<img align="right" src="https://github.com/mclear/Sesame/blob/master/UI/NFCRing.UI.View/Icon.png" width="150">
+<img align="right" src="https://github.com/Wolkenhof/NFCLoc/blob/master/UI/NFCLoc.UI.View/Icon.png" width="150">
 
 [![License](https://img.shields.io/badge/license-GNU%20General%20Public%20License-purple)](/LICENSE)
 [![.NET](https://github.com/Exploitox/NFCLoc/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Exploitox/NFCLoc/actions/workflows/dotnet.yml)
@@ -10,9 +10,9 @@
    <br />
    <strong>Version: </strong>2.0.0
    <br />
-   <a href="https://github.com/Exploitox/NFCLoc/issues">Report Bug</a>
+   <a href="https://github.com/Wolkenhof/NFCLoc/issues">Report Bug</a>
    ·
-   <a href="https://github.com/Exploitox/NFCLoc/blob/main/CHANGELOG.md">View Changelog</a>
+   <a href="https://github.com/Wolkenhof/NFCLoc/blob/main/CHANGELOG.md">View Changelog</a>
   </p>
 </p>
 </br>
