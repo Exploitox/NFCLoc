@@ -12,7 +12,7 @@
 #if DEBUG
         public static bool Debug = true;
 #else
-        public static bool debug = false;
+        public static bool Debug = false;
 #endif
         public static bool SkipWait = false;
 
