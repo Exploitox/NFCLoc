@@ -106,6 +106,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ClientCommunication\IMClient.cs" />
+    <Compile Include="ClientCommunication\IMEvents.cs" />
     <Compile Include="Controls\SkypeButtonControl.xaml.cs">
       <DependentUpon>SkypeButtonControl.xaml</DependentUpon>
     </Compile>
@@ -367,6 +369,7 @@
   <ItemGroup>
     <Resource Include="Assets\Banner.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

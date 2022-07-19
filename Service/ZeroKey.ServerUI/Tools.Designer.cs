@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ZeroKey.Server {
+namespace ZeroKey.ServerUI {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ZeroKey.Server {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ZeroKey.Server.Tools", typeof(Tools).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ZeroKey.ServerUI.Tools", typeof(Tools).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

@@ -1,7 +1,7 @@
-﻿<Application x:Class="ZeroKey.Server.App"
+﻿<Application x:Class="ZeroKey.ServerUI.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:ZeroKey.Server"
+             xmlns:local="clr-namespace:ZeroKey.ServerUI"
              StartupUri="MainWindow.xaml"
              xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml">
     <Application.Resources>

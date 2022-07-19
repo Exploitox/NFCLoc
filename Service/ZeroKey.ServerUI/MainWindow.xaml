@@ -1,9 +1,9 @@
-﻿<Window x:Class="ZeroKey.Server.MainWindow"
+﻿<Window x:Class="ZeroKey.ServerUI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ZeroKey.Server"
+        xmlns:local="clr-namespace:ZeroKey.ServerUI"
         mc:Ignorable="d"
         Title="MainWindow" Height="480" Width="600"
         xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
@@ -35,6 +35,7 @@
                 <Expander
                     Margin="0,8,0,0"
                     ExpandDirection="Down"
+                    x:Name="Expander"
                     IsExpanded="True">
                     <Expander.Header>
                         <Grid>
@@ -137,9 +138,9 @@
                                 <ColumnDefinition Width="35"/>
                             </Grid.ColumnDefinitions>
 
-                            <wpfui:Button Margin="0,0,10,0" Grid.Column="0" Height="35" Icon="KeyReset24" Content="Reset Password" Click="ResetPWButton_Click"/>
-                            <wpfui:Button Margin="0,0,10,0" Grid.Column="1" Height="35" Icon="Folder24" Content="Change Config"/>
-                            <wpfui:Button Margin="0,0,10,0" Grid.Column="2" Height="35" Icon="Delete24" Appearance="Danger" Content="Clear Config" Click="ClearConfig_Click"/>
+                            <wpfui:Button x:Name="ResetPWBtn" Margin="0,0,10,0" Grid.Column="0" Height="35" Icon="KeyReset24" Content="Reset Password" Click="ResetPWButton_Click"/>
+                            <wpfui:Button x:Name="ChangePathBtn" Margin="0,0,10,0" Grid.Column="1" Height="35" Icon="Folder24" Content="Change Configuration Path"/>
+                            <wpfui:Button x:Name="ClearBtn" Margin="0,0,10,0" Grid.Column="2" Height="35" Icon="Delete24" Appearance="Danger" Content="Clear Config" Click="ClearConfig_Click"/>
                             <wpfui:Button x:Name="ChangeThemeBtn" Grid.Column="3" Height="35" Icon="WeatherMoon20" Click="ChangeTheme"/>
                         </Grid>
 
