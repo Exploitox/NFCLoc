@@ -3,7 +3,7 @@
 <img align="right" src="https://github.com/Wolkenhof/ZeroKey/blob/master/UI/ZeroKey.UI.View/Icon.png" width="150">
 
 [![License](https://img.shields.io/badge/license-GNU%20General%20Public%20License-purple)](/LICENSE)
-[![.NET](https://github.com/Exploitox/ZeroKey/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Exploitox/ZeroKey/actions/workflows/dotnet.yml)
+[![.NET](https://github.com/Wolkenhof/ZeroKey/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Exploitox/ZeroKey/actions/workflows/dotnet.yml)
 
 <p align="center">
    <strong>Status: Maintained (preview)</strong>
