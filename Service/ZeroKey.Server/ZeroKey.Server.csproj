@@ -5,8 +5,7 @@
 		<TargetFramework>net6.0-windows</TargetFramework>
 		<Nullable>enable</Nullable>
 		<UseWPF>true</UseWPF>
-		<!--<OutputPath>..\..\bin\Release\Server\</OutputPath>-->
-		<OutputPath>Y:\</OutputPath>
+		<OutputPath>..\..\bin\Release\Server\</OutputPath>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 		<Authors>valnoxy</Authors>
