@@ -14,7 +14,9 @@ using Newtonsoft.Json;
 using System.Diagnostics;
 using Microsoft.Win32;
 using System.Management;
+using System.Security.Cryptography.X509Certificates;
 using ZeroKey.Libraries;
+using ZeroKey.Service.Core.ClientCommunication;
 
 namespace ZeroKey.Service.Core
 {
@@ -32,6 +34,10 @@ namespace ZeroKey.Service.Core
         private Thread _credentialListenThread;
         private TcpListener _registrationListener;
         private Thread _registrationListenThread;
+
+        IMClient im = new IMClient();
+        private int trys = 0;
+        private bool IM_Successful = false;
 
         private bool _runListenLoops = false;
         //private List<Client> Connections = new List<Client>();
@@ -59,6 +65,12 @@ namespace ZeroKey.Service.Core
                     }
                 }
                 catch { }
+
+            im.LoginOK += new EventHandler(im_LoginOK);
+            im.LoginFailed += new IMErrorEventHandler(im_LoginFailed);
+            im.Disconnected += new EventHandler(im_Disconnected);
+            var receivedHandler = new IMReceivedEventHandler(im_MessageReceived);
+            im.MessageReceived += receivedHandler;
         }
 
         private void InitLog()
@@ -575,6 +587,37 @@ namespace ZeroKey.Service.Core
                 SaveConfig();
         }
 
+        private void im_LoginOK(object sender, EventArgs e)
+        {
+            Debug.WriteLine("Login successful.\nSending message ...");
+            im.SendMessage("Server", "gimme config");
+        }
+
+        private void im_LoginFailed(object sender, IMErrorEventArgs e)
+        {
+            Debug.WriteLine("Login failed.");
+        }
+
+        private void im_Disconnected(object sender, EventArgs e)
+        {
+            Debug.WriteLine("Disconnected.");
+        }
+
+        private void im_MessageReceived(object sender, IMReceivedEventArgs e)
+        {
+            if (e.From == "Server")
+            {
+                Debug.WriteLine("Got response from server... sync file now...");
+
+                string appPath = new System.IO.FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location).DirectoryName;
+                string servicePath = Directory.GetParent(appPath).FullName + @"\Service\Service";
+                File.WriteAllText(AppPath + @"\Application.config", e.Message);
+                string sc = File.ReadAllText(AppPath + @"\Application.config");
+                _applicationConfiguration = JsonConvert.DeserializeObject<Config>(sc);
+                Log("Configuration loaded from authentication server.");
+            }
+        }
+
         private bool LoadConfig()
         {
             // read in our JSON file
@@ -588,20 +631,17 @@ namespace ZeroKey.Service.Core
                 string ip = db.Read("IP", "Login");
                 string user = db.Read("User", "Login");
                 string pass = db.Read("Password", "Login");
-                string boolIsEnabled = db.Read("Enabled", "Login");
-                bool IsEnabled = false || boolIsEnabled.Equals("Enabled", StringComparison.CurrentCultureIgnoreCase);
 
-                if (ip != null || user != null || pass != null)
+                if (ip != null && user != null && pass != null)
                 {
-                    // Using network based configuration
-                    NetworkCredential cred = new NetworkCredential(user, pass);
-                    using (new NetworkConnection($@"\\{ip}\ZeroKeyCONF", cred))
+                    im.Login(user, pass, ip);
+                    while (trys < 10)
                     {
-                        string sc = File.ReadAllText($@"\\{ip}\ZeroKeyCONF\Application.config");
-                        _applicationConfiguration = JsonConvert.DeserializeObject<Config>(sc);
-                        Log($@"Configuration loaded from \\{ip}\ZeroKeyCONF\Application.config");
-                        return true;
+                        Thread.Sleep(1000);
+                        trys++;
                     }
+
+                    return IM_Successful;
                 }
             }
             catch

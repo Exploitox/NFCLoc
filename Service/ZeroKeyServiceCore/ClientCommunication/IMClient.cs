@@ -10,7 +10,7 @@ using System.Security.Cryptography;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 
-namespace ZeroKey.UI.View.ClientCommunication
+namespace ZeroKey.Service.Core.ClientCommunication
 {
     public class IMClient
     {
