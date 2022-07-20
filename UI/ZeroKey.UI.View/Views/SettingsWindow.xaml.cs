@@ -27,7 +27,6 @@ namespace ZeroKey.UI.View.Views
     public partial class SettingsWindow : Window
     {
         IMClient im = new IMClient();
-        public IMReceivedEventHandler receivedHandler;
 
         public SettingsWindow()
         {
@@ -36,7 +35,8 @@ namespace ZeroKey.UI.View.Views
             im.LoginOK += new EventHandler(im_LoginOK);
             im.LoginFailed += new IMErrorEventHandler(im_LoginFailed);
             im.Disconnected += new EventHandler(im_Disconnected);
-            receivedHandler = new IMReceivedEventHandler(im_MessageReceived);
+            var receivedHandler = new IMReceivedEventHandler(im_MessageReceived);
+            im.MessageReceived += receivedHandler;
         }
 
         private void UseAuthServer_OnChecked(object sender, RoutedEventArgs e)
@@ -60,16 +60,12 @@ namespace ZeroKey.UI.View.Views
             {
                 im.Login(TbUser.Text, TbPW.Text, TbIp.Text);
             }
-
-            Debug.WriteLine("Saved.");
-            // this.Close();
         }
 
         void im_LoginOK(object sender, EventArgs e)
         {
             Debug.WriteLine("Login successful.\nSending message ...");
             im.SendMessage("Server", "gimme config");
-            //im.Disconnect();
         }
 
         void im_LoginFailed(object sender, IMErrorEventArgs e)
@@ -86,7 +82,10 @@ namespace ZeroKey.UI.View.Views
         {
             if (e.From == "Server")
             {
-                Debug.WriteLine("Got response from server... writing file now...");
+                Debug.WriteLine("Got response from server... sync file now...");
+
+                string appPath = new System.IO.FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location).DirectoryName;
+                string servicePath = Directory.GetParent(appPath).FullName + @"\Service\Service";
                 File.WriteAllText("C:\\Application.config", e.Message);
             }
         }

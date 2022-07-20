@@ -152,10 +152,7 @@ namespace ZeroKey.UI.ViewModel.ViewModels
                 {
                     DevicesList = NfcwmqService.GetConnectedDevices();
                 }
-                catch (Exception)
-                {
-
-                }
+                catch {;}
             });
             _dialogService = dialogService;
             _tokenService = tokenService;

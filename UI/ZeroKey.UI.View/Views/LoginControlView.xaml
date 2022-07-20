@@ -376,17 +376,15 @@
                                FontSize="{StaticResource SmallFontSize}" 
                                VerticalAlignment="Center" 
                                HorizontalAlignment="Right" 
-                               Foreground="Red"></TextBlock>
+                               Foreground="Red" />
             </DockPanel>
 
             <DockPanel Grid.Column="1" LastChildFill="False" VerticalAlignment="Center" Margin="0,0,10,0" Visibility="{Binding IsDeviceAvailable,Converter={StaticResource BooleanToVisibilityConverter}}">
-                <ComboBox DockPanel.Dock="Right" SelectedIndex="0" IsSynchronizedWithCurrentItem="True" Width="Auto" VerticalAlignment="Center" ItemsSource="{Binding DevicesList}" DisplayMemberPath="DeviceName">
-
-                </ComboBox>
+                <ComboBox DockPanel.Dock="Right" SelectedIndex="0" IsSynchronizedWithCurrentItem="True" Width="Auto" VerticalAlignment="Center" ItemsSource="{Binding DevicesList}" DisplayMemberPath="DeviceName"/>
                 <TextBlock Text="{DynamicResource login_availableReaders}" DockPanel.Dock="Right"
                                FontSize="{StaticResource SmallFontSize}" 
                                VerticalAlignment="Center" 
-                               HorizontalAlignment="Right"></TextBlock>
+                               HorizontalAlignment="Right" />
             </DockPanel>
 
         </Grid>
