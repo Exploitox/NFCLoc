@@ -22,13 +22,18 @@ namespace ZeroKey.ServerUI
         private static string? _user;
         private static string? _password;
         private static string? _configpath;
+        private static bool noUser = false;
 
         private static readonly int _port = 2000;
         private static bool _running = true;
         private static readonly IPAddress _ip = IPAddress.Parse(GetLocalIpAddress());
         private static TcpListener _server;
         public readonly X509Certificate2 _cert = new X509Certificate2("server.pfx", "xu#++m!Q~4DDGtH!Yy+§6w.6J#V8yFQS");
+        
+        
         public IMReceivedEventHandler receivedHandler;
+
+
         IMClient im = new IMClient();
 
         public MainWindow()
@@ -41,6 +46,7 @@ namespace ZeroKey.ServerUI
             im.RegisterFailed += new IMErrorEventHandler(im_RegisterFailed);
             im.Disconnected += new EventHandler(im_Disconnected);
             receivedHandler = new IMReceivedEventHandler(im_MessageReceived);
+            im.MessageReceived += receivedHandler;
 
             Wpf.Ui.Appearance.Theme.Apply(
                     Wpf.Ui.Appearance.ThemeType.Dark,                       // Theme type
@@ -54,11 +60,9 @@ namespace ZeroKey.ServerUI
             _password = config.Read("Password", "ZeroKey");
             _configpath = config.Read("ConfigurationFile", "ZeroKey");
 
-            Expander.IsExpanded = ToggleSwitch.IsChecked == true;
-
-            ResetPWBtn.IsEnabled = false;
-            ChangePathBtn.IsEnabled = false;
-            ClearBtn.IsEnabled = false;
+            ResetPWBtn.IsEnabled = true;
+            ChangePathBtn.IsEnabled = true;
+            ClearBtn.IsEnabled = true;
         }
 
         private void ChangeTheme(object sender, RoutedEventArgs e)
@@ -119,91 +123,87 @@ namespace ZeroKey.ServerUI
         {
             if (ToggleSwitch.IsChecked == true)
             {
-                var config = new IniFile("config.ini");
-                bool noUser = false;
-
-                if (String.IsNullOrEmpty(_user) && String.IsNullOrEmpty(_password) && String.IsNullOrEmpty(_configpath))
+                try
                 {
-                    noUser = true;
-                    _user = $"ZeroKey_{GenerateUsername(5)}";
-                    _password = GeneratePassword(12);
-                    _configpath = Path.Combine("C:", "ZeroKey");
-
-                    // Write to config
-                    config.Write("Username", _user, "ZeroKey");
-                    config.Write("Password", _password, "ZeroKey");
-                    config.Write("ConfigurationFile", _configpath, "ZeroKey");
+                    im.Disconnect();
                 }
+                catch {;}
 
-                // Generate data
                 TbIp.Text = GetLocalIpAddress();
                 TbUser.Text = _user;
                 TbPw.Text = _password;
                 TbConf.Text = _configpath;
 
-                // Say hello to server
-                if (noUser)
-                {
-                    im.Register(_user, _password, _ip.ToString());
-                    Debug.WriteLine("New user created.");
-                }
-
                 im.Login("Server", "Test123", _ip.ToString());
 
-                ResetPWBtn.IsEnabled = true;
-                ChangePathBtn.IsEnabled = true;
-                ClearBtn.IsEnabled = true;
-                Expander.IsExpanded = true;
+                ResetPWBtn.IsEnabled = false;
+                ChangePathBtn.IsEnabled = false;
+                ClearBtn.IsEnabled = false;
             }
 
             if (ToggleSwitch.IsChecked == false)
             {
+                im.Disconnect();
+
                 TbIp.Text = "";
                 TbUser.Text = "";
                 TbPw.Text = "";
                 TbSmb.Text = "";
                 TbConf.Text = "";
 
-                ResetPWBtn.IsEnabled = false;
-                ChangePathBtn.IsEnabled = false;
-                ClearBtn.IsEnabled = false;
-                Expander.IsExpanded = false;
+                ResetPWBtn.IsEnabled = true;
+                ChangePathBtn.IsEnabled = true;
+                ClearBtn.IsEnabled = true;
             }
         }
         
         void im_LoginOK(object sender, EventArgs e)
         {
-            RootSnackbar.Show("Logged in", $"Client is now logged into the server.");
+            Dispatcher.BeginInvoke(new Action(delegate
+            {
+                RootSnackbar.Show("Logged in", $"Client is now logged into the server.");
+            }));
         }
 
         void im_MessageReceived(object sender, IMReceivedEventArgs e)
         {
             if (e.Message == "gimme config")
             {
-                im.SendMessage("Client", File.ReadAllText("Application.config"));
+                im.SendMessage(e.From, File.ReadAllText("Application.config"));
             }
         }
 
         void im_RegisterOK(object sender, EventArgs e)
         {
-            RootSnackbar.Show("Registered", $"Client was successfully registered.");
+            Dispatcher.BeginInvoke(new Action(delegate
+            {
+                RootSnackbar.Show("Registered", $"Client was successfully registered.");
+            }));
         }
 
         void im_LoginFailed(object sender, EventArgs e)
         {
-            RootSnackbar.Show("Login failed", $"Failed to login into server.");
+            Dispatcher.BeginInvoke(new Action(delegate
+            {
+                RootSnackbar.Show("Login failed", $"Failed to login into server.");
+            }));
+
         }
 
         void im_RegisterFailed(object sender, EventArgs e)
         {
-            RootSnackbar.Show("Register failed", $"Failed to register to server.");
-            TbUser.Text = "";
-            TbPw.Text = "";
+            Dispatcher.BeginInvoke(new Action(delegate
+            {
+                RootSnackbar.Show("Register failed", $"Failed to register to server.");
+            }));
         }
 
         void im_Disconnected(object sender, EventArgs e)
         {
-            RootSnackbar.Show("Disconnected", $"Client was disconnected from server.");
+            /*Dispatcher.BeginInvoke(new Action(delegate
+            {
+                RootSnackbar.Show("Disconnected", $"Client was disconnected from server.");
+            }));*/
         }
 
         private void ToggleSwitchOff_Click(object sender, RoutedEventArgs e)
@@ -217,84 +217,29 @@ namespace ZeroKey.ServerUI
 
         private void ResetPWButton_Click(object sender, RoutedEventArgs e)
         {
-            var bkgPw = TbPw.Text;
-            TbPw.Text = GeneratePassword(16);
+            var config = new IniFile("config.ini");
 
-            var process = new Process();
-            var processInfo = new ProcessStartInfo
-            {
-                RedirectStandardError = true,
-                RedirectStandardOutput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
-            process.StartInfo = processInfo;
+            _user = $"ZK{GenerateUsername(6)}";
+            _password = GeneratePassword(12);
+            _configpath = Path.Combine("C:", "ZeroKey");
 
-            processInfo.FileName = @"cmd.exe";
-            processInfo.Arguments = $"/c \"net user {TbUser.Text} {TbPw.Text}\"";
+            // Write to config
+            config.Write("Username", _user, "ZeroKey");
+            config.Write("Password", _password, "ZeroKey");
+            config.Write("ConfigurationFile", _configpath, "ZeroKey");
 
-            process.Start();
-            process.WaitForExit();
+            // Register new user to server
+            im.Register(_user, _password, _ip.ToString());
 
-            if (process.ExitCode != 0)
-            {
-                RootSnackbar.Show("Cannot change password!", $"Failed to change password of user {TbUser.Text}.");
-                TbPw.Text = bkgPw;
-            }
-            else
-            {
-                _password = TbPw.Text;
-                var config = new IniFile("config.ini");
-                config.Write("ConfigurationFile", _configpath, "ZeroKey");
-            }
+            TbIp.Text = GetLocalIpAddress();
+            TbUser.Text = _user;
+            TbPw.Text = _password;
+            TbConf.Text = _configpath;
         }
 
         private void ClearConfig_Click(object sender, RoutedEventArgs e)
         {
-            var process = new Process();
-            var processInfo = new ProcessStartInfo
-            {
-                RedirectStandardError = true,
-                RedirectStandardOutput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
-            process.StartInfo = processInfo;
 
-            // Remove user
-            try
-            {
-                processInfo.FileName = @"cmd.exe";
-                processInfo.Arguments = $"/c \"net user {_user} /delete\"";
-
-                process.Start();
-                process.WaitForExit();
-            }
-            catch {; }
-
-            // Remove share
-            if (ExistsNetworkPath(@"ZeroKeyCONF"))
-            {
-                processInfo.FileName = @"powershell.exe";
-                processInfo.Arguments = $"& {{Remove-SmbShare -Name ZeroKeyCONF -Force}}";
-
-                process.Start();
-                process.WaitForExit();
-
-                if (process.ExitCode != 0)
-                {
-                    ToggleSwitch.IsChecked = false;
-                    RootSnackbar.Show("Cannot enable server!", "Failed to disable old SMB Share.");
-                }
-            }
-
-            // Remove files from share
-            try
-            {
-                File.Delete(Path.Combine(_configpath, "Application.config"));
-                Directory.Delete(_configpath);
-            }
-            catch {;}
         }
 
         #region Modules
@@ -352,7 +297,7 @@ namespace ZeroKey.ServerUI
 
         private static string GenerateUsername(int length)
         {
-            const string valid = $"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+            const string valid = $"ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
             StringBuilder res = new StringBuilder();
             Random rnd = new Random();
             while (0 < length--)
