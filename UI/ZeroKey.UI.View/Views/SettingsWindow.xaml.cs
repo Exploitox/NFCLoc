@@ -27,6 +27,7 @@ namespace ZeroKey.UI.View.Views
     public partial class SettingsWindow : Window
     {
         IMClient im = new IMClient();
+        public IMReceivedEventHandler receivedHandler;
 
         public SettingsWindow()
         {
@@ -35,6 +36,7 @@ namespace ZeroKey.UI.View.Views
             im.LoginOK += new EventHandler(im_LoginOK);
             im.LoginFailed += new IMErrorEventHandler(im_LoginFailed);
             im.Disconnected += new EventHandler(im_Disconnected);
+            receivedHandler = new IMReceivedEventHandler(im_MessageReceived);
         }
 
         private void UseAuthServer_OnChecked(object sender, RoutedEventArgs e)
@@ -60,14 +62,14 @@ namespace ZeroKey.UI.View.Views
             }
 
             Debug.WriteLine("Saved.");
-            this.Close();
+            // this.Close();
         }
 
         void im_LoginOK(object sender, EventArgs e)
         {
             Debug.WriteLine("Login successful.\nSending message ...");
             im.SendMessage("Server", "gimme config");
-            im.Disconnect();
+            //im.Disconnect();
         }
 
         void im_LoginFailed(object sender, IMErrorEventArgs e)
@@ -78,6 +80,15 @@ namespace ZeroKey.UI.View.Views
         void im_Disconnected(object sender, EventArgs e)
         {
             Debug.WriteLine("Disconnected.");
+        }
+
+        void im_MessageReceived(object sender, IMReceivedEventArgs e)
+        {
+            if (e.From == "Server")
+            {
+                Debug.WriteLine("Got response from server... writing file now...");
+                File.WriteAllText("C:\\Application.config", e.Message);
+            }
         }
     }
 }

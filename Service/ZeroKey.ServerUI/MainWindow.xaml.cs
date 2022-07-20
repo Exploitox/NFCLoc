@@ -28,19 +28,19 @@ namespace ZeroKey.ServerUI
         private static readonly IPAddress _ip = IPAddress.Parse(GetLocalIpAddress());
         private static TcpListener _server;
         public readonly X509Certificate2 _cert = new X509Certificate2("server.pfx", "xu#++m!Q~4DDGtH!Yy+§6w.6J#V8yFQS");
-        public IMClient im;
         public IMReceivedEventHandler receivedHandler;
+        IMClient im = new IMClient();
 
         public MainWindow()
         {
+            InitializeComponent();
+
             im.LoginOK += new EventHandler(im_LoginOK);
             im.RegisterOK += new EventHandler(im_RegisterOK);
             im.LoginFailed += new IMErrorEventHandler(im_LoginFailed);
             im.RegisterFailed += new IMErrorEventHandler(im_RegisterFailed);
             im.Disconnected += new EventHandler(im_Disconnected);
             receivedHandler = new IMReceivedEventHandler(im_MessageReceived);
-
-            InitializeComponent();
 
             Wpf.Ui.Appearance.Theme.Apply(
                     Wpf.Ui.Appearance.ThemeType.Dark,                       // Theme type
@@ -143,7 +143,10 @@ namespace ZeroKey.ServerUI
 
                 // Say hello to server
                 if (noUser)
+                {
                     im.Register(_user, _password, _ip.ToString());
+                    Debug.WriteLine("New user created.");
+                }
 
                 im.Login("Server", "Test123", _ip.ToString());
 
@@ -167,7 +170,7 @@ namespace ZeroKey.ServerUI
                 Expander.IsExpanded = false;
             }
         }
-
+        
         void im_LoginOK(object sender, EventArgs e)
         {
             RootSnackbar.Show("Logged in", $"Client is now logged into the server.");
@@ -194,6 +197,8 @@ namespace ZeroKey.ServerUI
         void im_RegisterFailed(object sender, EventArgs e)
         {
             RootSnackbar.Show("Register failed", $"Failed to register to server.");
+            TbUser.Text = "";
+            TbPw.Text = "";
         }
 
         void im_Disconnected(object sender, EventArgs e)
@@ -335,7 +340,7 @@ namespace ZeroKey.ServerUI
 
         private static string GeneratePassword(int length)
         {
-            const string valid = $"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!§$%&/()=?+*~#_.:,;-@";
+            const string valid = $"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!$?:;_-";
             StringBuilder res = new StringBuilder();
             Random rnd = new Random();
             while (0 < length--)

@@ -17,7 +17,7 @@ namespace ZeroKey.Server.Service
     {
         private static readonly int _port = 2000;
         private static bool _running = true;
-        private static readonly IPAddress _ip = IPAddress.Parse("127.0.0.1");
+        private static readonly IPAddress _ip = IPAddress.Parse(GetLocalIpAddress());
         private static TcpListener _server;
         public readonly X509Certificate2 _cert = new X509Certificate2("server.pfx", "xu#++m!Q~4DDGtH!Yy+§6w.6J#V8yFQS");
         public Dictionary<string, UserInfo> users = new Dictionary<string, UserInfo>();  // Information about users + connections info.
@@ -47,6 +47,7 @@ namespace ZeroKey.Server.Service
             _server = new TcpListener(_ip, _port);
             _server.Start();
             Console.WriteLine("[{0}] Server is running properly!", DateTime.Now);
+            Console.WriteLine("[{0}] Listen to IP {1}", DateTime.Now, GetLocalIpAddress());
 
             var listenThread = new Thread(Listen);
         }
