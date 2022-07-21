@@ -10,6 +10,7 @@ using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Runtime.Serialization.Formatters.Binary;
 using ZeroKey.ServerUI.ClientCommunication;
+using Newtonsoft.Json;
 
 namespace ZeroKey.ServerUI
 {
@@ -29,8 +30,8 @@ namespace ZeroKey.ServerUI
         private static readonly IPAddress _ip = IPAddress.Parse(GetLocalIpAddress());
         private static TcpListener _server;
         public readonly X509Certificate2 _cert = new X509Certificate2("server.pfx", "xu#++m!Q~4DDGtH!Yy+§6w.6J#V8yFQS");
-        
-        
+
+        private ConfigTemplate _applicationConfiguration;
         public IMReceivedEventHandler receivedHandler;
 
 
@@ -170,6 +171,22 @@ namespace ZeroKey.ServerUI
             if (e.Message == "gimme config")
             {
                 im.SendMessage(e.From, File.ReadAllText("Application.config"));
+            }
+            else
+            {
+                try
+                {
+                    _applicationConfiguration = JsonConvert.DeserializeObject<ConfigTemplate>(e.Message);
+                    if (_applicationConfiguration != null)
+                    {
+                        File.WriteAllText("Application.config", e.Message);
+                        Console.WriteLine("Config updated.");
+                    }
+                }
+                catch
+                {
+                    // Ignore, as this is not a config.
+                }
             }
         }
 
