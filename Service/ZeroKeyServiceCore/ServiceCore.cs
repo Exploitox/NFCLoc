@@ -38,6 +38,7 @@ namespace ZeroKey.Service.Core
         IMClient im = new IMClient();
         private int trys = 0;
         private bool IM_Successful = false;
+        private int IM_IO = 0; // 0 = Read config; 1 = Write config
 
         private bool _runListenLoops = false;
         //private List<Client> Connections = new List<Client>();
@@ -589,25 +590,34 @@ namespace ZeroKey.Service.Core
 
         private void im_LoginOK(object sender, EventArgs e)
         {
-            Debug.WriteLine("Login successful.\nSending message ...");
-            im.SendMessage("Server", "gimme config");
+            Console.WriteLine("Login successful.\nSending message ...");
+
+            if (IM_IO == 0)
+                im.SendMessage("Server", "gimme config");
+            if (IM_IO == 1)
+            {
+                im.SendMessage("Server", JsonConvert.SerializeObject(_applicationConfiguration)); // Initialize sending
+                Log("Configuration uploaded to server.");
+            }
         }
 
         private void im_LoginFailed(object sender, IMErrorEventArgs e)
         {
-            Debug.WriteLine("Login failed.");
+            Console.WriteLine("Login failed.");
         }
 
         private void im_Disconnected(object sender, EventArgs e)
         {
-            Debug.WriteLine("Disconnected.");
+            Console.WriteLine("Disconnected.");
         }
 
         private void im_MessageReceived(object sender, IMReceivedEventArgs e)
         {
-            if (e.From == "Server")
+            Console.Write($"Checking if {e.From.ToLower()} == 'server': ");
+            if (e.From.ToLower() == "server")
             {
-                Debug.WriteLine("Got response from server... sync file now...");
+                Console.WriteLine("TRUE");
+                Console.WriteLine("Got response from server... sync file now...");
 
                 string appPath = new System.IO.FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location).DirectoryName;
                 string servicePath = Directory.GetParent(appPath).FullName + @"\Service\Service";
@@ -615,6 +625,11 @@ namespace ZeroKey.Service.Core
                 string sc = File.ReadAllText(AppPath + @"\Application.config");
                 _applicationConfiguration = JsonConvert.DeserializeObject<Config>(sc);
                 Log("Configuration loaded from authentication server.");
+                IM_Successful = true;
+            }
+            else
+            {
+                Console.WriteLine("FALSE");
             }
         }
 
@@ -632,16 +647,22 @@ namespace ZeroKey.Service.Core
                 string user = db.Read("User", "Login");
                 string pass = db.Read("Password", "Login");
 
-                if (ip != null && user != null && pass != null)
+                if ( !String.IsNullOrEmpty(ip) || !String.IsNullOrEmpty(user) || !String.IsNullOrEmpty(pass))
                 {
                     im.Login(user, pass, ip);
+                    Console.WriteLine("Login requested!");
                     while (trys < 10)
                     {
+                        if (IM_Successful)
+                        {
+                            db.Write("IsEnabled", "true", "Settings");
+                            return true;
+                        }
+
+                        Console.WriteLine("Perform wait thread until response from server.");
                         Thread.Sleep(1000);
                         trys++;
                     }
-
-                    return IM_Successful;
                 }
             }
             catch
@@ -682,25 +703,18 @@ namespace ZeroKey.Service.Core
 
         private bool SaveConfig()
         {
+            // Read local database config
             try
             {
                 var db = new IniFile(AppPath + @"\Database.ini");
                 string ip = db.Read("IP", "Login");
                 string user = db.Read("User", "Login");
                 string pass = db.Read("Password", "Login");
-                string boolIsEnabled = db.Read("Enabled", "Login");
-                bool IsEnabled = false || boolIsEnabled.Equals("Enabled", StringComparison.CurrentCultureIgnoreCase);
 
-                if (ip != null || user != null || pass != null)
+                if (!String.IsNullOrEmpty(ip) || !String.IsNullOrEmpty(user) || !String.IsNullOrEmpty(pass))
                 {
-                    // Using network based configuration
-                    NetworkCredential cred = new NetworkCredential(user, pass);
-                    using (new NetworkConnection($@"\\{ip}\ZeroKeyCONF", cred))
-                    {
-                        File.WriteAllText($@"\\{ip}\ZeroKeyCONF\Application.config", JsonConvert.SerializeObject(_applicationConfiguration));
-                        Log($@"Configuration saved to \\{ip}\ZeroKeyCONF\Application.config");
-                        return true;
-                    }
+                    im.Login(user, pass, ip);
+                    Console.WriteLine("Login requested!");
                 }
             }
             catch

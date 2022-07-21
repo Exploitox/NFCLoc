@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
@@ -14,6 +15,8 @@ namespace ZeroKey.UI.View
     public partial class MainWindow
     {
         private readonly System.Windows.Forms.NotifyIcon _nIcon = new System.Windows.Forms.NotifyIcon();
+        private static readonly string AppPath = new System.IO.FileInfo(System.Reflection.Assembly.GetEntryAssembly()?.Location ?? string.Empty).DirectoryName;
+        public static readonly string ServicePath = Path.Combine(AppPath, "..", "Service", "Service");
         [DllImport("user32.dll")]
         private static extern
         bool SetForegroundWindow(IntPtr hWnd);
@@ -26,6 +29,7 @@ namespace ZeroKey.UI.View
             bool IsIconic(IntPtr hWnd);
 
         private const int SwRestore = 9;
+        public static bool UseRemoteAuthentication = false;
         
         public MainWindow()
         {
@@ -68,6 +72,13 @@ namespace ZeroKey.UI.View
             _nIcon.Icon = new Icon("icon.ico");
             _nIcon.Visible = true;
             _nIcon.Click += nIcon_Click;
+
+            // Read remote configuration
+            var db = new IniFile(ServicePath + @"\Database.ini");
+            string isEnabled = db.Read("IsEnabled", "Settings");
+            if (isEnabled == null) return;
+            if (isEnabled.ToLower() == "true")
+                UseRemoteAuthentication = true;
         }
 
         protected override void OnSourceInitialized(EventArgs e)

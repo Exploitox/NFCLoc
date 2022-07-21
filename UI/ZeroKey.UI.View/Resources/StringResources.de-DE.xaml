@@ -19,9 +19,10 @@
 
     <!-- About -->
     <system:String x:Key="about_abouttext">Über ZeroKey</system:String>
-    <system:String x:Key="about_text">ZeroKey provides NFC based login and logout functionality for the Microsoft Windows Operating System. The ZeroKey can be used to make payments, access control, unlock &amp; control mobile devices, transfer information, link people and much more.</system:String>
-    <system:String x:Key="about_authentication">Autorisierungsserver</system:String>
-    <system:String x:Key="about_authstatus">Lokale Autorisierung</system:String>
+    <system:String x:Key="about_text">ZeroKey bietet NFC-basierte An- und Abmeldefunktionen für das Microsoft Windows Betriebssystem. Es unterstützt die An- und Abmeldefunktionalität von Drittanbietersoftware wie medatixx.</system:String>
+    <system:String x:Key="about_authentication">Autorisierungsmethode:</system:String>
+    <system:String x:Key="about_localauth">Lokale Autorisierung</system:String>
+    <system:String x:Key="about_remoteauth">Serverseitige Autorisierung</system:String>
 
 <!-- FinishedStepView -->
     <system:String x:Key="fsv_header">Fertig!</system:String>

@@ -65,8 +65,6 @@ namespace ZeroKey.Service.Host
         internal void TestStartupAndStop(string[] args)
         {
             this.OnStart(args);
-            Console.ReadLine();
-            this.OnStop();
         }
 #endif
 

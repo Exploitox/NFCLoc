@@ -34,7 +34,7 @@
             <Label Content="{Binding VersionInfo}" FontWeight="Bold" Name="lblVersionInfo" Grid.Row="0" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="18"></Label>
 
             <Label Content="{DynamicResource about_authentication}" FontWeight="Bold" Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="18"/>
-            <Label Content="{DynamicResource about_authstatus}" FontWeight="Bold" Name="lbAuthStatus" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="18"/>
+            <Label Content="" FontWeight="Bold" Name="lbAuthStatus" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="18"/>
             
             <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
                 <Label Content="{DynamicResource about_abouttext}" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="18"></Label>

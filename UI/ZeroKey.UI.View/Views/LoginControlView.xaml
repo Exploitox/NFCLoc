@@ -361,13 +361,13 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Image Grid.Row="1"
-               Source="/ZeroKey.UI.View;component/Assets/Banner.png"
+            <Image
+               Source="/ZeroKey.UI.View;component/Assets/Banner-x64.png"
                Height="28"
                HorizontalAlignment="Left"/>
             
             <DockPanel Grid.Column="1" LastChildFill="False" VerticalAlignment="Center" Margin="0,0,10,0" Visibility="{Binding IsDeviceNotAvailable,Converter={StaticResource BooleanToVisibilityConverter}}">
-                <Button x:Name="buttonConnect" Background="Transparent" BorderBrush="Transparent" DockPanel.Dock="Right" Command="{Binding RefreshConnectedDevicesCommand}" Style="{StaticResource ConnectToolbarButtonStyle}">
+                <Button Background="Transparent" BorderBrush="Transparent" DockPanel.Dock="Right" Command="{Binding RefreshConnectedDevicesCommand}" Style="{StaticResource ConnectToolbarButtonStyle}">
                     <Viewbox>
                         <ContentControl />
                     </Viewbox>

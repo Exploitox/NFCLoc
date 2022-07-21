@@ -15,8 +15,8 @@
         </Grid.RowDefinitions>
 
         <!-- image -->
-        <Image Source="/ZeroKey.UI.View;component/Assets/Wolkenhof-Logo.png"
-               Height="64"
+        <Image Source="/ZeroKey.UI.View;component/Assets/Banner-x64.png"
+               Height="48"
                HorizontalAlignment="Center"/>
         
         <!-- step content -->

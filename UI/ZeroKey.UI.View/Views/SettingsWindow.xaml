@@ -10,12 +10,12 @@
         Title="ZeroKey - Settings" Height="420" Width="600">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="80"/>
+            <RowDefinition Height="60"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
         <Image 
-            Source="/ZeroKey.UI.View;component/Assets/Wolkenhof-Logo.png" Stretch="Uniform"
+            Source="/ZeroKey.UI.View;component/Assets/Banner-x64.png"
             Margin="130,10,130,0"/>
 
         <Grid Grid.Row="1" Margin="10" ShowGridLines="false">
@@ -71,7 +71,20 @@
                                 Text="Password:" />
                             <TextBox x:Name="TbPW" Grid.Column="1" IsEnabled="false" />
                         </Grid>
-                        <TextBlock Margin="0,10,0,0" Text="After enabling Authentication Server, you need to restart ZeroKey to apply the changes." />
+                        <Grid Margin="0,10,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="25"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                FontSize="12"
+                                Margin="0,0,0,0"
+                                Text="Query interval:" />
+                            <TextBox x:Name="TbSec" Grid.Column="1" IsEnabled="false" />
+                            <TextBlock Grid.Column="2" Text="sec" Margin="5,0,0,0"/>
+                        </Grid>
+                        <TextBlock Margin="0,10,0,0" Text="After enabling Authentication Server, you need to restart ZeroKey (and service) to apply the changes." />
                     </StackPanel>
                 </GroupBox>
             </StackPanel>
