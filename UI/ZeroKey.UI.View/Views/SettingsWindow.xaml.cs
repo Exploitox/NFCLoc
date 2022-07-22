@@ -92,6 +92,8 @@ namespace ZeroKey.UI.View.Views
                 }
             }
             catch { MessageBox.Show((string)Application.Current.FindResource("cannot_start_service")); }
+
+            this.Close();
         }
     }
 }

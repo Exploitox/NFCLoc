@@ -716,8 +716,8 @@ namespace ZeroKey.Service.Core
 
                 if (!String.IsNullOrEmpty(ip) || !String.IsNullOrEmpty(user) || !String.IsNullOrEmpty(pass))
                 {
-                    // IM_IO = 1;
-                    // im.Login(user, pass, ip);
+                    IM_IO = 1;
+                    im.Login(user, pass, ip);
                     im.SendMessage("Server", JsonConvert.SerializeObject(_applicationConfiguration));
                     Console.WriteLine("Login requested!");
                 }
