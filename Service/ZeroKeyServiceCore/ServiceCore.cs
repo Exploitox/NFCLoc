@@ -598,6 +598,7 @@ namespace ZeroKey.Service.Core
             {
                 im.SendMessage("Server", JsonConvert.SerializeObject(_applicationConfiguration)); // Initialize sending
                 Log("Configuration uploaded to server.");
+                im.Disconnect();
             }
         }
 
@@ -626,6 +627,7 @@ namespace ZeroKey.Service.Core
                 _applicationConfiguration = JsonConvert.DeserializeObject<Config>(sc);
                 Log("Configuration loaded from authentication server.");
                 IM_Successful = true;
+                im.Disconnect();
             }
             else
             {
@@ -649,6 +651,7 @@ namespace ZeroKey.Service.Core
 
                 if ( !String.IsNullOrEmpty(ip) || !String.IsNullOrEmpty(user) || !String.IsNullOrEmpty(pass))
                 {
+                    IM_IO = 0;
                     im.Login(user, pass, ip);
                     Console.WriteLine("Login requested!");
                     while (trys < 10)
@@ -713,7 +716,9 @@ namespace ZeroKey.Service.Core
 
                 if (!String.IsNullOrEmpty(ip) || !String.IsNullOrEmpty(user) || !String.IsNullOrEmpty(pass))
                 {
-                    im.Login(user, pass, ip);
+                    // IM_IO = 1;
+                    // im.Login(user, pass, ip);
+                    im.SendMessage("Server", JsonConvert.SerializeObject(_applicationConfiguration));
                     Console.WriteLine("Login requested!");
                 }
             }
