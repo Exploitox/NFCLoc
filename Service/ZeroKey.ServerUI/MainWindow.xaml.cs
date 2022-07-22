@@ -128,7 +128,7 @@ namespace ZeroKey.ServerUI
                 {
                     im.Disconnect();
                 }
-                catch {;}
+                catch (Exception ex) { Debug.WriteLine("Error logging off: " + ex.Message); }
 
                 TbIp.Text = GetLocalIpAddress();
                 TbUser.Text = _user;
@@ -170,22 +170,26 @@ namespace ZeroKey.ServerUI
         {
             if (e.Message == "gimme config")
             {
+                Debug.WriteLine("[{0}] Got request command from client... sending config...", DateTime.Now);
+
                 im.SendMessage(e.From, File.ReadAllText("Application.config"));
             }
             else
             {
                 try
                 {
+                    Debug.WriteLine("[{0}] Got configuration from client... writing config...", DateTime.Now);
                     _applicationConfiguration = JsonConvert.DeserializeObject<ConfigTemplate>(e.Message);
                     if (_applicationConfiguration != null)
                     {
                         File.WriteAllText("Application.config", e.Message);
-                        Console.WriteLine("Config updated.");
+                        Debug.WriteLine("[{0}] Config updated.", DateTime.Now);
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
                     // Ignore, as this is not a config.
+                    Debug.WriteLine("[{0}] Error on write config: " + ex.Message, DateTime.Now);
                 }
             }
         }

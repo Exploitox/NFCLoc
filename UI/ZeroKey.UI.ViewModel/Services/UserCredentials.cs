@@ -1,5 +1,6 @@
 ﻿using ZeroKey.Service.Common;
 using System.DirectoryServices.AccountManagement;
+using System.DirectoryServices.ActiveDirectory;
 
 namespace ZeroKey.UI.ViewModel.Services
 {
@@ -14,10 +15,19 @@ namespace ZeroKey.UI.ViewModel.Services
 
         public bool IsValidCredentials(string username, string password)
         {
-            var contextType = Crypto.IsDomainJoined() // check if we're on a domain
-                ? ContextType.Domain
-                : ContextType.Machine;
+            ContextType contextType;
+            try // Check if we are in a domain
+            {
+                var IsDomain = System.DirectoryServices.ActiveDirectory.Domain.GetComputerDomain();
 
+                // User is in domain
+                contextType = ContextType.Domain;
+            }
+            catch (ActiveDirectoryObjectNotFoundException)
+            {
+                // User is not in domain
+                contextType = ContextType.Machine;
+            }
 
             if (contextType == ContextType.Domain)
             {
