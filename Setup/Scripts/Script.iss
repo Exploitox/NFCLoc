@@ -13,7 +13,7 @@
 #define ServiceAppPluginsPath = "{app}\Service\Service\Plugins"
 #define ServiceAppMedatixxPath = "{app}\Service\Service\medatixx"
 #define RegistryKey = "{{8EB4E5F7-9DFB-4674-897C-2A584934CDBE}"
-#define ProviderNameKey = "NFCCredentialProvider"
+#define ProviderNameKey = "ZeroKeyCredentialProvider"
 #define VCmsg "Installing Microsoft Visual C++ Redistributable ..."
 #define NETmsg "Installing Microsoft .NET 6.0 ..."
 
@@ -106,9 +106,9 @@ Source: "..\..\bin\Release\Service\medatixx\WinRT.Runtime.dll"; DestDir: {#Servi
 
 ; Credential registration
 ;Source: "..\..\bin\Release\Credential\CredUILauncher.exe"; DestDir: {#ServiceCredentialPath}; Flags: ignoreversion
-Source: "..\..\bin\Release\Credential\NFCCredentialProvider.dll"; DestDir: {#ServiceCredentialPath}; Flags: ignoreversion
-;Source: "..\..\bin\Release\Credential\tileimage.bmp"; DestDir: {#ServiceCredentialPath}; Flags: ignoreversion
-Source: "..\..\bin\Release\Credential\NFCCredentialProvider.dll"; DestDir: {sys};
+Source: "..\..\bin\Release\Credential\ZeroKeyCredentialProvider.dll"; DestDir: {#ServiceCredentialPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Credential\tileimage.bmp"; DestDir: {#ServiceCredentialPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Credential\ZeroKeyCredentialProvider.dll"; DestDir: {sys};
 
 ; Visual C++ 2015
 Source: "vc_redist.x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall
