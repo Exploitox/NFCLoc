@@ -155,7 +155,7 @@ void SHA1::processBlock(const void* data)
 /// add arbitrary number of bytes
 void SHA1::add(const void* data, size_t numBytes)
 {
-  const auto* current = static_cast<const uint8_t*>(data);
+  const uint8_t* current = (const uint8_t*) data;
 
   if (m_bufferSize > 0)
   {
@@ -245,14 +245,14 @@ void SHA1::processBuffer()
     addLength = extra + paddedLength - BlockSize;
 
   // must be big endian
-  *addLength++ = static_cast<unsigned char>((msgBits >> 56) & 0xFF);
-  *addLength++ = static_cast<unsigned char>((msgBits >> 48) & 0xFF);
-  *addLength++ = static_cast<unsigned char>((msgBits >> 40) & 0xFF);
-  *addLength++ = static_cast<unsigned char>((msgBits >> 32) & 0xFF);
-  *addLength++ = static_cast<unsigned char>((msgBits >> 24) & 0xFF);
-  *addLength++ = static_cast<unsigned char>((msgBits >> 16) & 0xFF);
-  *addLength++ = static_cast<unsigned char>((msgBits >> 8) & 0xFF);
-  *addLength   = static_cast<unsigned char>(msgBits & 0xFF);
+  *addLength++ = (unsigned char)((msgBits >> 56) & 0xFF);
+  *addLength++ = (unsigned char)((msgBits >> 48) & 0xFF);
+  *addLength++ = (unsigned char)((msgBits >> 40) & 0xFF);
+  *addLength++ = (unsigned char)((msgBits >> 32) & 0xFF);
+  *addLength++ = (unsigned char)((msgBits >> 24) & 0xFF);
+  *addLength++ = (unsigned char)((msgBits >> 16) & 0xFF);
+  *addLength++ = (unsigned char)((msgBits >>  8) & 0xFF);
+  *addLength   = (unsigned char)( msgBits        & 0xFF);
 
   // process blocks
   processBlock(m_buffer);
@@ -272,11 +272,11 @@ std::string SHA1::getHash()
   // convert to hex string
   std::string result;
   result.reserve(2 * HashBytes);
-  for (const unsigned char i : rawHash)
+  for (int i = 0; i < HashBytes; i++)
   {
-    static constexpr char dec2_hex[16+1] = "0123456789abcdef";
-    result += dec2_hex[(i >> 4) & 15];
-    result += dec2_hex[i & 15];
+    static const char dec2hex[16+1] = "0123456789abcdef";
+    result += dec2hex[(rawHash[i] >> 4) & 15];
+    result += dec2hex[ rawHash[i]       & 15];
   }
 
   return result;

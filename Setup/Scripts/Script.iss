@@ -13,7 +13,7 @@
 #define ServiceAppPluginsPath = "{app}\Service\Service\Plugins"
 #define ServiceAppMedatixxPath = "{app}\Service\Service\medatixx"
 #define RegistryKey = "{{8EB4E5F7-9DFB-4674-897C-2A584934CDBE}"
-#define ProviderNameKey = "ZeroKeyCredentialProvider"
+#define ProviderNameKey = "NFCCredentialProvider"
 #define VCmsg "Installing Microsoft Visual C++ Redistributable ..."
 #define NETmsg "Installing Microsoft .NET 6.0 ..."
 
@@ -36,8 +36,8 @@ DefaultDirName={pf}\{#MyAppPublisher}\{#MyAppName}
 DisableProgramGroupPage=yes
 
 OutputDir=..\Result
-OutputBaseFilename={#MyAppName}_{#GitCommitHash}_{#MyAppVersion}
-
+;OutputBaseFilename={#MyAppName}_{#GitCommitHash}_{#MyAppVersion}
+OutputBaseFilename={#MyAppName}_INTERNAL_T0_{#MyAppVersion}
 CloseApplications=force
 
 Compression=lzma
@@ -106,37 +106,37 @@ Source: "..\..\bin\Release\Service\medatixx\WinRT.Runtime.dll"; DestDir: {#Servi
 
 ; Credential registration
 ;Source: "..\..\bin\Release\Credential\CredUILauncher.exe"; DestDir: {#ServiceCredentialPath}; Flags: ignoreversion
-Source: "..\..\bin\Release\Credential\ZeroKeyCredentialProvider.dll"; DestDir: {#ServiceCredentialPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Credential\NFCCredentialProvider.dll"; DestDir: {#ServiceCredentialPath}; Flags: ignoreversion
 Source: "..\..\bin\Release\Credential\tileimage.bmp"; DestDir: {#ServiceCredentialPath}; Flags: ignoreversion
-Source: "..\..\bin\Release\Credential\ZeroKeyCredentialProvider.dll"; DestDir: {sys};
+Source: "..\..\bin\Release\Credential\NFCCredentialProvider.dll"; DestDir: {sys};
 
 ; Visual C++ 2015
-Source: "vc_redist.x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall
+;Source: "vc_redist.x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall
 
 ; .NET 6.0
-Source: "windowsdesktop-runtime-6.0.5-win-x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall
+;Source: "windowsdesktop-runtime-6.0.5-win-x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall
 
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
 Name: "{commonprograms}\Wolkenhof\{#MyAppName}"; Filename: "{app}\App\{#MyAppExeName}"
 
-[Code]
-#include "dotnet.pas"
+[Code] 
+//#include "dotnet.pas"
 #include "checkinstalled.pas"
-#include "vc.pas"
+//#include "vc.pas"
 
 function InitializeSetup(): Boolean;
 begin
-    if not NET6NeedsInstall() then
-    begin
-        result := false;    
-    end;
+    //if not NET6NeedsInstall() then
+    //begin
+    //    result := false;    
+    //end;
 
-    if not CheckNetFramework() then
-    begin
-        result := false;
-    end else
+    //if not CheckNetFramework() then
+    //begin
+    //    result := false;
+    //end else
     begin
         result := CheckInstalledVersion();
     end;
@@ -151,26 +151,26 @@ begin
 end;
 
 [Run]
-Filename: "{tmp}\vc_redist.x64.exe"; StatusMsg: "{#VCmsg}"; Check: IsWin64 and VCRedistNeedsInstall
-Filename: "{tmp}\windowsdesktop-runtime-6.0.5-win-x64.exe"; StatusMsg: "{#NETmsg}"; Check: IsWin64
+;Filename: "{tmp}\vc_redist.x64.exe"; StatusMsg: "{#VCmsg}"; Check: IsWin64 and VCRedistNeedsInstall
+;Filename: "{tmp}\windowsdesktop-runtime-6.0.5-win-x64.exe"; StatusMsg: "{#NETmsg}"; Check: IsWin64
 Filename: "{#AppPath}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 Filename: "{#ServiceAppPath}\ZeroKeyServiceHost.exe"; Flags: runascurrentuser; Parameters: "--install"
 
 [UninstallRun]
 Filename: "{#ServiceAppPath}\ZeroKeyServiceHost.exe"; Parameters: "--uninstall"
-Filename: "{sys}\ZeroKeyCredentialProvider.dll"
+Filename: "{sys}\NFCCredentialProvider.dll"
 
 [Registry]
 ; [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\Credential Providers\{8EB4E5F7-9DFB-4674-897C-2A584934CDBE}]
-; @="ZeroKeyCredentialProvider"
+; @="NFCCredentialProvider"
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\Credential Providers\{#RegistryKey}"; ValueType: string; ValueName: ""; ValueData: "{#ProviderNameKey}"; Flags: uninsdeletekey
 
 ; [HKEY_CLASSES_ROOT\CLSID\{8EB4E5F7-9DFB-4674-897C-2A584934CDBE}]
-; @="ZeroKeyCredentialProvider"
+; @="NFCCredentialProvider"
 Root: HKCR; Subkey: "CLSID\{#RegistryKey}"; ValueType: string; ValueName: ""; ValueData: "{#ProviderNameKey}"; Flags: uninsdeletekey
 
 ; [HKEY_CLASSES_ROOT\CLSID\{8EB4E5F7-9DFB-4674-897C-2A584934CDBE}\InprocServer32]
-; @="ZeroKeyCredentialProvider.dll"
+; @="NFCCredentialProvider.dll"
 ; "ThreadingModel"="Apartment"
 Root: HKCR; Subkey: "CLSID\{#RegistryKey}\InprocServer32"; ValueType: string; ValueName: ""; ValueData: "{#ProviderNameKey}.dll"
 Root: HKCR; Subkey: "CLSID\{#RegistryKey}\InprocServer32"; ValueType: string; ValueName: "ThreadingModel"; ValueData: "Apartment"

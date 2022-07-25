@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Credential", "Credential", 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CredUILauncher", "Credential\CredUILauncher\CredUILauncher.vcxproj", "{D1F100CA-0215-405D-9B43-7C0AAAAC8880}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NFCCredentialProvider", "Credential\ZeroKeyCredentialProvider\ZeroKeyCredentialProvider.vcxproj", "{6181F937-13C7-4F37-B011-B3828985E402}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NFCCredentialProvider", "Credential\NFCCredentialProvider\NFCCredentialProvider.vcxproj", "{6181F937-13C7-4F37-B011-B3828985E402}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CredentialRegistration", "Management\RegistryWriter\CredentialRegistration.csproj", "{6DEAB8BD-E316-4056-894A-DD5ECB1D59B7}"
 EndProject

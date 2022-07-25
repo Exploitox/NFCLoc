@@ -16,7 +16,7 @@ static LONG g_cRef = 0;   // global dll reference count
 
 // IClassFactory ///////////////////////////////////////////////////////////////////////
 
-extern HRESULT ZeroKeyCredentialProvider_CreateInstance(REFIID riid, void** ppv);
+extern HRESULT NFCCredentialProvider_CreateInstance(REFIID riid, void** ppv);
 
 HINSTANCE g_hinst = NULL;   // global dll hinstance
 
@@ -70,7 +70,7 @@ public:
 		HRESULT hr;
 		if (!pUnkOuter)
 		{
-			hr = ZeroKeyCredentialProvider_CreateInstance(riid, ppv);
+			hr = NFCCredentialProvider_CreateInstance(riid, ppv);
 		}
 		else
 		{
@@ -105,9 +105,9 @@ private:
 HRESULT CClassFactory_CreateInstance(REFCLSID rclsid, REFIID riid, void** ppv)
 {
 	HRESULT hr;
-	if (CLSID_ZeroKeyProvider == rclsid)
+	if (CLSID_NFCProvider == rclsid)
 	{
-		auto* pcf = new CClassFactory;
+		CClassFactory* pcf = new CClassFactory;
 		if (pcf)
 		{
 			hr = pcf->QueryInterface(riid, ppv);

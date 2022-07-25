@@ -66,13 +66,13 @@ private:
   void processBuffer();
 
   /// size of processed data in bytes
-  uint64_t m_numBytes{};
+  uint64_t m_numBytes;
   /// valid bytes in m_buffer
-  size_t   m_bufferSize{};
+  size_t   m_bufferSize;
   /// bytes not processed yet
-  uint8_t  m_buffer[BlockSize]{};
+  uint8_t  m_buffer[BlockSize];
 
   enum { HashValues = HashBytes / 4 };
   /// hash, stored as integers
-  uint32_t m_hash[HashValues]{};
+  uint32_t m_hash[HashValues];
 };

@@ -45,7 +45,7 @@ static char *pcsc_stringify_error(LONG rv)
 
 extern HINSTANCE hInstance;
 
-nfc_credential::nfc_credential() :
+NFCCredential::NFCCredential() :
 	_cRef(1),
 	_pCredProvCredentialEvents(NULL)
 {
@@ -58,7 +58,7 @@ nfc_credential::nfc_credential() :
 	ZeroMemory(_rgFieldStrings, sizeof(_rgFieldStrings));
 }
 
-nfc_credential::~nfc_credential()
+NFCCredential::~NFCCredential()
 {
 	MAZ_LOG(LogMessageType::Information, "NFCCredential::Destructor");
 
@@ -74,11 +74,11 @@ nfc_credential::~nfc_credential()
 // Initializes one credential with the field information passed in.
 // Set the value of the SFI_FIMTITLE field to pwzUsername.
 // Optionally takes a password for the SetSerialization case.
-HRESULT nfc_credential::Initialize(
+HRESULT NFCCredential::Initialize(
 	CREDENTIAL_PROVIDER_USAGE_SCENARIO cpus,
 	const CREDENTIAL_PROVIDER_FIELD_DESCRIPTOR* rgcpfd,
 	const FIELD_STATE_PAIR* rgfsp,
-	reader* rdr
+	Reader* rdr
 	)
 {
 	MAZ_LOG(LogMessageType::Information, "NFCCredential::Initialize");
@@ -110,7 +110,7 @@ HRESULT nfc_credential::Initialize(
 }
 
 // LogonUI calls this in order to give us a callback in case we need to notify it of anything.
-HRESULT nfc_credential::Advise(
+HRESULT NFCCredential::Advise(
 	ICredentialProviderCredentialEvents* pcpce
 	)
 {
@@ -127,7 +127,7 @@ HRESULT nfc_credential::Advise(
 }
 
 // LogonUI calls this to tell us to release the callback.
-HRESULT nfc_credential::UnAdvise()
+HRESULT NFCCredential::UnAdvise()
 {
 	MAZ_LOG(LogMessageType::Information, "NFCCredential::UnAdvise");
 
@@ -146,7 +146,7 @@ HRESULT nfc_credential::UnAdvise()
 // field definitions.  But if you want to do something
 // more complicated, like change the contents of a field when the tile is
 // selected, you would do it here.
-HRESULT nfc_credential::SetSelected(BOOL* pbAutoLogon)
+HRESULT NFCCredential::SetSelected(BOOL* pbAutoLogon)
 {
 	MAZ_LOG(LogMessageType::Information, "NFCCredential::SetSelected");
 
@@ -158,7 +158,7 @@ HRESULT nfc_credential::SetSelected(BOOL* pbAutoLogon)
 // Similarly to SetSelected, LogonUI calls this when your tile was selected
 // and now no longer is. The most common thing to do here (which we do below)
 // is to clear out the password field.
-HRESULT nfc_credential::SetDeselected()
+HRESULT NFCCredential::SetDeselected()
 {
 	MAZ_LOG(LogMessageType::Information, "NFCCredential::SetDeselected");
 
@@ -181,7 +181,7 @@ HRESULT nfc_credential::SetDeselected()
 
 // Gets info for a particular field of a tile. Called by logonUI to get information to 
 // display the tile.
-HRESULT nfc_credential::GetFieldState(
+HRESULT NFCCredential::GetFieldState(
 	DWORD dwFieldID,
 	CREDENTIAL_PROVIDER_FIELD_STATE* pcpfs,
 	CREDENTIAL_PROVIDER_FIELD_INTERACTIVE_STATE* pcpfis
@@ -208,7 +208,7 @@ HRESULT nfc_credential::GetFieldState(
 }
 
 // Sets ppwsz to the string value of the field at the index dwFieldID.
-HRESULT nfc_credential::GetStringValue(
+HRESULT NFCCredential::GetStringValue(
 	DWORD dwFieldID, 
 	PWSTR* ppwsz
 	)
@@ -233,7 +233,7 @@ HRESULT nfc_credential::GetStringValue(
 }
 
 // Gets the image to show in the user tile.
-HRESULT nfc_credential::GetBitmapValue(
+HRESULT NFCCredential::GetBitmapValue(
 	DWORD dwFieldID, 
 	HBITMAP* phbmp
 	)
@@ -268,7 +268,7 @@ HRESULT nfc_credential::GetBitmapValue(
 // adjacent to. We recommend that the submit button is placed next to the last
 // field which the user is required to enter information in. Optional fields
 // should be below the submit button.
-HRESULT nfc_credential::GetSubmitButtonValue(
+HRESULT NFCCredential::GetSubmitButtonValue(
 	DWORD dwFieldID,
 	DWORD* pdwAdjacentTo
 	)
@@ -294,7 +294,7 @@ HRESULT nfc_credential::GetSubmitButtonValue(
 
 // Sets the value of a field which can accept a string as a value.
 // This is called on each keystroke when a user types into an edit field.
-HRESULT nfc_credential::SetStringValue(
+HRESULT NFCCredential::SetStringValue(
 	DWORD dwFieldID, 
 	PCWSTR pwz      
 	)
@@ -324,7 +324,7 @@ HRESULT nfc_credential::SetStringValue(
 // The following methods are for logonUI to get the values of various UI elements and then communicate
 // to the credential about what the user did in that field.  However, these methods are not implemented
 // because our tile doesn't contain these types of UI elements
-HRESULT nfc_credential::GetCheckboxValue(
+HRESULT NFCCredential::GetCheckboxValue(
 	DWORD dwFieldID, 
 	BOOL* pbChecked,
 	PWSTR* ppwszLabel
@@ -339,7 +339,7 @@ HRESULT nfc_credential::GetCheckboxValue(
 	return E_NOTIMPL;
 }
 
-HRESULT nfc_credential::GetComboBoxValueCount(
+HRESULT NFCCredential::GetComboBoxValueCount(
 	DWORD dwFieldID, 
 	DWORD* pcItems, 
 	DWORD* pdwSelectedItem
@@ -354,7 +354,7 @@ HRESULT nfc_credential::GetComboBoxValueCount(
 	return E_NOTIMPL;
 }
 
-HRESULT nfc_credential::GetComboBoxValueAt(
+HRESULT NFCCredential::GetComboBoxValueAt(
 	DWORD dwFieldID, 
 	DWORD dwItem,
 	PWSTR* ppwszItem
@@ -369,7 +369,7 @@ HRESULT nfc_credential::GetComboBoxValueAt(
 	return E_NOTIMPL;
 }
 
-HRESULT nfc_credential::SetCheckboxValue(
+HRESULT NFCCredential::SetCheckboxValue(
 	DWORD dwFieldID, 
 	BOOL bChecked
 	)
@@ -382,7 +382,7 @@ HRESULT nfc_credential::SetCheckboxValue(
 	return E_NOTIMPL;
 }
 
-HRESULT nfc_credential::SetComboBoxSelectedValue(
+HRESULT NFCCredential::SetComboBoxSelectedValue(
 	DWORD dwFieldId,
 	DWORD dwSelectedItem
 	)
@@ -395,7 +395,7 @@ HRESULT nfc_credential::SetComboBoxSelectedValue(
 	return E_NOTIMPL;
 }
 
-HRESULT nfc_credential::CommandLinkClicked(DWORD dwFieldID)
+HRESULT NFCCredential::CommandLinkClicked(DWORD dwFieldID)
 {
 	MAZ_LOG(LogMessageType::Information, "NFCCredential::CommandLinkClicked");
 
@@ -409,7 +409,7 @@ HRESULT nfc_credential::CommandLinkClicked(DWORD dwFieldID)
 // Collect the username and password into a serialized credential for the correct usage scenario 
 // (logon/unlock is what's demonstrated in this sample).  LogonUI then passes these credentials 
 // back to the system to log on.
-HRESULT nfc_credential::GetSerialization(
+HRESULT NFCCredential::GetSerialization(
 	CREDENTIAL_PROVIDER_GET_SERIALIZATION_RESPONSE* pcpgsr,
 	CREDENTIAL_PROVIDER_CREDENTIAL_SERIALIZATION* pcpcs, 
 	PWSTR* ppwszOptionalStatusText, 
@@ -423,10 +423,10 @@ HRESULT nfc_credential::GetSerialization(
 
 	HRESULT hr = S_OK;
 
-	if (_reader == NULL || !_reader->has_login())
+	if (_reader == NULL || !_reader->HasLogin())
 		return E_FAIL;
 
-	hr = _reader->get_login(pcpgsr, pcpcs, ppwszOptionalStatusText, pcpsiOptionalStatusIcon, _cpus);
+	hr = _reader->GetLogin(pcpgsr, pcpcs, ppwszOptionalStatusText, pcpsiOptionalStatusIcon, _cpus);
 
 	return hr;
 }
@@ -435,7 +435,7 @@ HRESULT nfc_credential::GetSerialization(
 // and the icon displayed in the case of a logon failure.  For example, we have chosen to 
 // customize the error shown in the case of bad username/password and in the case of the account
 // being disabled.
-HRESULT nfc_credential::ReportResult(
+HRESULT NFCCredential::ReportResult(
 	NTSTATUS ntsStatus, 
 	NTSTATUS ntsSubstatus,
 	PWSTR* ppwszOptionalStatusText, 
@@ -452,7 +452,7 @@ HRESULT nfc_credential::ReportResult(
 	return E_NOTIMPL;
 }
 
-HRESULT nfc_credential::GetUserSid(LPWSTR *sid)
+HRESULT NFCCredential::GetUserSid(LPWSTR *sid)
 {
 	MAZ_LOG(LogMessageType::Information, "NFCCredential::GetUserSid");
 

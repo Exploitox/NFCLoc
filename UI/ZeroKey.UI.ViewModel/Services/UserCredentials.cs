@@ -1,5 +1,4 @@
-﻿using ZeroKey.Service.Common;
-using System.DirectoryServices.AccountManagement;
+﻿using System.DirectoryServices.AccountManagement;
 using System.DirectoryServices.ActiveDirectory;
 
 namespace ZeroKey.UI.ViewModel.Services

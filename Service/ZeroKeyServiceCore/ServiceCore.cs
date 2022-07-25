@@ -6,15 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using ZeroKey.Service.Common;
-using System.Runtime.InteropServices;
 using System.IO;
 using System.Net.Sockets;
 using System.Net;
 using Newtonsoft.Json;
-using System.Diagnostics;
-using Microsoft.Win32;
 using System.Management;
-using System.Security.Cryptography.X509Certificates;
 using ZeroKey.Libraries;
 using ZeroKey.Service.Core.ClientCommunication;
 
@@ -593,10 +589,14 @@ namespace ZeroKey.Service.Core
             Console.WriteLine("Login successful.\nSending message ...");
 
             if (IM_IO == 0)
+            {
                 im.SendMessage("Server", "gimme config");
+                Console.WriteLine("Configuration request -> Server");
+            }
             if (IM_IO == 1)
             {
                 im.SendMessage("Server", JsonConvert.SerializeObject(_applicationConfiguration)); // Initialize sending
+                Console.WriteLine("Local configuration -> Server");
                 Log("Configuration uploaded to server.");
                 im.Disconnect();
             }
@@ -718,8 +718,10 @@ namespace ZeroKey.Service.Core
                 {
                     IM_IO = 1;
                     im.Login(user, pass, ip);
+                    Console.WriteLine("Login requested. (perf. login with IM_IO 1)");
+
                     im.SendMessage("Server", JsonConvert.SerializeObject(_applicationConfiguration));
-                    Console.WriteLine("Login requested!");
+                    Console.WriteLine("Local configuration -> server.");
                 }
             }
             catch
