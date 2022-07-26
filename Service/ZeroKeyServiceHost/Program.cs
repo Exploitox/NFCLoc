@@ -22,11 +22,11 @@ namespace ZeroKey.Service.Host
                     case "--uninstall":
                         ManagedInstallerClass.InstallHelper(new[] { "/u", Assembly.GetExecutingAssembly().Location });
                         break;
+                    default:
+                        ZeroKeyServiceHost service1 = new ZeroKeyServiceHost();
+                        service1.TestStartupAndStop(args);
+                        break;
                 }
-#if DEBUG
-                ZeroKeyServiceHost service1 = new ZeroKeyServiceHost();
-                service1.TestStartupAndStop(args);
-#endif
             }
             else
             {

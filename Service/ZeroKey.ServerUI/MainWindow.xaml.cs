@@ -9,6 +9,8 @@ using System.Security.Cryptography.X509Certificates;
 using System.ServiceProcess;
 using ZeroKey.ServerUI.ClientCommunication;
 using Newtonsoft.Json;
+using Wpf.Ui.Common;
+using Clipboard = System.Windows.Clipboard;
 
 namespace ZeroKey.ServerUI
 {
@@ -23,6 +25,7 @@ namespace ZeroKey.ServerUI
         private static readonly IPAddress? _ip = IPAddress.Parse(GetLocalIpAddress());
         private static int procIdMain = -1;
         private static bool mainStarted = false;
+        private static bool authDisconnect = false;
 
         private ConfigTemplate _applicationConfiguration;
         public IMReceivedEventHandler receivedHandler;
@@ -99,78 +102,78 @@ namespace ZeroKey.ServerUI
         {
             Environment.Exit(0);
         }
-        
+
         private void ToggleSwitchOn_Click(object sender, RoutedEventArgs e)
         {
-            if (ToggleSwitch.IsChecked == true)
+            // Start Windows Service (ZeroKey Server)
+            try
             {
-                // Start Windows Service (ZeroKey Server)
-                try
+                mainStarted = false;
+                var p = new Process();
+                p.StartInfo.FileName = "ZeroKey.Server.Main.exe";
+                mainStarted = p.Start();
+                try 
+                {
+                    procIdMain = p.Id;
+                }
+                catch(InvalidOperationException)
                 {
                     mainStarted = false;
-                    var p = new Process();
-                    p.StartInfo.FileName = "ZeroKey.Server.Main.exe";
-                    mainStarted = p.Start();
-                    try 
-                    {
-                        procIdMain = p.Id;
-                    }
-                    catch(InvalidOperationException)
-                    {
-                        mainStarted = false;
-                    }
-                    catch(Exception ex)
-                    {
-                        mainStarted = false;
-                    }
                 }
-                catch (Exception ex) { MessageBox.Show("Cannot start server: " + $"\n{ex.Message}"); }
-                if (!mainStarted)
-                    MessageBox.Show("Cannot start server: Unknown error");
+                catch(Exception ex)
+                {
+                    mainStarted = false;
+                }
+            }
+            catch (Exception ex) { MessageBox.Show("Cannot start server: " + $"\n{ex.Message}"); }
+            if (!mainStarted)
+                MessageBox.Show("Cannot start server: Unknown error");
                 
-                // Log-out client if already connected
-                try
-                {
-                    im.Disconnect();
-                }
-                catch (Exception ex) { Debug.WriteLine("Error logging out: " + ex.Message); }
-
-                TbIp.Text = GetLocalIpAddress();
-                TbUser.Text = _user;
-                TbPw.Text = _password;
-
-                im.Login("Server", "Test123", _ip.ToString());
-#warning Server login still default / hard coded
-
-                ResetPwBtn.IsEnabled = false;
-                ClearUserBtn.IsEnabled = false;
-                ClearBtn.IsEnabled = false;
-            }
-
-            if (ToggleSwitch.IsChecked == false)
+            // Log-out client if already connected
+            try
             {
-                // Stop Windows Service (ZeroKey Server)
-                try
-                {
-                    // Kill task
-                    EndProcessPid(procIdMain);
-                }
-                catch (Exception ex) { MessageBox.Show("Cannot stop server: " + $"\n{ex.Message}"); }
-
-                TbIp.Text = "";
-                TbUser.Text = "";
-                TbPw.Text = "";
-
-                ResetPwBtn.IsEnabled = true;
-                ClearUserBtn.IsEnabled = true;
-                ClearBtn.IsEnabled = true;
+                authDisconnect = true;
+                im.Disconnect();
             }
+            catch (Exception ex) { Debug.WriteLine("Error logging out: " + ex.Message); }
+
+            TbIp.Text = GetLocalIpAddress();
+            TbUser.Text = _user;
+            TbPw.Text = _password;
+
+            im.Login("Server", "Test123", _ip.ToString());
+            // TODO: Autogenerate login information for server
+
+            ResetPwBtn.IsEnabled = false;
+            ClearUserBtn.IsEnabled = false;
+            ClearBtn.IsEnabled = false;
+        }
+        
+        private void ToggleSwitchOff_Click(object sender, RoutedEventArgs e)
+        {
+            // Stop Windows Service (ZeroKey Server)
+            try
+            {
+                // Kill task
+                EndProcessPid(procIdMain);
+            }
+            catch (Exception ex) { MessageBox.Show("Cannot stop server: " + $"\n{ex.Message}"); }
+
+            TbIp.Text = "";
+            TbUser.Text = "";
+            TbPw.Text = "";
+
+            ResetPwBtn.IsEnabled = true;
+            ClearUserBtn.IsEnabled = true;
+            ClearBtn.IsEnabled = true;
         }
         
         void im_LoginOK(object sender, EventArgs e)
         {
             Dispatcher.BeginInvoke(new Action(delegate
             {
+                RootSnackbar.Appearance = ControlAppearance.Success;
+                RootSnackbar.Icon = SymbolRegular.CheckmarkStarburst24;
                 RootSnackbar.Show("Logged in", $"Client is now logged into the server.");
             }));
         }
@@ -207,23 +210,31 @@ namespace ZeroKey.ServerUI
         {
             Dispatcher.BeginInvoke(new Action(delegate
             {
+                RootSnackbar.Appearance = ControlAppearance.Success;
+                RootSnackbar.Icon = SymbolRegular.CheckmarkStarburst24;
                 RootSnackbar.Show("Registered", $"Client was successfully registered.");
             }));
+            
+            // Kill server
+            EndProcessPid(procIdMain);
         }
 
         void im_LoginFailed(object sender, EventArgs e)
         {
             Dispatcher.BeginInvoke(new Action(delegate
             {
+                RootSnackbar.Appearance = ControlAppearance.Danger;
+                RootSnackbar.Icon = SymbolRegular.ErrorCircle24;
                 RootSnackbar.Show("Login failed", $"Failed to login into server.");
             }));
-
         }
 
         void im_RegisterFailed(object sender, EventArgs e)
         {
             Dispatcher.BeginInvoke(new Action(delegate
             {
+                RootSnackbar.Appearance = ControlAppearance.Danger;
+                RootSnackbar.Icon = SymbolRegular.ErrorCircle24;
                 RootSnackbar.Show("Register failed", $"Failed to register to server.");
             }));
         }
@@ -232,15 +243,20 @@ namespace ZeroKey.ServerUI
         {
             /*Dispatcher.BeginInvoke(new Action(delegate
             {
+                RootSnackbar.Appearance = ControlAppearance.Danger;
                 RootSnackbar.Show("Disconnected", $"Client was disconnected from server.");
             }));*/
-        }
 
-        private void ToggleSwitchOff_Click(object sender, RoutedEventArgs e)
-        {
-            TbIp.Text = "";
-            TbUser.Text = "";
-            TbPw.Text = "";
+            if (!authDisconnect)
+            {
+                im.Login("Server", "Test123", _ip.ToString());
+                // TODO: Autogenerate login information for server
+                authDisconnect = false;
+            }
+            else
+            {
+                authDisconnect = true;
+            }
         }
 
         private void ResetPWButton_Click(object sender, RoutedEventArgs e)
@@ -248,12 +264,34 @@ namespace ZeroKey.ServerUI
             var _userbkg = _user;
             var _passwordbkg = _password;
 
-            var config = new IniFile("config.ini");
+            // Start Windows Service (ZeroKey Server)
+            try
+            {
+                mainStarted = false;
+                var p = new Process();
+                p.StartInfo.FileName = "ZeroKey.Server.Main.exe";
+                mainStarted = p.Start();
+                try 
+                {
+                    procIdMain = p.Id;
+                }
+                catch(InvalidOperationException)
+                {
+                    mainStarted = false;
+                }
+                catch(Exception)
+                {
+                    mainStarted = false;
+                }
+            }
+            catch (Exception ex) { MessageBox.Show("Cannot start server: " + $"\n{ex.Message}"); }
+            if (!mainStarted)
+                MessageBox.Show("Cannot start server: Unknown error");
 
+            // Write new data to config
+            var config = new IniFile("config.ini");
             _user = $"ZK{GenerateUsername(6)}";
             _password = GeneratePassword(12);
-
-            // Write to config
             config.Write("Username", _user, "ZeroKey");
             config.Write("Password", _password, "ZeroKey");
 
@@ -266,6 +304,8 @@ namespace ZeroKey.ServerUI
             {
                 Dispatcher.BeginInvoke(new Action(delegate
                 {
+                    RootSnackbar.Appearance = ControlAppearance.Danger;
+                    RootSnackbar.Icon = SymbolRegular.ErrorCircle24;
                     RootSnackbar.Show("Cannot register new user", $"The server is not responding to the request. Is the server online?");
                 }));
 
@@ -289,6 +329,8 @@ namespace ZeroKey.ServerUI
                     File.Delete("Application.config");
                     Dispatcher.BeginInvoke(new Action(delegate
                     {
+                        RootSnackbar.Appearance = ControlAppearance.Success;
+                        RootSnackbar.Icon = SymbolRegular.CheckmarkStarburst24;
                         RootSnackbar.Show("Successful", $"App configuration was successfully removed.");
                     }));
                 }
@@ -296,6 +338,8 @@ namespace ZeroKey.ServerUI
                 {
                     Dispatcher.BeginInvoke(new Action(delegate
                     {
+                        RootSnackbar.Appearance = ControlAppearance.Danger;
+                        RootSnackbar.Icon = SymbolRegular.ErrorCircle24;
                         RootSnackbar.Show("Configuration cannot be cleared.", $"Cannot remove file 'Application.config'.");
                     }));
                 }
@@ -304,6 +348,8 @@ namespace ZeroKey.ServerUI
             {
                 Dispatcher.BeginInvoke(new Action(delegate
                 {
+                    RootSnackbar.Appearance = ControlAppearance.Danger;
+                    RootSnackbar.Icon = SymbolRegular.ErrorCircle24;
                     RootSnackbar.Show("Application configuration cannot be cleared.", $"There is no active Application configuration to be cleared.");
                 }));
             }
@@ -317,7 +363,9 @@ namespace ZeroKey.ServerUI
                 {
                     File.Delete("users.dat");
                     Dispatcher.BeginInvoke(new Action(delegate
-                    {
+                    {                        
+                        RootSnackbar.Appearance = ControlAppearance.Success;
+                        RootSnackbar.Icon = SymbolRegular.CheckmarkStarburst24;
                         RootSnackbar.Show("Successful", $"User list was successfully cleared.");
                     }));
                 }
@@ -325,6 +373,8 @@ namespace ZeroKey.ServerUI
                 {
                     Dispatcher.BeginInvoke(new Action(delegate
                     {
+                        RootSnackbar.Appearance = ControlAppearance.Danger;
+                        RootSnackbar.Icon = SymbolRegular.ErrorCircle24;
                         RootSnackbar.Show("Users cannot be cleared.", $"Cannot remove file 'users.dat'.");
                     }));
                 }
@@ -333,6 +383,8 @@ namespace ZeroKey.ServerUI
             {
                 Dispatcher.BeginInvoke(new Action(delegate
                 {
+                    RootSnackbar.Appearance = ControlAppearance.Danger;
+                    RootSnackbar.Icon = SymbolRegular.ErrorCircle24;
                     RootSnackbar.Show("Users cannot be cleared.", $"There are no users in the database.");
                 }));
             }

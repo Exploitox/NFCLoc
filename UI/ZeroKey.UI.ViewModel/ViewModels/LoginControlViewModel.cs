@@ -49,21 +49,19 @@ namespace ZeroKey.UI.ViewModel.ViewModels
         public ObservableCollection<NfcDevice> DevicesList
         {
             get { return _devicesList ?? (_devicesList = new ObservableCollection<NfcDevice>()); }
-            set
+            private set
             {
                 Set(ref _devicesList, value);
-                if (_devicesList != null)
+                if (_devicesList == null) return;
+                if (_devicesList.Count > 0)
                 {
-                    if (_devicesList.Count > 0)
-                    {
-                        IsDeviceAvailable = true;
-                        IsDeviceNotAvailable = false;
-                    }
-                    else
-                    {
-                        IsDeviceAvailable = false;
-                        IsDeviceNotAvailable = true;
-                    }
+                    IsDeviceAvailable = true;
+                    IsDeviceNotAvailable = false;
+                }
+                else
+                {
+                    IsDeviceAvailable = false;
+                    IsDeviceNotAvailable = true;
                 }
             }
         }

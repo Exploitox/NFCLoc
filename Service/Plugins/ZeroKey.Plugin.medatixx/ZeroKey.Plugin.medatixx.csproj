@@ -17,7 +17,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CommandLineParser" Version="2.8.0" />
+		<PackageReference Include="CommandLineParser" Version="2.9.1" />
 		<PackageReference Include="Meziantou.Framework.Win32.CredentialManager" Version="1.4.2" />
 		<PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.2" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />

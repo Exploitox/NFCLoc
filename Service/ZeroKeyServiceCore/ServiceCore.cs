@@ -126,8 +126,9 @@ namespace ZeroKey.Service.Core
             Log(_plugins.Count().ToString() + " Plugin(s) loaded");
             if (_plugins.Any()) return;
             
+            // No plugins loaded
             Log("No plugins loaded. Closing service ...");
-            Environment.Exit(1);
+            Stop();
         }
 
         // thread to monitor nfc reader
@@ -611,17 +612,17 @@ namespace ZeroKey.Service.Core
 
         private void im_LoginOK(object sender, EventArgs e)
         {
-            Console.WriteLine("Login successful.\nSending message ...");
+            Debug.WriteLine("Login successful.\nSending message ...");
 
             if (IM_IO == 0)
             {
                 im.SendMessage("Server", "gimme config");
-                Console.WriteLine("Configuration request -> Server");
+                Debug.WriteLine("Configuration request -> Server");
             }
             if (IM_IO == 1)
             {
                 im.SendMessage("Server", JsonConvert.SerializeObject(_applicationConfiguration)); // Initialize sending
-                Console.WriteLine("Local configuration -> Server");
+                Debug.WriteLine("Local configuration -> Server");
                 Log("Configuration uploaded to server.");
                 im.Disconnect();
             }
@@ -629,21 +630,21 @@ namespace ZeroKey.Service.Core
 
         private void im_LoginFailed(object sender, IMErrorEventArgs e)
         {
-            Console.WriteLine("Login failed.");
+            Debug.WriteLine("Login failed.");
         }
 
         private void im_Disconnected(object sender, EventArgs e)
         {
-            Console.WriteLine("Disconnected.");
+            Debug.WriteLine("Disconnected.");
         }
 
         private void im_MessageReceived(object sender, IMReceivedEventArgs e)
         {
-            Console.Write($"Checking if {e.From.ToLower()} == 'server': ");
+            Debug.Write($"Checking if {e.From.ToLower()} == 'server': ");
             if (e.From.ToLower() == "server")
             {
-                Console.WriteLine("TRUE");
-                Console.WriteLine("Got response from server... sync file now...");
+                Debug.WriteLine("TRUE");
+                Debug.WriteLine("Got response from server... sync file now...");
 
                 string appPath = new System.IO.FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location).DirectoryName;
                 string servicePath = Directory.GetParent(appPath).FullName + @"\Service\Service";
@@ -656,7 +657,7 @@ namespace ZeroKey.Service.Core
             }
             else
             {
-                Console.WriteLine("FALSE");
+                Debug.WriteLine("FALSE");
             }
         }
 
@@ -678,7 +679,7 @@ namespace ZeroKey.Service.Core
                 {
                     IM_IO = 0;
                     im.Login(user, pass, ip);
-                    Console.WriteLine("Login requested!");
+                    Debug.WriteLine("Login requested!");
                     while (trys < 10)
                     {
                         if (IM_Successful)
@@ -687,7 +688,7 @@ namespace ZeroKey.Service.Core
                             return true;
                         }
 
-                        Console.WriteLine("Perform wait thread until response from server.");
+                        Debug.WriteLine("Perform wait thread until response from server.");
                         Thread.Sleep(1000);
                         trys++;
                     }
@@ -743,10 +744,10 @@ namespace ZeroKey.Service.Core
                 {
                     IM_IO = 1;
                     im.Login(user, pass, ip);
-                    Console.WriteLine("Login requested. (perf. login with IM_IO 1)");
+                    Debug.WriteLine("Login requested. (perf. login with IM_IO 1)");
 
                     im.SendMessage("Server", JsonConvert.SerializeObject(_applicationConfiguration));
-                    Console.WriteLine("Local configuration -> server.");
+                    Debug.WriteLine("Local configuration -> server.");
                 }
             }
             catch
