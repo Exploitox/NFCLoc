@@ -21,6 +21,8 @@ namespace ZeroKey.ServerUI
         private static string? _user;
         private static string? _password;
         private static readonly IPAddress? _ip = IPAddress.Parse(GetLocalIpAddress());
+        private static int procIdMain = -1;
+        private static bool mainStarted = false;
 
         private ConfigTemplate _applicationConfiguration;
         public IMReceivedEventHandler receivedHandler;
@@ -105,20 +107,33 @@ namespace ZeroKey.ServerUI
                 // Start Windows Service (ZeroKey Server)
                 try
                 {
-                    ServiceController service = new ServiceController("ZeroKeyServer");
-                    if (service.Status.Equals(ServiceControllerStatus.Stopped) || service.Status.Equals(ServiceControllerStatus.StopPending))
+                    mainStarted = false;
+                    var p = new Process();
+                    p.StartInfo.FileName = "ZeroKey.Server.Main.exe";
+                    mainStarted = p.Start();
+                    try 
                     {
-                        service.Start();
-                        service.WaitForStatus(ServiceControllerStatus.Running);
+                        procIdMain = p.Id;
+                    }
+                    catch(InvalidOperationException)
+                    {
+                        mainStarted = false;
+                    }
+                    catch(Exception ex)
+                    {
+                        mainStarted = false;
                     }
                 }
                 catch (Exception ex) { MessageBox.Show("Cannot start server: " + $"\n{ex.Message}"); }
-
+                if (!mainStarted)
+                    MessageBox.Show("Cannot start server: Unknown error");
+                
+                // Log-out client if already connected
                 try
                 {
                     im.Disconnect();
                 }
-                catch (Exception ex) { Debug.WriteLine("Error logging off: " + ex.Message); }
+                catch (Exception ex) { Debug.WriteLine("Error logging out: " + ex.Message); }
 
                 TbIp.Text = GetLocalIpAddress();
                 TbUser.Text = _user;
@@ -137,13 +152,8 @@ namespace ZeroKey.ServerUI
                 // Stop Windows Service (ZeroKey Server)
                 try
                 {
-                    ServiceController service = new ServiceController("ZeroKeyServer");
-                    if (service.Status.Equals(ServiceControllerStatus.Running) || service.Status.Equals(ServiceControllerStatus.StartPending))
-                    {
-                        service.Stop();
-                        service.WaitForStatus(ServiceControllerStatus.Stopped);
-                    }
-
+                    // Kill task
+                    EndProcessPid(procIdMain);
                 }
                 catch (Exception ex) { MessageBox.Show("Cannot stop server: " + $"\n{ex.Message}"); }
 
@@ -393,6 +403,16 @@ namespace ZeroKey.ServerUI
             return res.ToString();
         }
 
+        private static void EndProcessPid(int pid)
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "taskkill",
+                Arguments = $"/pid {pid} /f /t",
+                CreateNoWindow = true,
+                UseShellExecute = false
+            }).WaitForExit();
+        }
         #endregion
     }
 }

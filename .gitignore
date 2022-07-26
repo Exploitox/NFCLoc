@@ -10,6 +10,9 @@
 *.userosscache
 *.sln.docstates
 
+# Rider IDE
+.idea
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ZeroKey.Server.Service.Communication
+namespace ZeroKey.Server.Main.Communication
 {
     [Serializable]
     public class UserInfo

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -333,8 +334,20 @@ namespace ZeroKey.Service.Core
         private void ListenForCredentialProvider()
         {
             Log("Credential Network Active");
-            if (_credentialListener != null)
-                _credentialListener.Start(3);
+            try
+            {
+                if (_credentialListener != null)
+                    _credentialListener.Start(3);
+            }
+            catch (Exception ex)
+            {
+                using (EventLog eventLog = new EventLog("Application"))
+                {
+                    eventLog.Source = "ZeroKey Service Core";
+                    eventLog.WriteEntry(ex.Message, EventLogEntryType.Error, 101, 1);
+                }
+            }
+
             while (_runListenLoops && _credentialListener != null && (_state == ServiceState.Running || _state == ServiceState.Starting))
             {
                 try
@@ -366,8 +379,20 @@ namespace ZeroKey.Service.Core
         private void ListenForRegistration()
         {
             Log("Registration Network Active");
-            if (_registrationListener != null)
-                _registrationListener.Start(3);
+            try
+            {
+                if (_registrationListener != null)
+                    _registrationListener.Start(3);
+            }
+            catch (Exception ex)
+            {
+                using (EventLog eventLog = new EventLog("Application"))
+                {
+                    eventLog.Source = "ZeroKey Service Core";
+                    eventLog.WriteEntry(ex.Message, EventLogEntryType.Error, 101, 1);
+                }
+            }
+            
             while (_runListenLoops && _registrationListener != null && (_state == ServiceState.Running || _state == ServiceState.Starting))
             {
                 try

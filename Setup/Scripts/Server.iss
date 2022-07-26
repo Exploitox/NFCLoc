@@ -42,15 +42,17 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 ; exe file
 Source: "..\..\bin\Release\ServerUI\ZeroKey.ServerUI.exe"; DestDir: {app}; Flags: ignoreversion; \
     BeforeInstall: TaskKill('ZeroKey.ServerUI.exe')
-Source: "..\..\bin\Release\ServerUI\ZeroKey.Server.Service.exe"; DestDir: {app}; Flags: ignoreversion; \
-    BeforeInstall: TaskKill('ZeroKey.Server.Service.exe')
+Source: "..\..\bin\Release\ServerUI\ZeroKey.Server.Main.exe"; DestDir: {app}; Flags: ignoreversion; \
+    BeforeInstall: TaskKill('ZeroKey.Server.Main.exe')
 
 ; Application files
 Source: "..\..\bin\Release\ServerUI\Newtonsoft.Json.dll"; DestDir: {app}; Flags: ignoreversion
 Source: "server.pfx"; DestDir: {app}; Flags: ignoreversion
 Source: "..\..\bin\Release\ServerUI\System.ServiceProcess.ServiceController.dll"; DestDir: {app}; Flags: ignoreversion
 Source: "..\..\bin\Release\ServerUI\Wpf.Ui.dll"; DestDir: {app}; Flags: ignoreversion
-Source: "..\..\bin\Release\ServerUI\ZeroKey.Server.Service.exe.config"; DestDir: {app}; Flags: ignoreversion
+Source: "..\..\bin\Release\ServerUI\ZeroKey.Server.Main.deps.json"; DestDir: {app}; Flags: ignoreversion
+Source: "..\..\bin\Release\ServerUI\ZeroKey.Server.Main.dll"; DestDir: {app}; Flags: ignoreversion
+Source: "..\..\bin\Release\ServerUI\ZeroKey.Server.Main.runtimeconfig.json"; DestDir: {app}; Flags: ignoreversion
 Source: "..\..\bin\Release\ServerUI\ZeroKey.ServerUI.deps.json"; DestDir: {app}; Flags: ignoreversion
 Source: "..\..\bin\Release\ServerUI\ZeroKey.ServerUI.dll"; DestDir: {app}; Flags: ignoreversion
 Source: "..\..\bin\Release\ServerUI\ZeroKey.ServerUI.runtimeconfig.json"; DestDir: {app}; Flags: ignoreversion
@@ -61,10 +63,6 @@ Name: "{commonprograms}\Wolkenhof GmbH\{#MyAppName}"; Filename: "{app}\{#MyAppEx
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
-Filename: "{app}\ZeroKey.Server.Service.exe"; Flags: runascurrentuser; Parameters: "--install"
-
-[UninstallRun]
-Filename: "{app}\ZeroKey.Server.Service.exe"; Parameters: "--uninstall"
 
 [Code] 
 #include "checkinstalled.pas"

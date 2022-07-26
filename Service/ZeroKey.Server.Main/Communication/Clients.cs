@@ -6,11 +6,11 @@ using System.Security.Authentication;
 using System.Text;
 using System.Threading;
 
-namespace ZeroKey.Server.Service.Communication
+namespace ZeroKey.Server.Main.Communication
 {
     public class Client
     {
-        public Client(ZKServer p, TcpClient c)
+        public Client(Program p, TcpClient c)
         {
             prog = p;
             client = c;
@@ -19,7 +19,7 @@ namespace ZeroKey.Server.Service.Communication
             (new Thread(new ThreadStart(SetupConn))).Start();
         }
 
-        ZKServer prog;
+        Program prog;
         public TcpClient client;
         public NetworkStream netStream;  // Raw-data stream of connection.
         public SslStream ssl;            // Encrypts connection using SSL.
@@ -35,7 +35,7 @@ namespace ZeroKey.Server.Service.Communication
                 Console.WriteLine("[{0}] New connection!", DateTime.Now);
                 netStream = client.GetStream();
                 ssl = new SslStream(netStream, false);
-                ssl.AuthenticateAsServer(prog._cert, false, SslProtocols.Tls, true);
+                ssl.AuthenticateAsServer(prog.cert, false, SslProtocols.Tls, true);
                 Console.WriteLine("[{0}] Connection authenticated!", DateTime.Now);
                 // Now we have encrypted connection.
 
