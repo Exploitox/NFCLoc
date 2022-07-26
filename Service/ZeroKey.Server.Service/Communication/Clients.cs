@@ -107,13 +107,16 @@ namespace ZeroKey.Server.Service.Communication
         {
             try
             {
-                userInfo.LoggedIn = false;
-                br.Close();
-                bw.Close();
-                ssl.Close();
-                netStream.Close();
-                client.Close();
-                Console.WriteLine("[{0}] End of connection!", DateTime.Now);
+                if (userInfo != null)
+                {
+                    userInfo.LoggedIn = false;
+                    br.Close();
+                    bw.Close();
+                    ssl.Close();
+                    netStream.Close();
+                    client.Close();
+                    Console.WriteLine("[{0}] End of connection!", DateTime.Now);
+                }
             }
             catch { }
         }

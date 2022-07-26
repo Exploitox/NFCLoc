@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ZeroKey.ServerUI"
         mc:Ignorable="d"
-        Title="MainWindow" Height="480" Width="600"
+        Title="MainWindow" Height="400" Width="600"
         xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
         Style="{StaticResource UiWindow}" ResizeMode="NoResize"
-        MinHeight="480" MaxWidth="600">
+        MinHeight="400" MaxWidth="600">
 
     <Grid>
         <!--  The title bar contains window navigation elements and some Tray related extras.  -->
@@ -102,44 +102,14 @@
 
                         <Grid Margin="0,10,0,0">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="100"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="40"/>
-                            </Grid.ColumnDefinitions>
-
-                            <TextBlock
-                            FontSize="14"
-                            Margin="0,6,0,0"
-                            Text="Configuration:" />
-                            <wpfui:TextBox x:Name="TbConf" Grid.Column="1" Icon="Folder24" PlaceholderText="Configuration Path" IsEnabled="false" />
-                            <wpfui:Button Grid.Column="2" Width="35" Height="35" Margin="5,0,0,0" Icon="Copy24" Click="tbConfCopy_Click"/>
-                        </Grid>
-
-                        <Grid Margin="0,10,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="100"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="40"/>
-                            </Grid.ColumnDefinitions>
-
-                            <TextBlock
-                            FontSize="14"
-                            Margin="0,6,0,0"
-                            Text="SMB Share:" />
-                            <wpfui:TextBox x:Name="TbSmb" Grid.Column="1" Icon="VirtualNetwork20" PlaceholderText="SMB Share" IsEnabled="false" />
-                            <wpfui:Button Grid.Column="2" Width="35" Height="35" Margin="5,0,0,0" Icon="Copy24" Click="tbSMBCopy_Click"/>
-                        </Grid>
-
-                        <Grid Margin="0,10,0,0">
-                            <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="35"/>
                             </Grid.ColumnDefinitions>
 
-                            <wpfui:Button x:Name="ResetPWBtn" Margin="0,0,10,0" Grid.Column="0" Height="35" Icon="KeyReset24" Content="New Login" Click="ResetPWButton_Click"/>
-                            <wpfui:Button x:Name="ChangePathBtn" Margin="0,0,10,0" Grid.Column="1" Height="35" Icon="Folder24" Content="Change Configuration Path"/>
+                            <wpfui:Button x:Name="ResetPwBtn" Margin="0,0,10,0" Grid.Column="0" Height="35" Icon="KeyReset24" Content="New Login" Click="ResetPWButton_Click"/>
+                            <wpfui:Button x:Name="ClearUserBtn" Margin="0,0,10,0" Grid.Column="1" Height="35" Icon="PeopleTeamDelete20" Appearance="Danger" Content="Clear Users" Click="ClearUserBtn_OnClick"/>
                             <wpfui:Button x:Name="ClearBtn" Margin="0,0,10,0" Grid.Column="2" Height="35" Icon="Delete24" Appearance="Danger" Content="Clear Config" Click="ClearConfig_Click"/>
                             <wpfui:Button x:Name="ChangeThemeBtn" Grid.Column="3" Height="35" Icon="WeatherMoon20" Click="ChangeTheme"/>
                         </Grid>

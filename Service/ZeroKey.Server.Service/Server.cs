@@ -21,6 +21,7 @@ namespace ZeroKey.Server.Service
         private static TcpListener _server;
         public readonly X509Certificate2 _cert = new X509Certificate2("server.pfx", "xu#++m!Q~4DDGtH!Yy+§6w.6J#V8yFQS");
         public Dictionary<string, UserInfo> users = new Dictionary<string, UserInfo>();  // Information about users + connections info.
+        public Thread _thread;
 
         public ZKServer()
         {
@@ -49,12 +50,14 @@ namespace ZeroKey.Server.Service
             Console.WriteLine("[{0}] Server is running properly!", DateTime.Now);
             Console.WriteLine("[{0}] Listen to IP {1}", DateTime.Now, GetLocalIpAddress());
 
-            var listenThread = new Thread(Listen);
+            _thread = new Thread(Listen);
+            _thread.Start();
         }
 
         protected override void OnStop()
         {
             _server.Stop();
+            _thread.Abort();
             _running = false;
         }
 

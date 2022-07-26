@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -8,7 +6,7 @@ using System.Windows;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.ServiceProcess;
 using ZeroKey.ServerUI.ClientCommunication;
 using Newtonsoft.Json;
 
@@ -22,18 +20,10 @@ namespace ZeroKey.ServerUI
         private static bool _dark = true;
         private static string? _user;
         private static string? _password;
-        private static string? _configpath;
-        private static bool noUser = false;
-
-        private static readonly int _port = 2000;
-        private static bool _running = true;
-        private static readonly IPAddress _ip = IPAddress.Parse(GetLocalIpAddress());
-        private static TcpListener _server;
-        public readonly X509Certificate2 _cert = new X509Certificate2("server.pfx", "xu#++m!Q~4DDGtH!Yy+§6w.6J#V8yFQS");
+        private static readonly IPAddress? _ip = IPAddress.Parse(GetLocalIpAddress());
 
         private ConfigTemplate _applicationConfiguration;
         public IMReceivedEventHandler receivedHandler;
-
 
         IMClient im = new IMClient();
 
@@ -59,10 +49,8 @@ namespace ZeroKey.ServerUI
             var config = new IniFile("config.ini");
             _user = config.Read("Username","ZeroKey");
             _password = config.Read("Password", "ZeroKey");
-            _configpath = config.Read("ConfigurationFile", "ZeroKey");
 
-            ResetPWBtn.IsEnabled = true;
-            ChangePathBtn.IsEnabled = true;
+            ResetPwBtn.IsEnabled = true;
             ClearBtn.IsEnabled = true;
         }
 
@@ -104,16 +92,6 @@ namespace ZeroKey.ServerUI
         {
             Clipboard.SetText(TbPw.Text);
         }
-        
-        private void tbSMBCopy_Click(object sender, RoutedEventArgs e)
-        {
-            Clipboard.SetText(TbSmb.Text);
-        }
-        
-        private void tbConfCopy_Click(object sender, RoutedEventArgs e)
-        {
-            Clipboard.SetText(TbConf.Text);
-        }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
@@ -124,6 +102,18 @@ namespace ZeroKey.ServerUI
         {
             if (ToggleSwitch.IsChecked == true)
             {
+                // Start Windows Service (ZeroKey Server)
+                try
+                {
+                    ServiceController service = new ServiceController("ZeroKeyServer");
+                    if (service.Status.Equals(ServiceControllerStatus.Stopped) || service.Status.Equals(ServiceControllerStatus.StopPending))
+                    {
+                        service.Start();
+                        service.WaitForStatus(ServiceControllerStatus.Running);
+                    }
+                }
+                catch (Exception ex) { MessageBox.Show("Cannot start server: " + $"\n{ex.Message}"); }
+
                 try
                 {
                     im.Disconnect();
@@ -133,27 +123,36 @@ namespace ZeroKey.ServerUI
                 TbIp.Text = GetLocalIpAddress();
                 TbUser.Text = _user;
                 TbPw.Text = _password;
-                TbConf.Text = _configpath;
 
                 im.Login("Server", "Test123", _ip.ToString());
+#warning Server login still default / hard coded
 
-                ResetPWBtn.IsEnabled = false;
-                ChangePathBtn.IsEnabled = false;
+                ResetPwBtn.IsEnabled = false;
+                ClearUserBtn.IsEnabled = false;
                 ClearBtn.IsEnabled = false;
             }
 
             if (ToggleSwitch.IsChecked == false)
             {
-                im.Disconnect();
+                // Stop Windows Service (ZeroKey Server)
+                try
+                {
+                    ServiceController service = new ServiceController("ZeroKeyServer");
+                    if (service.Status.Equals(ServiceControllerStatus.Running) || service.Status.Equals(ServiceControllerStatus.StartPending))
+                    {
+                        service.Stop();
+                        service.WaitForStatus(ServiceControllerStatus.Stopped);
+                    }
+
+                }
+                catch (Exception ex) { MessageBox.Show("Cannot stop server: " + $"\n{ex.Message}"); }
 
                 TbIp.Text = "";
                 TbUser.Text = "";
                 TbPw.Text = "";
-                TbSmb.Text = "";
-                TbConf.Text = "";
 
-                ResetPWBtn.IsEnabled = true;
-                ChangePathBtn.IsEnabled = true;
+                ResetPwBtn.IsEnabled = true;
+                ClearUserBtn.IsEnabled = true;
                 ClearBtn.IsEnabled = true;
             }
         }
@@ -232,35 +231,101 @@ namespace ZeroKey.ServerUI
             TbIp.Text = "";
             TbUser.Text = "";
             TbPw.Text = "";
-            TbSmb.Text = @"";
-            TbConf.Text = @"";
         }
 
         private void ResetPWButton_Click(object sender, RoutedEventArgs e)
         {
+            var _userbkg = _user;
+            var _passwordbkg = _password;
+
             var config = new IniFile("config.ini");
 
             _user = $"ZK{GenerateUsername(6)}";
             _password = GeneratePassword(12);
-            _configpath = Path.Combine("C:", "ZeroKey");
 
             // Write to config
             config.Write("Username", _user, "ZeroKey");
             config.Write("Password", _password, "ZeroKey");
-            config.Write("ConfigurationFile", _configpath, "ZeroKey");
 
             // Register new user to server
-            im.Register(_user, _password, _ip.ToString());
+            try
+            {
+                im.Register(_user, _password, _ip.ToString());
+            }
+            catch (Exception)
+            {
+                Dispatcher.BeginInvoke(new Action(delegate
+                {
+                    RootSnackbar.Show("Cannot register new user", $"The server is not responding to the request. Is the server online?");
+                }));
+
+                config.Write("Username", _userbkg, "ZeroKey");
+                config.Write("Password", _passwordbkg, "ZeroKey");
+                _user = _userbkg;
+                _password = _passwordbkg;
+            }
 
             TbIp.Text = GetLocalIpAddress();
             TbUser.Text = _user;
             TbPw.Text = _password;
-            TbConf.Text = _configpath;
         }
 
         private void ClearConfig_Click(object sender, RoutedEventArgs e)
         {
+            if (File.Exists("Application.config"))
+            {
+                try
+                {
+                    File.Delete("Application.config");
+                    Dispatcher.BeginInvoke(new Action(delegate
+                    {
+                        RootSnackbar.Show("Successful", $"App configuration was successfully removed.");
+                    }));
+                }
+                catch
+                {
+                    Dispatcher.BeginInvoke(new Action(delegate
+                    {
+                        RootSnackbar.Show("Configuration cannot be cleared.", $"Cannot remove file 'Application.config'.");
+                    }));
+                }
+            }
+            else
+            {
+                Dispatcher.BeginInvoke(new Action(delegate
+                {
+                    RootSnackbar.Show("Application configuration cannot be cleared.", $"There is no active Application configuration to be cleared.");
+                }));
+            }
+        }
 
+        private void ClearUserBtn_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (File.Exists("users.dat"))
+            {
+                try
+                {
+                    File.Delete("users.dat");
+                    Dispatcher.BeginInvoke(new Action(delegate
+                    {
+                        RootSnackbar.Show("Successful", $"User list was successfully cleared.");
+                    }));
+                }
+                catch
+                {
+                    Dispatcher.BeginInvoke(new Action(delegate
+                    {
+                        RootSnackbar.Show("Users cannot be cleared.", $"Cannot remove file 'users.dat'.");
+                    }));
+                }
+            }
+            else
+            {
+                Dispatcher.BeginInvoke(new Action(delegate
+                {
+                    RootSnackbar.Show("Users cannot be cleared.", $"There are no users in the database.");
+                }));
+            }
         }
 
         #region Modules
@@ -268,14 +333,14 @@ namespace ZeroKey.ServerUI
         private static bool ExistsNetworkPath(string path)
         {
             if (string.IsNullOrEmpty(path)) return false;
-            string pathRoot = Path.GetPathRoot(path);
+            string? pathRoot = Path.GetPathRoot(path);
             if (string.IsNullOrEmpty(pathRoot)) return false;
             ProcessStartInfo pinfo = new ProcessStartInfo("powershell", "Get-SmbShare");
             pinfo.CreateNoWindow = true;
             pinfo.RedirectStandardOutput = true;
             pinfo.UseShellExecute = false;
             string output;
-            using (Process p = Process.Start(pinfo))
+            using (Process? p = Process.Start(pinfo))
             {
                 output = p.StandardOutput.ReadToEnd();
             }
@@ -295,7 +360,7 @@ namespace ZeroKey.ServerUI
             using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
             {
                 socket.Connect("8.8.8.8", 65530);
-                IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
+                IPEndPoint? endPoint = socket.LocalEndPoint as IPEndPoint;
                 localIp = endPoint.Address.ToString();
             }
             if (String.IsNullOrEmpty(localIp))

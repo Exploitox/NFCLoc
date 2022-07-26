@@ -1,9 +1,7 @@
-; Codename ZeroKey
-
 #define MyAppName "ZeroKey"
 #define MyAppVersion "2.0.0.205"
-#define MyAppPublisher "Wolkenhof"
-#define MyAppURL "https://wolkenhof.com/"
+#define MyAppPublisher "Wolkenhof GmbH"
+#define MyAppURL "https://github.com/Wolkenhof/ZeroKey"
 #define MyAppExeName "ZeroKey.UI.View.exe"
 #define AppGuid "{A33A7C95-A915-4A87-8E33-0A429819B22E}"
 #define AppPath = "{app}\App"
@@ -14,37 +12,36 @@
 #define ServiceAppMedatixxPath = "{app}\Service\Service\medatixx"
 #define RegistryKey = "{{8EB4E5F7-9DFB-4674-897C-2A584934CDBE}"
 #define ProviderNameKey = "NFCCredentialProvider"
-#define VCmsg "Installing Microsoft Visual C++ Redistributable ..."
-#define NETmsg "Installing Microsoft .NET 6.0 ..."
 
 [Setup]
-; NOTE: The value of AppId uniquely identifies this application.
-; Do not use the same AppId value in installers for other applications.
+; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-PrivilegesRequired=admin
-ArchitecturesInstallIn64BitMode=x64
-
-AppId={{#AppGuid}
-AppName= {#MyAppName}
+AppId={{DCA15196-060E-431E-873C-AE3530D2DB18}
+AppName={#MyAppName}
 AppVersion={#MyAppVersion}
+;AppVerName={#MyAppName} {#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 
-DefaultDirName={pf}\{#MyAppPublisher}\{#MyAppName}
+DefaultDirName={commonpf}\{#MyAppPublisher}\{#MyAppName}
 DisableProgramGroupPage=yes
 
-OutputDir=..\Result
-;OutputBaseFilename={#MyAppName}_{#GitCommitHash}_{#MyAppVersion}
-OutputBaseFilename={#MyAppName}_INTERNAL_T0_{#MyAppVersion}
-CloseApplications=force
+LicenseFile=license.rtf
+ArchitecturesInstallIn64BitMode=x64
 
+OutputDir=..\Result
+OutputBaseFilename={#MyAppName}_{#GitCommitHash}_{#MyAppVersion}
+
+CloseApplications=force
 Compression=lzma
 SolidCompression=yes
+WizardStyle=modern
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "german"; MessagesFile: "compiler:Languages\German.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
@@ -53,6 +50,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 ; exe file
 Source: "..\..\bin\Release\UI\ZeroKey.UI.View.exe"; DestDir: {#AppPath}; Flags: ignoreversion; \
     BeforeInstall: TaskKill('ZeroKey.UI.View.exe')
+
 ; Application files
 Source: "..\..\bin\Release\UI\ZeroKey.UI.View.exe.config"; DestDir: {#AppPath}; Flags: ignoreversion
 Source: "..\..\bin\Release\UI\NLog.config"; DestDir: {#AppPath}; Flags: ignoreversion
@@ -78,7 +76,8 @@ Source: "..\..\bin\Release\Service\ZeroKeyServiceHost.exe.config"; DestDir: {#Se
 Source: "..\..\bin\Release\Service\Newtonsoft.Json.dll"; DestDir: {#ServiceAppPath}; Flags: ignoreversion
 Source: "..\..\bin\Release\Service\ZeroKeyServiceCommon.dll"; DestDir: {#ServiceAppPath}; Flags: ignoreversion
 Source: "..\..\bin\Release\Service\ZeroKeyServiceCore.dll"; DestDir: {#ServiceAppPath}; Flags: ignoreversion
-Source: "..\..\bin\Release\Service\ZeroKeyServiceHost.exe"; DestDir: {#ServiceAppPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Service\ZeroKeyServiceHost.exe"; DestDir: {#ServiceAppPath}; Flags: ignoreversion; \
+  BeforeInstall: TaskKill('ZeroKeyServiceHost.exe')
 
 ; Service plugin files
 Source: "..\..\bin\Release\Service\Plugins\ZeroKey.Plugin.Lock.dll"; DestDir: {#ServiceAppPluginsPath}; Flags: ignoreversion
@@ -97,62 +96,17 @@ Source: "..\..\bin\Release\Service\medatixx\ZeroKey.Plugin.medatixx.pdb"; DestDi
 Source: "..\..\bin\Release\Service\medatixx\ZeroKey.Plugin.medatixx.runtimeconfig.json"; DestDir: {#ServiceAppMedatixxPath}; Flags: ignoreversion
 Source: "..\..\bin\Release\Service\medatixx\WinRT.Runtime.dll"; DestDir: {#ServiceAppMedatixxPath}; Flags: ignoreversion
 
-; Management
-;Source: "..\..\bin\Release\Management\CredentialRegistration.exe.config"; DestDir: {#ServiceManagementPath}; Flags: ignoreversion
-;Source: "..\..\bin\Release\Management\Newtonsoft.Json.dll"; DestDir: {#ServiceManagementPath}; Flags: ignoreversion
-;Source: "..\..\bin\Release\Management\ZeroKeyServiceCommon.dll"; DestDir: {#ServiceManagementPath}; Flags: ignoreversion
-;Source: "..\..\bin\Release\Management\CredentialRegistration.exe"; DestDir: {#ServiceManagementPath}; Flags: ignoreversion
-;Source: "..\..\bin\Release\Management\WinAPIWrapper.dll"; DestDir: {#ServiceManagementPath}; Flags: ignoreversion
-
 ; Credential registration
-;Source: "..\..\bin\Release\Credential\CredUILauncher.exe"; DestDir: {#ServiceCredentialPath}; Flags: ignoreversion
 Source: "..\..\bin\Release\Credential\NFCCredentialProvider.dll"; DestDir: {#ServiceCredentialPath}; Flags: ignoreversion
 Source: "..\..\bin\Release\Credential\tileimage.bmp"; DestDir: {#ServiceCredentialPath}; Flags: ignoreversion
 Source: "..\..\bin\Release\Credential\NFCCredentialProvider.dll"; DestDir: {sys};
 
-; Visual C++ 2015
-;Source: "vc_redist.x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall
-
-; .NET 6.0
-;Source: "windowsdesktop-runtime-6.0.5-win-x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall
-
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{commonprograms}\Wolkenhof\{#MyAppName}"; Filename: "{app}\App\{#MyAppExeName}"
-
-[Code] 
-//#include "dotnet.pas"
-#include "checkinstalled.pas"
-//#include "vc.pas"
-
-function InitializeSetup(): Boolean;
-begin
-    //if not NET6NeedsInstall() then
-    //begin
-    //    result := false;    
-    //end;
-
-    //if not CheckNetFramework() then
-    //begin
-    //    result := false;
-    //end else
-    begin
-        result := CheckInstalledVersion();
-    end;
-end; 
-
-procedure TaskKill(FileName: String);
-var
-  ResultCode: Integer;
-begin
-    Exec('taskkill.exe', '/f /im ' + '"' + FileName + '"', '', SW_HIDE,
-     ewWaitUntilTerminated, ResultCode);
-end;
+Name: "{commonprograms}\Wolkenhof GmbH\{#MyAppName}"; Filename: "{app}\App\{#MyAppExeName}"
 
 [Run]
-;Filename: "{tmp}\vc_redist.x64.exe"; StatusMsg: "{#VCmsg}"; Check: IsWin64 and VCRedistNeedsInstall
-;Filename: "{tmp}\windowsdesktop-runtime-6.0.5-win-x64.exe"; StatusMsg: "{#NETmsg}"; Check: IsWin64
 Filename: "{#AppPath}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 Filename: "{#ServiceAppPath}\ZeroKeyServiceHost.exe"; Flags: runascurrentuser; Parameters: "--install"
 
@@ -174,3 +128,21 @@ Root: HKCR; Subkey: "CLSID\{#RegistryKey}"; ValueType: string; ValueName: ""; Va
 ; "ThreadingModel"="Apartment"
 Root: HKCR; Subkey: "CLSID\{#RegistryKey}\InprocServer32"; ValueType: string; ValueName: ""; ValueData: "{#ProviderNameKey}.dll"
 Root: HKCR; Subkey: "CLSID\{#RegistryKey}\InprocServer32"; ValueType: string; ValueName: "ThreadingModel"; ValueData: "Apartment"
+
+[Code] 
+#include "checkinstalled.pas"
+
+function InitializeSetup(): Boolean;
+begin
+    begin
+        result := CheckInstalledVersion();
+    end;
+end; 
+
+procedure TaskKill(FileName: String);
+var
+  ResultCode: Integer;
+begin
+    Exec('taskkill.exe', '/f /im ' + '"' + FileName + '"', '', SW_HIDE,
+    ewWaitUntilTerminated, ResultCode);
+end;

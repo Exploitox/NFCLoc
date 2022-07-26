@@ -42,7 +42,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZeroKey.Plugin.medatixx", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZeroKey.ServerUI", "Service\ZeroKey.ServerUI\ZeroKey.ServerUI.csproj", "{84DC2DED-E641-41E8-862B-D96F35B72A8D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroKey.Server.Service", "ZeroKey.Server.Service\ZeroKey.Server.Service.csproj", "{AFC7E884-3152-4727-9807-09746B2DFE47}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroKey.Server.Service", "Service\ZeroKey.Server.Service\ZeroKey.Server.Service.csproj", "{AFC7E884-3152-4727-9807-09746B2DFE47}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
