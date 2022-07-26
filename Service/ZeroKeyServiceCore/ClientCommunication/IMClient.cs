@@ -131,8 +131,14 @@ namespace ZeroKey.Service.Core.ClientCommunication
 
         void SetupConn()  // Setup connection and login
         {
-#warning No error handler
-            client = new TcpClient(Server, Port);  // Connect to the server.
+            try
+            {
+                client = new TcpClient(Server, Port); // Connect to the server.
+            }
+            catch
+            {
+                return;
+            }
             netStream = client.GetStream();
             ssl = new SslStream(netStream, false, new RemoteCertificateValidationCallback(ValidateCert));
             ssl.AuthenticateAsClient("InstantMessengerServer");

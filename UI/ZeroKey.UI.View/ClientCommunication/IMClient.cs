@@ -9,6 +9,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using System.Windows;
 
 namespace ZeroKey.UI.View.ClientCommunication
 {
@@ -131,8 +132,15 @@ namespace ZeroKey.UI.View.ClientCommunication
 
         void SetupConn()  // Setup connection and login
         {
-#warning No error handler
-            client = new TcpClient(Server, Port);  // Connect to the server.
+            try
+            {
+                client = new TcpClient(Server, Port); // Connect to the server.
+            }
+            catch
+            {
+                MessageBox.Show("Error: Server is not responding... Is the server online?");
+                return;
+            }
             netStream = client.GetStream();
             ssl = new SslStream(netStream, false, new RemoteCertificateValidationCallback(ValidateCert));
             ssl.AuthenticateAsClient("InstantMessengerServer");

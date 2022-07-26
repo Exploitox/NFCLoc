@@ -31,10 +31,16 @@ jobs:
     - name: Build
       run: msbuild.exe ZeroKey.sln /p:platform="x64" /p:configuration="Release"
       
-    - name: Create Setup file
+    - name: Create Setup file (Client)
       run: |
         FOR /F "tokens=*" %%g IN ('git rev-parse --short HEAD') do (set githash=%%g)
         "%programfiles(x86)%\\Inno Setup 6\\iscc.exe" /dGitCommitHash="%githash%" "Setup\Scripts\Script.iss"
+      shell: cmd
+
+    - name: Create Setup file (Server)
+      run: |
+        FOR /F "tokens=*" %%g IN ('git rev-parse --short HEAD') do (set githash=%%g)
+        "%programfiles(x86)%\\Inno Setup 6\\iscc.exe" /dGitCommitHash="%githash%" "Setup\Scripts\Server.iss"
       shell: cmd
 
     - name: Upload artifact

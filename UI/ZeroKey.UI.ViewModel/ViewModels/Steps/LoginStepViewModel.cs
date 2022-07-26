@@ -39,7 +39,7 @@ namespace ZeroKey.UI.ViewModel.ViewModels
             UserName = _userCredentials.GetName();
         }
 
-        private async Task<bool> Save()
+        private Task<bool> Save()
         {
             var password = ConvertToUnsecureString(Password);
 
@@ -47,9 +47,9 @@ namespace ZeroKey.UI.ViewModel.ViewModels
             NewRingViewModel.Password = password;
 
             if (!Validate())
-                return false;
+                return Task.FromResult(false);
 
-            return true;
+            return Task.FromResult(true);
         }
 
         private bool Validate()
