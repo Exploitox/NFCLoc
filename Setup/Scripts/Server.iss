@@ -47,7 +47,7 @@ Source: "..\..\bin\Release\ServerUI\ZeroKey.Server.Service.exe"; DestDir: {app};
 
 ; Application files
 Source: "..\..\bin\Release\ServerUI\Newtonsoft.Json.dll"; DestDir: {app}; Flags: ignoreversion
-Source: "..\..\bin\Release\ServerUI\server.pfx"; DestDir: {app}; Flags: ignoreversion
+Source: "server.pfx"; DestDir: {app}; Flags: ignoreversion
 Source: "..\..\bin\Release\ServerUI\System.ServiceProcess.ServiceController.dll"; DestDir: {app}; Flags: ignoreversion
 Source: "..\..\bin\Release\ServerUI\Wpf.Ui.dll"; DestDir: {app}; Flags: ignoreversion
 Source: "..\..\bin\Release\ServerUI\ZeroKey.Server.Service.exe.config"; DestDir: {app}; Flags: ignoreversion
