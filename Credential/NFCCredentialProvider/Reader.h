@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include <string>
 #include <windows.h>
 #include <thread>
 #include "NFCCredentialProvider.h"
