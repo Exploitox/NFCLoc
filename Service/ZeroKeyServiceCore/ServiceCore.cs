@@ -685,6 +685,7 @@ namespace ZeroKey.Service.Core
                         if (IM_Successful)
                         {
                             db.Write("IsEnabled", "true", "Settings");
+                            db.Write("IsOnline", "true", "Settings");
                             return true;
                         }
 
@@ -693,6 +694,7 @@ namespace ZeroKey.Service.Core
                         trys++;
                     }
                 }
+                db.Write("IsOnline","false","Settings");
             }
             catch
             {

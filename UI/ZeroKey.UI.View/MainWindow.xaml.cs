@@ -75,7 +75,7 @@ namespace ZeroKey.UI.View
 
             // Read remote configuration
             var db = new IniFile(ServicePath + @"\Database.ini");
-            string isEnabled = db.Read("IsEnabled", "Settings");
+            string isEnabled = db.Read("IsOnline", "Settings");
             if (isEnabled == null) return;
             if (isEnabled.ToLower() == "true")
                 UseRemoteAuthentication = true;

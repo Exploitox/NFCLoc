@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -29,7 +30,8 @@ namespace ZeroKey.ServerUI
 
         private ConfigTemplate _applicationConfiguration;
         public IMReceivedEventHandler receivedHandler;
-
+        public static List<string> AvailableUsers = new List<string>();
+        
         IMClient im = new IMClient();
 
         public MainWindow()
@@ -176,6 +178,15 @@ namespace ZeroKey.ServerUI
                 RootSnackbar.Icon = SymbolRegular.CheckmarkStarburst24;
                 RootSnackbar.Show("Logged in", $"Client is now logged into the server.");
             }));
+            var timer = SetInterval(IsAvailable, 1000);
+        }
+
+        void IsAvailable()
+        {
+            foreach (string user in AvailableUsers)
+            {
+                im.IsAvailable(user);
+            }
         }
 
         void im_MessageReceived(object sender, IMReceivedEventArgs e)
@@ -183,25 +194,37 @@ namespace ZeroKey.ServerUI
             if (e.Message == "gimme config")
             {
                 Debug.WriteLine("[{0}] Got request command from client... sending config...", DateTime.Now);
-
+                
+                // Add user to available list
+                AvailableUsers.Add(e.From);
+                
+                // Send configuration to user
                 im.SendMessage(e.From, File.ReadAllText("Application.config"));
             }
             else
             {
+                // Received configuration - parsing & saving ... 
                 try
                 {
-                    Debug.WriteLine("[{0}] Got configuration from client... writing config...", DateTime.Now);
+                    Debug.WriteLine("[{0}] Got message from client... try parsing...", DateTime.Now);
                     _applicationConfiguration = JsonConvert.DeserializeObject<ConfigTemplate>(e.Message);
                     if (_applicationConfiguration != null)
                     {
+                        Debug.WriteLine("[{0}] Got configuration from client... writing config...", DateTime.Now);
                         File.WriteAllText("Application.config", e.Message);
-                        Debug.WriteLine("[{0}] Config updated.", DateTime.Now);
+                        
+                        Debug.WriteLine("[{0}] New configuration saved. Contacting all clients now ...", DateTime.Now);
+                        foreach (string user in AvailableUsers)
+                        {
+                            im.SendMessage(user, e.Message);
+                            Debug.WriteLine("[{0}] Send config to {1}", DateTime.Now, user);
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
                     // Ignore, as this is not a config.
-                    Debug.WriteLine("[{0}] Error on write config: " + ex.Message, DateTime.Now);
+                    Debug.WriteLine("[{0}] Error on parsing message: " + ex.Message, DateTime.Now);
                 }
             }
         }
@@ -391,7 +414,23 @@ namespace ZeroKey.ServerUI
         }
 
         #region Modules
+        
+        /// <summary>
+        /// Usage: var timer = SetInterval(DoThis, 1000);
+        /// UI Usage: BeginInvoke((Action)(() =>{ SetInterval(DoThis, 1000); }));
+        /// </summary>
+        /// <returns>Returns a timer object which can be stopped and disposed.</returns>
+        public static System.Timers.Timer SetInterval(Action Act, int Interval)
+        {
+            System.Timers.Timer tmr = new System.Timers.Timer();
+            tmr.Elapsed += (sender, args) => Act();
+            tmr.AutoReset = true;
+            tmr.Interval = Interval;
+            tmr.Start();
 
+            return tmr;
+        }
+        
         private static bool ExistsNetworkPath(string path)
         {
             if (string.IsNullOrEmpty(path)) return false;

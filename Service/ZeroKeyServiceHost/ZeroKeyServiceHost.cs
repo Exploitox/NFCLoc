@@ -60,13 +60,11 @@ namespace ZeroKey.Service.Host
             CanHandleSessionChangeEvent = true;
             InitializeComponent();
         }
-
-#if DEBUG
+        
         internal void TestStartupAndStop(string[] args)
         {
             this.OnStart(args);
         }
-#endif
 
         protected override void OnStart(string[] args)
         {
