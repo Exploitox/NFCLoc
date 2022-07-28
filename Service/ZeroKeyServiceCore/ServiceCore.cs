@@ -180,20 +180,27 @@ namespace ZeroKey.Service.Core
                         else
                         {
                             // check config
-                            foreach (var u in _applicationConfiguration.Users)
+                            try
                             {
-                                var hashedToken = Crypto.Hash(Crypto.Hash(id) + u.Salt);
-                                foreach (var e in u.Events)
+                                foreach (var u in _applicationConfiguration.Users)
                                 {
-                                    if (hashedToken != e.Token) continue;
-                                    foreach (var plugin in _plugins)
+                                    var hashedToken = Crypto.Hash(Crypto.Hash(id) + u.Salt);
+                                    foreach (var e in u.Events)
                                     {
-                                        if (plugin.Value.GetPluginName() != e.PluginName) continue;
-                                        plugin.Value.NcfRingDown(id, e.Parameters, SystemStatus);
+                                        if (hashedToken != e.Token) continue;
+                                        foreach (var plugin in _plugins)
+                                        {
+                                            if (plugin.Value.GetPluginName() != e.PluginName) continue;
+                                            plugin.Value.NcfRingDown(id, e.Parameters, SystemStatus);
 
-                                        Log("Plugin " + plugin.Value.GetPluginName() + " passed TagDown event");
+                                            Log("Plugin " + plugin.Value.GetPluginName() + " passed TagDown event");
+                                        }
                                     }
                                 }
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine($"Error while checking config: {ex.Message}");
                             }
                         }
                     }
@@ -211,19 +218,26 @@ namespace ZeroKey.Service.Core
                     else
                     {
                         // check config
-                        foreach (var u in _applicationConfiguration.Users)
+                        try
                         {
-                            var hashedToken = Crypto.Hash(Crypto.Hash(id) + u.Salt);
-                            foreach (var e in u.Events)
+                            foreach (var u in _applicationConfiguration.Users)
                             {
-                                if (hashedToken != e.Token) continue;
-                                foreach (var plugin in _plugins)
+                                var hashedToken = Crypto.Hash(Crypto.Hash(id) + u.Salt);
+                                foreach (var e in u.Events)
                                 {
-                                    if (plugin.Value.GetPluginName() != e.PluginName) continue;
-                                    plugin.Value.NcfRingUp(id, e.Parameters, SystemStatus);
-                                    Log("Plugin " + plugin.Value.GetPluginName() + " passed TagUp event");
+                                    if (hashedToken != e.Token) continue;
+                                    foreach (var plugin in _plugins)
+                                    {
+                                        if (plugin.Value.GetPluginName() != e.PluginName) continue;
+                                        plugin.Value.NcfRingUp(id, e.Parameters, SystemStatus);
+                                        Log("Plugin " + plugin.Value.GetPluginName() + " passed TagUp event");
+                                    }
                                 }
                             }
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine($"Error while checking config: {ex.Message}");
                         }
                     }
                 }
@@ -660,6 +674,11 @@ namespace ZeroKey.Service.Core
                 Debug.WriteLine("FALSE");
             }
         }
+        
+        private void IsAvailable()
+        {
+            im.IsAvailable("Server");
+        }
 
         private bool LoadConfig()
         {
@@ -686,6 +705,7 @@ namespace ZeroKey.Service.Core
                         {
                             db.Write("IsEnabled", "true", "Settings");
                             db.Write("IsOnline", "true", "Settings");
+                            var timer = SetInterval(IsAvailable, 10000);
                             return true;
                         }
 
@@ -889,6 +909,22 @@ namespace ZeroKey.Service.Core
             ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT UserName FROM Win32_ComputerSystem");
             ManagementObjectCollection collection = searcher.Get();
             return (string)collection.Cast<ManagementBaseObject>().First()["UserName"];
+        }
+        
+        /// <summary>
+        /// Usage: var timer = SetInterval(DoThis, 1000);
+        /// UI Usage: BeginInvoke((Action)(() =>{ SetInterval(DoThis, 1000); }));
+        /// </summary>
+        /// <returns>Returns a timer object which can be stopped and disposed.</returns>
+        public static System.Timers.Timer SetInterval(Action Act, int Interval)
+        {
+            System.Timers.Timer tmr = new System.Timers.Timer();
+            tmr.Elapsed += (sender, args) => Act();
+            tmr.AutoReset = true;
+            tmr.Interval = Interval;
+            tmr.Start();
+
+            return tmr;
         }
     }
 }
