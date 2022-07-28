@@ -178,7 +178,8 @@ namespace ZeroKey.ServerUI
                 RootSnackbar.Icon = SymbolRegular.CheckmarkStarburst24;
                 RootSnackbar.Show("Logged in", $"Client is now logged into the server.");
             }));
-            var timer = SetInterval(IsAvailable, 1000);
+            Debug.WriteLine("[i] Set interval of timer for action 'IsAvailable()'...");
+            var timer = SetInterval(IsAvailable, 10000);
         }
 
         void IsAvailable()
@@ -186,6 +187,7 @@ namespace ZeroKey.ServerUI
             foreach (string user in AvailableUsers)
             {
                 im.IsAvailable(user);
+                Debug.WriteLine("[i] ImAvailable to {0}", user);
             }
         }
 
@@ -199,7 +201,10 @@ namespace ZeroKey.ServerUI
                 AvailableUsers.Add(e.From);
                 
                 // Send configuration to user
-                im.SendMessage(e.From, File.ReadAllText("Application.config"));
+                if (!File.Exists("Application.config"))
+                    im.SendMessage(e.From, "null");
+                else
+                    im.SendMessage(e.From, File.ReadAllText("Application.config"));
             }
             else
             {

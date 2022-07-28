@@ -86,42 +86,41 @@ namespace ZeroKey.Service.Core.ClientCommunication
         public event IMAvailEventHandler UserAvailable;
         public event IMReceivedEventHandler MessageReceived;
 
-        virtual protected void OnLoginOK()
+        protected virtual void OnLoginOK()
         {
             if (LoginOK != null)
                 LoginOK(this, EventArgs.Empty);
         }
-        virtual protected void OnRegisterOK()
+        protected virtual void OnRegisterOK()
         {
             if (RegisterOK != null)
                 RegisterOK(this, EventArgs.Empty);
         }
-        virtual protected void OnLoginFailed(IMErrorEventArgs e)
+        protected virtual void OnLoginFailed(IMErrorEventArgs e)
         {
             if (LoginFailed != null)
                 LoginFailed(this, e);
         }
-        virtual protected void OnRegisterFailed(IMErrorEventArgs e)
+        protected virtual void OnRegisterFailed(IMErrorEventArgs e)
         {
             if (RegisterFailed != null)
                 RegisterFailed(this, e);
         }
-        virtual protected void OnDisconnected()
+        protected virtual void OnDisconnected()
         {
             if (Disconnected != null)
                 Disconnected(this, EventArgs.Empty);
         }
-        virtual protected void OnUserAvail(IMAvailEventArgs e)
+        protected virtual void OnUserAvail(IMAvailEventArgs e)
         {
             if (UserAvailable != null)
                 UserAvailable(this, e);
         }
-        virtual protected void OnMessageReceived(IMReceivedEventArgs e)
+        protected virtual void OnMessageReceived(IMReceivedEventArgs e)
         {
             if (MessageReceived != null)
                 MessageReceived(this, e);
         }
-
 
         TcpClient client;
         NetworkStream netStream;
