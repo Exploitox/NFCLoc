@@ -5,12 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              dp:Ignorable="d"
              xmlns:dp="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <wpfui:Resources Theme="Dark" />
+                <ui:ThemesDictionary Theme="Dark" />
+                <ui:ControlsDictionary/>
                 <ResourceDictionary Source="Resources/StringResources.xaml"/>
                 <ResourceDictionary Source="Resources/StringResources.de-DE.xaml"/>
             </ResourceDictionary.MergedDictionaries>

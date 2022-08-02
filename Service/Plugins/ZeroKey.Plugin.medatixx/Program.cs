@@ -1,13 +1,9 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Net;
+﻿using System.Diagnostics;
 using Microsoft.Toolkit.Uwp.Notifications;
-using System.Configuration;
-using System.Collections.Specialized;
 using CommandLine;
 using System.Runtime.InteropServices;
-using Meziantou.Framework.Win32;
+// using Meziantou.Framework.Win32;
+using Newtonsoft.Json;
 
 namespace ZeroKey.Plugin.medatixx
 {
@@ -24,7 +20,21 @@ namespace ZeroKey.Plugin.medatixx
             [Option('l', "loginback", Default = false, HelpText = "Logged in back")]
             public bool LoginBack { get; set; } // false = First run, true = Login user from id
         }
+        
+        public class User
+        {
+            public string Username { get; set; }
+            public string Password { get; set; }
+            public string Card { get; set; }
+        }
 
+        private static string _currentUser = null;
+        private static string _currentPassword = null;
+
+        private static List<User> _users;
+        private static readonly string AppPath = new System.IO.FileInfo(System.Reflection.Assembly.GetEntryAssembly()?.Location ?? string.Empty).DirectoryName;
+        public static readonly string ServicePath = Path.Combine(AppPath, "..");
+        
         private class ProcessUtils
         {
             [DllImport("user32.dll")]
@@ -48,23 +58,28 @@ namespace ZeroKey.Plugin.medatixx
             if (ToastNotificationManagerCompat.WasCurrentProcessToastActivated())
                 Environment.Exit(0);
 
-            // Notify user if this is a debug build
-            if (ZeroKey.Plugin.medatixx.Config.Debug)
-                ShowToast(
-                    "Debug-Build erkannt!",
-                    "Diese Version ist nur für das Debuggen zulässig. Verwenden Sie es nicht in einer Produktionsumgebung!",
-                    "Warnung",
-                    "Hoch");
-
             Parser.Default.ParseArguments<CpOptions>(args)
                    .WithParsed<CpOptions>(o =>
                    {
                        if (o.LoginBack == true)
                        {
                            if (Config.Debug) Console.WriteLine($"Login back with card id {o.CardId}");
-                           if (Config.Debug) File.WriteAllText("C:\\card.txt", $"LOGINBACK: CardID: {o.CardId}");
                            if (Config.Debug) Console.WriteLine("Call SwitchUserWithKeyStroke");
 
+                           // Validate data
+                           _currentUser = GetUsername(o.CardId);
+                           _currentPassword = GetPassword(o.CardId);
+
+                           if (_currentUser == null || _currentPassword == null)
+                           {
+                               // TODO: Implement translation to English
+                               ShowToast(
+                                   "Anmeldedaten ungültig!",
+                                   "Es sind entweder keine oder ungültige Anmeldedaten für medatixx hinterlegt.",
+                                   "Warnung",
+                                   "Hoch");
+                           }
+                           
                            int trys = 0;
                            while (trys != 3)
                            {
@@ -86,7 +101,6 @@ namespace ZeroKey.Plugin.medatixx
                        if (o.Stage == true) // Switch
                        {
                            if (Config.Debug) Console.WriteLine($"Logoff medatixx");
-                           if (Config.Debug) File.WriteAllText("C:\\card.txt", $"LOGOFF: CardID: {o.CardId}");
 
                            int trys = 0;
                            while (trys != 3)
@@ -126,6 +140,7 @@ namespace ZeroKey.Plugin.medatixx
             }
             catch
             {
+                // TODO: Implement translation into English
                 ShowToast(
                     "Sperren fehlgeschlagen!",
                     "Das Sperren dieses Computers ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
@@ -138,6 +153,13 @@ namespace ZeroKey.Plugin.medatixx
         {
             int delay = 500;            
             
+            // TODO: Find a better solution.
+            //       This is bs. One miss click and this will crash.
+            //       
+            //       Ideas: 
+            //         - Modify medatixx (against TOS)
+            //         - Better window management / detection
+
             // Username
             SendKeys.SendWait("^{HOME}");  // Move to start of control
             SendKeys.SendWait("^+{END}");  // Select everything
@@ -181,16 +203,42 @@ namespace ZeroKey.Plugin.medatixx
 
         private static string GetUsername(string cId)
         {
-            // Get a credential from the credential manager
-            var cred = CredentialManager.ReadCredential(applicationName: $"ZeroKey_{cId}");
-            return cred.UserName;
+            // Get credential from config
+            var json = File.ReadAllText(ServicePath + @"\medatixx.json");
+            _users = JsonConvert.DeserializeObject<List<User>>(json);
+            
+            using (var enumerator = _users.GetEnumerator())
+            {
+                while (enumerator.MoveNext())
+                {
+                    var element = enumerator.Current;
+                    if (element.Card == cId)
+                    {
+                        return element.Username;
+                    }
+                }
+            }
+            return null;
         }
 
         private static string GetPassword(string cId)
         {
-            // Get a credential from the credential manager
-            var cred = CredentialManager.ReadCredential(applicationName: $"ZeroKey_{cId}");
-            return cred.Password;
+            // Get credential from config
+            var json = File.ReadAllText(ServicePath + @"\medatixx.json");
+            _users = JsonConvert.DeserializeObject<List<User>>(json);
+            
+            using (var enumerator = _users.GetEnumerator())
+            {
+                while (enumerator.MoveNext())
+                {
+                    var element = enumerator.Current;
+                    if (element.Card == cId)
+                    {
+                        return element.Password;
+                    }
+                }
+            }
+            return null;
         }
 
         #region Foreground

@@ -204,26 +204,70 @@ namespace ZeroKey.ServerUI
                 if (!File.Exists("Application.config"))
                     im.SendMessage(e.From, "null");
                 else
+                {
                     im.SendMessage(e.From, File.ReadAllText("Application.config"));
+                    if (File.Exists("medatixx.json")) im.SendMessage(e.From, File.ReadAllText("medatixx.json"));
+                }
             }
             else
             {
                 // Received configuration - parsing & saving ... 
                 try
                 {
+                    // Integer list:
+                    //  0 = null
+                    //  1 = Application.config
+                    //  2 = medatixx.json
+                    int IsConfig = 0;
                     Debug.WriteLine("[{0}] Got message from client... try parsing...", DateTime.Now);
-                    _applicationConfiguration = JsonConvert.DeserializeObject<ConfigTemplate>(e.Message);
-                    if (_applicationConfiguration != null)
+                    
+                    // Deserializing Application.config
+                    try
                     {
-                        Debug.WriteLine("[{0}] Got configuration from client... writing config...", DateTime.Now);
-                        File.WriteAllText("Application.config", e.Message);
+                       var testConfig = JsonConvert.DeserializeObject<ConfigTemplate>(e.Message);
+                        if (testConfig != null)
+                            IsConfig = 1;
+                    }
+                    catch { IsConfig = 0; }
+                    
+                    // Deserializing medatixx.json
+                    try
+                    {
+                        var medatixxTest = JsonConvert.DeserializeObject<List<MedatixxUser>>(e.Message);
+                        if (medatixxTest != null)
+                            IsConfig = 2;
+                    }
+                    catch { IsConfig = 0; }
+                    
+                    switch (IsConfig)
+                    {
+                        case 0:
+                            // Random message, ignore it.
+                            break;
                         
-                        Debug.WriteLine("[{0}] New configuration saved. Contacting all clients now ...", DateTime.Now);
-                        foreach (string user in AvailableUsers)
-                        {
-                            im.SendMessage(user, e.Message);
-                            Debug.WriteLine("[{0}] Send config to {1}", DateTime.Now, user);
-                        }
+                        case 1:
+                            // Application.config
+                            Debug.WriteLine("[{0}] Got configuration from client... writing config...", DateTime.Now);
+                            File.WriteAllText("Application.config", e.Message);
+                            Debug.WriteLine("[{0}] New configuration saved. Contacting all clients now ...", DateTime.Now);
+                            foreach (string user in AvailableUsers)
+                            {
+                                im.SendMessage(user, e.Message);
+                                Debug.WriteLine("[{0}] Send config to {1}", DateTime.Now, user);
+                            }
+                            break;
+                        
+                        case 2:
+                            // medatixx.json
+                            Debug.WriteLine("[{0}] Got medatixx configuration from client... writing config...", DateTime.Now);
+                            File.WriteAllText("medatixx.json", e.Message);
+                            Debug.WriteLine("[{0}] New configuration saved. Contacting all clients now ...", DateTime.Now);
+                            foreach (string user in AvailableUsers)
+                            {
+                                im.SendMessage(user, e.Message);
+                                Debug.WriteLine("[{0}] Send config to {1}", DateTime.Now, user);
+                            }
+                            break;
                     }
                 }
                 catch (Exception ex)
@@ -425,7 +469,7 @@ namespace ZeroKey.ServerUI
         /// UI Usage: BeginInvoke((Action)(() =>{ SetInterval(DoThis, 1000); }));
         /// </summary>
         /// <returns>Returns a timer object which can be stopped and disposed.</returns>
-        public static System.Timers.Timer SetInterval(Action Act, int Interval)
+        private static System.Timers.Timer SetInterval(Action Act, int Interval)
         {
             System.Timers.Timer tmr = new System.Timers.Timer();
             tmr.Elapsed += (sender, args) => Act();

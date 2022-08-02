@@ -46,8 +46,6 @@
             <DockPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
                 <TextBlock Text="Copyright © 2022 Wolkenhof GmbH." TextWrapping="Wrap" Margin="10" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="White"/>
             </DockPanel>
-
-
         </Grid>
     </Grid>
 </Page>

@@ -654,24 +654,67 @@ namespace ZeroKey.Service.Core
 
         private void im_MessageReceived(object sender, IMReceivedEventArgs e)
         {
-            Debug.Write($"Checking if {e.From.ToLower()} == 'server': ");
             if (e.From.ToLower() == "server")
-            {
-                Debug.WriteLine("TRUE");
+            { 
                 Debug.WriteLine("Got response from server... sync file now...");
 
-                string appPath = new System.IO.FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location).DirectoryName;
-                string servicePath = Directory.GetParent(appPath).FullName + @"\Service\Service";
-                File.WriteAllText(AppPath + @"\Application.config", e.Message);
-                string sc = File.ReadAllText(AppPath + @"\Application.config");
-                _applicationConfiguration = JsonConvert.DeserializeObject<Config>(sc);
-                Log("Configuration loaded from authentication server.");
+                // Testing now which config this is
+                
+                // Integer list:
+                //  0 = null
+                //  1 = Application.config
+                //  2 = medatixx.json
+                int IsConfig = 0;
+                
+                // Serializing Application.config
+                try
+                {
+                    Config testConfig = JsonConvert.DeserializeObject<Config>(e.Message);
+                    if (testConfig != null)
+                        IsConfig = 1;
+                }
+                catch
+                {
+                    // Failed, it is not a Application.config file
+                    IsConfig = 0;
+                }
+                
+                // Serializing medatixx.json
+                try
+                {
+                    var medatixxTest = JsonConvert.DeserializeObject<List<MedatixxUser>>(e.Message);
+                    if (medatixxTest != null)
+                        IsConfig = 2;
+                }
+                catch
+                {
+                    // Failed, it is not a medatixx.json file
+                    IsConfig = 0;
+                }
+
+                switch (IsConfig)
+                {
+                    case 0:
+                        // Random message, ignore it.
+                        break;
+                    
+                    case 1:
+                        // Application.config
+                        File.WriteAllText(AppPath + @"\Application.config", e.Message);
+                        
+                        string sc = File.ReadAllText(AppPath + @"\Application.config");
+                        _applicationConfiguration = JsonConvert.DeserializeObject<Config>(sc);
+                        Log("Configuration loaded from authentication server.");
+                        break;
+                    
+                    case 2:
+                        // medatixx.json
+                        File.WriteAllText(AppPath + @"\medatixx.json", e.Message);
+                        break;
+                }
+                
                 IM_Successful = true;
                 im.Disconnect();
-            }
-            else
-            {
-                Debug.WriteLine("FALSE");
             }
         }
         

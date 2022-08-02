@@ -15,7 +15,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Newtonsoft.Json;
 using ZeroKey.UI.View.NFC;
+using Path = System.IO.Path;
 
 namespace ZeroKey.UI.View.Views
 {
@@ -25,11 +27,21 @@ namespace ZeroKey.UI.View.Views
     public partial class MedatixxManager : Window
     {
         private NfcReader _nfc = new NfcReader();
-
+        
+        public class User
+        {
+            public string Username { get; set; }
+            public string Password { get; set; }
+            public string Card { get; set; }
+        }
+        private static List<User> users;
+        
         // Get appdata folder
-        private static string _appDataPath = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "ZeroKey");
-        private static string _listFile = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "ZeroKey", "idlist.cfg");
-
+        //private static string _appDataPath = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "ZeroKey");
+        //private static string _listFile = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "ZeroKey", "idlist.cfg");
+        private static readonly string AppPath = new System.IO.FileInfo(System.Reflection.Assembly.GetEntryAssembly()?.Location ?? string.Empty).DirectoryName;
+        public static readonly string ServicePath = Path.Combine(AppPath, "..", "Service", "Service");
+        
         public MedatixxManager()
         {
             InitializeComponent();
@@ -51,6 +63,7 @@ namespace ZeroKey.UI.View.Views
 
         private void SetCurrentUserDatabase()
         {
+            /*
             if (!File.Exists(_listFile))
             {
                 try { Directory.CreateDirectory(_appDataPath); File.WriteAllText(_listFile, ""); }
@@ -68,6 +81,23 @@ namespace ZeroKey.UI.View.Views
                     listBox.Items.Add(line);
                 }
             }
+            */
+            
+            listBox.Items.Clear();
+            try
+            {
+                string json = File.ReadAllText(ServicePath + @"\medatixx.json");
+                users = JsonConvert.DeserializeObject<List<User>>(json);
+                using (var enumerator = users.GetEnumerator())
+                {
+                    while (enumerator.MoveNext())
+                    {
+                        var element = enumerator.Current;
+                        listBox.Items.Add($"{element.Username} | {element.Card}");
+                    }
+                }
+            }
+            catch {;}
         }
 
         private void RegisterCard(object sender, RoutedEventArgs e)
@@ -77,17 +107,24 @@ namespace ZeroKey.UI.View.Views
                 MessageBox.Show((string)Application.Current.FindResource("data_empty"));
                 return;
             }
-            
-            foreach (string line in File.ReadLines(_listFile))
+
+            try
             {
-                if (line.Contains(cID.Text))
+                using (var enumerator = users.GetEnumerator())
                 {
-                    MessageBox.Show((string)Application.Current.FindResource("already_registered"));
-                    return;
+                    while (enumerator.MoveNext())
+                    {
+                        var element = enumerator.Current;
+                        if (element.Card.Equals(cID.Text))
+                            MessageBox.Show((string) Application.Current.FindResource("already_registered"));
+                    }
                 }
             }
+            catch {;}
 
             // Register credentials in Windows Database
+            
+            /*
             string appName = $"ZeroKey_{cID.Text}";
 
             CredentialManager.WriteCredential(
@@ -95,12 +132,18 @@ namespace ZeroKey.UI.View.Views
                 userName: username.Text,
                 secret: password.Text,
                 persistence: CredentialPersistence.LocalMachine);
-
-
-            StreamWriter file = new StreamWriter(_listFile, append: true);
-            file.WriteLine($"{username.Text} | {cID.Text}");
-            file.Close();
-
+            */
+            
+            users.Add(new User
+            {
+                Username = username.Text,
+                Password = password.Text,
+                Card = cID.Text
+            });
+            
+            string json = JsonConvert.SerializeObject(users);
+            File.WriteAllText(ServicePath + @"\medatixx.json", json);
+            
             SetCurrentUserDatabase();
         }
 
@@ -111,6 +154,8 @@ namespace ZeroKey.UI.View.Views
                 MessageBox.Show((string)Application.Current.FindResource("no_card_selected"));
                 return;
             }
+            
+            /*
             string tmpUsername = listBox.SelectedItem.ToString().Split('|')[0];
             string username = tmpUsername.Remove(tmpUsername.Length - 1);
             string cid = listBox.SelectedItem.ToString().Split('|')[1].Trim();
@@ -124,6 +169,25 @@ namespace ZeroKey.UI.View.Views
             File.WriteAllLines(tempFile, linesToKeep);
             File.Delete(_listFile);
             File.Move(tempFile, _listFile);
+            */
+            
+            using (var enumerator = users.GetEnumerator())
+            {
+                int i = 0;
+                while (enumerator.MoveNext())
+                {
+                    var element = enumerator.Current;
+                    if (element.Card.Equals(cID.Text))
+                    {
+                        users.RemoveAt(i);
+                        break;
+                    }
+                    else i++;
+                }
+            }
+            
+            string json = JsonConvert.SerializeObject(users);
+            File.WriteAllText(ServicePath + @"\medatixx.json", json);
 
             // Refresh
             SetCurrentUserDatabase();

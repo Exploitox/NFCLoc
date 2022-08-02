@@ -21,4 +21,13 @@ namespace ZeroKey.Service.Common
         public string PluginName { get; set; }
         public Dictionary<string, object> Parameters { get; set; }
     }
+    
+    // -------------------------------------------------------------
+    
+    public class MedatixxUser
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string Card { get; set; }
+    }
 }

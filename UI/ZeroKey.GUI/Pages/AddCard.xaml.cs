@@ -21,8 +21,10 @@ namespace ZeroKey.GUI.Pages
     /// </summary>
     public partial class AddCard : Page
     {
+        public static AddCard? ContentWindow;
+        
         Steps.HelloStepView _hsv = new Steps.HelloStepView();
-        Steps.PlaceRingStepView _prsv = new Steps.PlaceRingStepView();
+        //Steps.PlaceRingStepView _prsv = new Steps.PlaceRingStepView();
         //Steps.LoginStepView LSV = new Steps.LoginStepView();
         //Steps.RemoveRingStepView RRSV = new Steps.RemoveRingStepView();
         //Steps.SuccessfullyStepView SSV = new Steps.SuccessfullyStepView();
@@ -33,6 +35,7 @@ namespace ZeroKey.GUI.Pages
             InitializeComponent();
 
             FrameWindow.Content = _hsv;
+            CancelBtn.IsEnabled = false;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -43,9 +46,10 @@ namespace ZeroKey.GUI.Pages
             {
                 case ZeroKey.GUI.Pages.Steps.HelloStepView:
                     Debug.WriteLine("HSV -> PRSV");
-                    FrameWindow.Content = _prsv;
-                    NextBtn.Visibility = Visibility.Hidden;
-                    _prsv.InitializeAsync();
+                    CancelBtn.IsEnabled = true;
+                    //FrameWindow.Content = _prsv;
+                    //NextBtn.Visibility = Visibility.Hidden;
+                    //_prsv.InitializeAsync();
                     break;
                 case ZeroKey.GUI.Pages.Steps.PlaceRingStepView:
                     Debug.WriteLine("PRS -> LSV");
@@ -72,7 +76,8 @@ namespace ZeroKey.GUI.Pages
         {
             FrameWindow.Content = _hsv;
             NextBtn.Visibility = Visibility.Visible;
-
+            CancelBtn.IsEnabled = false;
+            // MainWindow.RootNavigation.Navigate("manage");
         }
     }
 }
