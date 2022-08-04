@@ -1,4 +1,4 @@
-﻿<Page x:Class="ZeroKey.GUI.Pages.ManageCards"
+﻿<UserControl x:Class="ZeroKey.GUI.Pages.ManageCards"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -8,10 +8,9 @@
       xmlns:controls="clr-namespace:ZeroKey.UI.View.Controls;assembly=ZeroKey.UI.View"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="ManageCards"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
     
-    <Grid Margin="19,20,19,0">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -35,6 +34,7 @@
                             Appearance="Secondary"
                             Background="Black"
                             FontSize="18"
+                            x:Name="CardBtn"
                             Click="ButtonBase_OnClick"
                             Content="{Binding Name}"
                             Icon="ContactCard24" />
@@ -43,7 +43,7 @@
             </ui:VirtualizingItemsControl>
         </Grid>
 
-        <Grid Grid.Row="3" Margin="-19,0,-19,0" VerticalAlignment="Bottom">
+        <Grid Grid.Row="2" Margin="-19,0,-19,0" VerticalAlignment="Bottom">
             <StatusBar>
                 <StatusBar.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -67,4 +67,4 @@
             </StatusBar>
         </Grid>
     </Grid>
-</Page>
+</UserControl>

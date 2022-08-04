@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -21,15 +22,18 @@ namespace ZeroKey.GUI.Pages
     /// <summary>
     /// Interaktionslogik für ManageCards.xaml
     /// </summary>
-    public partial class ManageCards : Page
+    public partial class ManageCards : UserControl
     {
         public class Card
         {
             public string Name { get; set; }
             public string Id { get; set; }
+            public string Username { get; set; }
+            public bool UnlockWorkstation { get; set; }
+            public bool UnlockMedatixx { get; set; }
         }
 
-        private List<Card> cards;
+        private static List<Card> cards;
         
         public List<Card> CardList
         {
@@ -39,6 +43,8 @@ namespace ZeroKey.GUI.Pages
             }
         }
 
+        public static ManageCards? ContentWindow;
+
         public ManageCards()
         {
             InitializeComponent();
@@ -47,28 +53,49 @@ namespace ZeroKey.GUI.Pages
             cards.Add(new Card
             {
                 Name = "Card 01",
-                Id = "B4CAEF7A"
+                Id = "B4CAEF7A",
+                Username = "Administrator",
+                UnlockWorkstation = true,
+                UnlockMedatixx = true
+            });
+            cards.Add(new Card
+            {
+                Name = "Card 02",
+                Id = "C464EF7A",
+                Username = "MaxMustermann",
+                UnlockWorkstation = true,
+                UnlockMedatixx = false
             });
             this.DataContext = this;
+            ContentWindow = this;
         }
 
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
-            if (e.Source)
+            Button button = (Button)sender;
+            foreach (Card item in cards)
             {
-                Common.ApplyDetails.Name = item.Name;
-                Common.ApplyDetails.Index = Convert.ToInt32(item.Index);
-                Common.ApplyDetails.FileName = item.ImageFile;
-                Common.ApplyDetails.IconPath = item.Picture;
+                if (item.Name == button.Content)
+                {
+                    Debug.WriteLine($"Card name: {item.Name}");
+                    Debug.WriteLine($"Id: {item.Id}");
 
-                Common.Debug.WriteLine($"Selected Index: {Common.ApplyDetails.Index}", ConsoleColor.White);
-                Common.Debug.WriteLine($"Selected Name: {Common.ApplyDetails.Name}", ConsoleColor.White);
-                Common.Debug.WriteLine($"Selected Image File Path: {Common.ApplyDetails.FileName}\n", ConsoleColor.White);
-
-                ApplyContent.ContentWindow.NextBtn.IsEnabled = true;
+                    ManageContent.ViewPage(item.Name, item.Id, item.Username, item.UnlockWorkstation, item.UnlockMedatixx);
+                }
             }
+        }
 
-            Debug.WriteLine($"Card name: {Name} with Id: {Id}");
+        public static void DeleteCard(string CardId)
+        {
+            var activeCards = cards;
+            foreach (Card item in activeCards)
+            {
+                if (item.Id == CardId)
+                {
+                    cards.Remove(item);
+                    break;
+                }
+            }
         }
     }
 }

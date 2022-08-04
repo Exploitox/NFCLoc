@@ -47,7 +47,7 @@
                         Content="Manage"
                         Icon="ContactCard24"
                         Tag="manage"
-                        PageType="{x:Type pages:ManageCards}" />
+                        PageType="{x:Type pages:ManageContent}" Cursor="Hand" />
                 </ui:NavigationStore.Items>
                 <ui:NavigationStore.Footer>
                     <ui:NavigationItem

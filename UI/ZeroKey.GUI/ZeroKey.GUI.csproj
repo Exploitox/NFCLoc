@@ -12,12 +12,14 @@
   <ItemGroup>
     <None Remove="Assets\nfc_reader_1x.png" />
     <None Remove="Assets\nfc_reader_2x.png" />
+    <None Remove="Assets\pass-100.png" />
     <None Remove="Assets\Wolkenhof-Logo.png" />
     <None Remove="logo.png" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Assets\nfc_reader_2x.png" />
+    <Resource Include="Assets\pass-100.png" />
     <Content Include="Icon.ico" />
   </ItemGroup>
 

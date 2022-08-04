@@ -18,11 +18,31 @@ namespace ZeroKey.GUI.Pages
     /// <summary>
     /// Interaktionslogik für ManageSingleCardPage.xaml
     /// </summary>
-    public partial class ManageSingleCardPage : Page
+    public partial class ManageSingleCardPage : UserControl
     {
-        public ManageSingleCardPage()
+        public string CardId;
+
+        public ManageSingleCardPage(string CardName, string Id, string Username, bool UnlockWorkstation, bool UnlockMedatixx)
         {
             InitializeComponent();
+            IdBlock.Text = $"Card ID: {Id}";
+            NameBlock.Text = CardName;
+            UserBlock.Text = $"Assigned to: {Username}";
+            UnlockWorkstationChb.IsChecked = UnlockWorkstation;
+            UnlockMedatixxChb.IsChecked = UnlockMedatixx;
+
+            CardId = Id;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            ManageContent.ViewHome();
+        }
+
+        private void DeleteBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ManageCards.DeleteCard(CardId);
+            ManageContent.ViewHome();
         }
     }
 }
