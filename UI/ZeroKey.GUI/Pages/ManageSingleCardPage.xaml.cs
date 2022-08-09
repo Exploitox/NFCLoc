@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -12,6 +13,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Newtonsoft.Json;
+using ZeroKey.Service.Common;
 
 namespace ZeroKey.GUI.Pages
 {
@@ -20,6 +23,7 @@ namespace ZeroKey.GUI.Pages
     /// </summary>
     public partial class ManageSingleCardPage : UserControl
     {
+        public string AssignedUsername;
         public string CardId;
 
         public ManageSingleCardPage(string CardName, string Id, string Username, bool UnlockWorkstation, bool UnlockMedatixx)
@@ -31,6 +35,7 @@ namespace ZeroKey.GUI.Pages
             UnlockWorkstationChb.IsChecked = UnlockWorkstation;
             UnlockMedatixxChb.IsChecked = UnlockMedatixx;
 
+            AssignedUsername = Username;
             CardId = Id;
         }
 
@@ -41,8 +46,15 @@ namespace ZeroKey.GUI.Pages
 
         private void DeleteBtn_Click(object sender, RoutedEventArgs e)
         {
-            ManageCards.DeleteCard(CardId);
+            DeleteCard(CardId, AssignedUsername);
             ManageContent.ViewHome();
+        }
+
+        public static void DeleteCard(string CardId, string Username)
+        {
+            TcpClient client = null;
+            ServiceCommunication.SendNetworkMessage(ref client,
+                JsonConvert.SerializeObject(new NetworkMessage(MessageType.Delete) { Token = CardId, Username = Username }));
         }
     }
 }

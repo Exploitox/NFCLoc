@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -16,6 +19,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ZeroKey.GUI.Common;
+using ZeroKey.Service.Common;
 
 namespace ZeroKey.GUI.Pages
 {    
@@ -26,11 +31,11 @@ namespace ZeroKey.GUI.Pages
     {
         public class Card
         {
-            public string Name { get; set; }
-            public string Id { get; set; }
-            public string Username { get; set; }
-            public bool UnlockWorkstation { get; set; }
-            public bool UnlockMedatixx { get; set; }
+            public string Name { get; set; }                // Tokenname
+            public string Id { get; set; }                  // TokenID
+            public string Username { get; set; }            // Assigned User
+            public bool UnlockWorkstation { get; set; }     // Unlock Workstation state
+            public bool UnlockMedatixx { get; set; }        // Unlock medatixx state
         }
 
         private static List<Card> cards;
@@ -43,12 +48,18 @@ namespace ZeroKey.GUI.Pages
             }
         }
 
+        TcpClient _client;
+        UserServerState _uss;
+        Config applicationConfiguration;
+
         public static ManageCards? ContentWindow;
 
         public ManageCards()
         {
             InitializeComponent();
-            
+            LoadConfig();
+
+            /*
             cards = new List<Card>();
             cards.Add(new Card
             {
@@ -66,6 +77,7 @@ namespace ZeroKey.GUI.Pages
                 UnlockWorkstation = true,
                 UnlockMedatixx = false
             });
+            */
             this.DataContext = this;
             ContentWindow = this;
         }
@@ -85,15 +97,30 @@ namespace ZeroKey.GUI.Pages
             }
         }
 
-        public static void DeleteCard(string CardId)
+        private void LoadConfig()
         {
-            var activeCards = cards;
-            foreach (Card item in activeCards)
+            string appPath = new System.IO.FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location).DirectoryName;
+            string servicePath = Directory.GetParent(appPath).FullName + @"\Service\Service";
+
+            if (File.Exists(servicePath + @"\Application.config"))
             {
-                if (item.Id == CardId)
+                string sc = File.ReadAllText(servicePath + @"\Application.config");
+                applicationConfiguration = JsonConvert.DeserializeObject<Config>(sc);
+                cards = new List<Card>();
+
+                foreach (var item in applicationConfiguration.Users)
                 {
-                    cards.Remove(item);
-                    break;
+                    foreach (var t in item.Tokens)
+                    {
+                        cards.Add(new Card
+                        {
+                            Name = t.Value,
+                            Id = t.Key,
+                            Username = item.Username,
+                            UnlockWorkstation = true,
+                            UnlockMedatixx = true
+                        });
+                    }
                 }
             }
         }

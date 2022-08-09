@@ -161,6 +161,7 @@ namespace ZeroKey.Service.Core
                 {
                     //string id = ls.FirstOrDefault() ?? "";
                     // check the id of the token
+
                     if (!currentTokens.Contains(id) && id != "")
                     {
                         Log("NFCTagDownEvent");
