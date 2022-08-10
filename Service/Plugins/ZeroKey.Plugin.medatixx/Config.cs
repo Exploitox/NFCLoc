@@ -2,11 +2,6 @@
 {
     public class Config
     {
-        #region General Config
-        public static string WinDrive = Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.System));
-        public static string InstDir = Path.Combine(WinDrive, "Program Files", "Wolkenhof", "ZeroKey", "Service", "medatixx");
-        #endregion
-        
         #region Debug Config
 
 #if DEBUG

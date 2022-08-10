@@ -34,7 +34,7 @@ namespace ZeroKey.UI.View.Views
             public string Password { get; set; }
             public string Card { get; set; }
         }
-        private static List<User> users;
+        private List<User> users;
         
         // Get appdata folder
         //private static string _appDataPath = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "ZeroKey");
@@ -108,15 +108,21 @@ namespace ZeroKey.UI.View.Views
                 return;
             }
 
+            // Initialize list
+            if (users == null) users = new List<User>();
+
             try
             {
-                using (var enumerator = users.GetEnumerator())
+                if (users != null)
                 {
-                    while (enumerator.MoveNext())
+                    using (var enumerator = users.GetEnumerator())
                     {
-                        var element = enumerator.Current;
-                        if (element.Card.Equals(cID.Text))
-                            MessageBox.Show((string) Application.Current.FindResource("already_registered"));
+                        while (enumerator.MoveNext())
+                        {
+                            var element = enumerator.Current;
+                            if (element.Card.Equals(cID.Text))
+                                MessageBox.Show((string)Application.Current.FindResource("already_registered"));
+                        }
                     }
                 }
             }

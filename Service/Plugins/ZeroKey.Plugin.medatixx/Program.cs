@@ -206,9 +206,11 @@ namespace ZeroKey.Plugin.medatixx
             // Get credential from config
             var json = File.ReadAllText(ServicePath + @"\medatixx.json");
             _users = JsonConvert.DeserializeObject<List<User>>(json);
-            
-            using (var enumerator = _users.GetEnumerator())
+
+            if (_users == null) return null;
+            try
             {
+                using var enumerator = _users.GetEnumerator();
                 while (enumerator.MoveNext())
                 {
                     var element = enumerator.Current;
@@ -218,6 +220,8 @@ namespace ZeroKey.Plugin.medatixx
                     }
                 }
             }
+            catch {;}
+
             return null;
         }
 
@@ -227,8 +231,10 @@ namespace ZeroKey.Plugin.medatixx
             var json = File.ReadAllText(ServicePath + @"\medatixx.json");
             _users = JsonConvert.DeserializeObject<List<User>>(json);
             
-            using (var enumerator = _users.GetEnumerator())
+            if (_users == null) return null;
+            try
             {
+                using var enumerator = _users.GetEnumerator();
                 while (enumerator.MoveNext())
                 {
                     var element = enumerator.Current;
@@ -238,6 +244,8 @@ namespace ZeroKey.Plugin.medatixx
                     }
                 }
             }
+            catch {;}
+
             return null;
         }
 
