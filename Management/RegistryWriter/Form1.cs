@@ -333,7 +333,7 @@ namespace CredentialRegistration
             });
             if (task.Result == "")
             {
-                if (MessageBox.Show("Unable to connect to service. Please make sure its running", "NFC Ring Service Registration App", MessageBoxButtons.RetryCancel) == DialogResult.Cancel)
+                if (MessageBox.Show("Unable to connect to service. Please make sure its running", "ZeroKey Service Registration App", MessageBoxButtons.RetryCancel) == DialogResult.Cancel)
                 {
                     Application.Exit();
                 }

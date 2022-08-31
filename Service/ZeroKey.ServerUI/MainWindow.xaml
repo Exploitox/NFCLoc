@@ -149,9 +149,7 @@
                         MaxWidth="600"
                         Appearance="Danger"
                         Icon="Warning24"
-                        IsShown="false"
                         Message="Remember that the Heat Death of Universe is coming someday, no time to explain - let's go!"
-                        ShowCloseButton="True"
                         Timeout="5000" />
     </Grid>
 </Window>

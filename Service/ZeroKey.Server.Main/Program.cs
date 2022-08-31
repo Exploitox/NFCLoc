@@ -1,89 +1,61 @@
 ﻿using System.Net;
 using System.Net.Sockets;
-using System.Security.Cryptography.X509Certificates;
-using System.Runtime.Serialization.Formatters.Binary;
-using ZeroKey.Server.Main.Communication;
+using System.Text;
+using SuperSimpleTcp;
 
 namespace ZeroKey.Server.Main
 {
     public class Program
     {
+        private static SimpleTcpServer server;
+
         static void Main(string[] args)
         {
-            Program p = new Program();
-            Console.WriteLine();
-            Console.WriteLine("Press enter to close program.");
-            Console.ReadLine();
-        }
+            // instantiate
+            string ip = GetLocalIP();
+            int port = 9000;
 
-        // Self-signed certificate for SSL encryption.
-        // You can generate one using my generate_cert script in tools directory (OpenSSL is required).
-        public X509Certificate2 cert = new X509Certificate2("server.pfx", "xu#++m!Q~4DDGtH!Yy+§6w.6J#V8yFQS");
+            if (ip != "")
+            {
+                server = new SimpleTcpServer($"{ip}:{port}");
+                Console.WriteLine($"Listening on {ip}:{port}");
+            }
+            else
+            {
+                Console.WriteLine("FAILED: No IP address available on this system.");
+                Thread.Sleep(2000);
+                Environment.Exit(1);
+            }
 
-        // IP of this computer. If you are running all clients at the same computer you can use 127.0.0.1 (localhost). 
-        public IPAddress ip = IPAddress.Parse(GetLocalIpAddress());
-        public int port = 2000;
-        public bool running = true;
-        public TcpListener server;
-        
-        public Dictionary<string, UserInfo> users = new Dictionary<string, UserInfo>();  // Information about users + connections info.
+            // set events
+            server.Events.ClientConnected += ClientConnected;
+            server.Events.ClientDisconnected += ClientDisconnected;
+            server.Events.DataReceived += DataReceived;
 
-        public Program()
-        {
-            Console.Title = "ZeroKey Server";
-            Console.WriteLine("----- ZeroKey Server -----");
-            LoadUsers();
-            Console.WriteLine("[{0}] Starting server...", DateTime.Now);
-
-            server = new TcpListener(ip, port);
+            // let's go!
             server.Start();
-            Console.WriteLine("[{0}] Server is running properly!", DateTime.Now);
-            
-            Listen();
+
+            // once a client has connected...
+            server.Send("[ClientIp:Port]", "Hello, world!");
+            Console.ReadKey();
         }
 
-        void Listen()  // Listen to incoming connections.
+        static void ClientConnected(object sender, ConnectionEventArgs e)
         {
-            while (running)
-            {
-                TcpClient tcpClient = server.AcceptTcpClient();  // Accept incoming connection.
-                Client client = new Client(this, tcpClient);     // Handle in another thread.
-            }
+            Console.WriteLine($"[{e.IpPort}] client connected");
         }
 
-        string usersFileName = Environment.CurrentDirectory + "\\users.dat";
-        public void SaveUsers()  // Save users data
+        static void ClientDisconnected(object sender, ConnectionEventArgs e)
         {
-            try
-            {
-                Console.WriteLine("[{0}] Saving users...", DateTime.Now);
-                BinaryFormatter bf = new BinaryFormatter();
-                FileStream file = new FileStream(usersFileName, FileMode.Create, FileAccess.Write);
-                bf.Serialize(file, users.Values.ToArray());  // Serialize UserInfo array
-                file.Close();
-                Console.WriteLine("[{0}] Users saved!", DateTime.Now);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
+            Console.WriteLine($"[{e.IpPort}] client disconnected: {e.Reason}");
         }
-        public void LoadUsers()  // Load users data
+
+        static void DataReceived(object sender, DataReceivedEventArgs e)
         {
-            try
-            {
-                Console.WriteLine("[{0}] Loading users...", DateTime.Now);
-                BinaryFormatter bf = new BinaryFormatter();
-                FileStream file = new FileStream(usersFileName, FileMode.Open, FileAccess.Read);
-                UserInfo[] infos = (UserInfo[])bf.Deserialize(file);      // Deserialize UserInfo array
-                file.Close();
-                users = infos.ToDictionary((u) => u.UserName, (u) => u);  // Convert UserInfo array to Dictionary
-                Console.WriteLine("[{0}] Users loaded! ({1})", DateTime.Now, users.Count);
-            }
-            catch { }
+            Console.WriteLine($"[{e.IpPort}]: {Encoding.UTF8.GetString(e.Data.Array, 0, e.Data.Count)}");
         }
-        
-        private static string GetLocalIpAddress()
+
+        static string GetLocalIP()
         {
             string localIp;
             using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
@@ -93,7 +65,7 @@ namespace ZeroKey.Server.Main
                 localIp = endPoint.Address.ToString();
             }
             if (String.IsNullOrEmpty(localIp))
-                return "No IPv4 address in the System!";
+                return "";
             else
                 return localIp;
         }

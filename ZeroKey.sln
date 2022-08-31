@@ -41,11 +41,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZeroKey.Plugin.medatixx", "Service\Plugins\ZeroKey.Plugin.medatixx\ZeroKey.Plugin.medatixx.csproj", "{FE3766CE-B009-426D-A8BF-4AFF0E237087}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZeroKey.ServerUI", "Service\ZeroKey.ServerUI\ZeroKey.ServerUI.csproj", "{84DC2DED-E641-41E8-862B-D96F35B72A8D}"
-	ProjectSection(ProjectDependencies) = postProject
-		{309DFBCD-4AE2-4DB5-9CA0-FFC7ADF18FB6} = {309DFBCD-4AE2-4DB5-9CA0-FFC7ADF18FB6}
-	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroKey.Server.Main", "Service\ZeroKey.Server.Main\ZeroKey.Server.Main.csproj", "{309DFBCD-4AE2-4DB5-9CA0-FFC7ADF18FB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZeroKey.Server.Main", "Service\ZeroKey.Server.Main\ZeroKey.Server.Main.csproj", "{309DFBCD-4AE2-4DB5-9CA0-FFC7ADF18FB6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

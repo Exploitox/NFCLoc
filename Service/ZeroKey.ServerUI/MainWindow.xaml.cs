@@ -6,10 +6,8 @@ using System.Text;
 using System.Windows;
 using System.Diagnostics;
 using System.IO;
-using System.Security.Cryptography.X509Certificates;
-using System.ServiceProcess;
-using ZeroKey.ServerUI.ClientCommunication;
 using Newtonsoft.Json;
+using SuperSimpleTcp;
 using Wpf.Ui.Common;
 using Clipboard = System.Windows.Clipboard;
 
@@ -21,30 +19,33 @@ namespace ZeroKey.ServerUI
     public partial class MainWindow : Window
     {
         private static bool _dark = true;
-        private static string? _user;
-        private static string? _password;
-        private static readonly IPAddress? _ip = IPAddress.Parse(GetLocalIpAddress());
-        private static int procIdMain = -1;
-        private static bool mainStarted = false;
-        private static bool authDisconnect = false;
+        private SimpleTcpServer server;
 
-        private ConfigTemplate _applicationConfiguration;
-        public IMReceivedEventHandler receivedHandler;
         public static List<string> AvailableUsers = new List<string>();
         
-        IMClient im = new IMClient();
-
         public MainWindow()
         {
             InitializeComponent();
 
-            im.LoginOK += new EventHandler(im_LoginOK);
-            im.RegisterOK += new EventHandler(im_RegisterOK);
-            im.LoginFailed += new IMErrorEventHandler(im_LoginFailed);
-            im.RegisterFailed += new IMErrorEventHandler(im_RegisterFailed);
-            im.Disconnected += new EventHandler(im_Disconnected);
-            receivedHandler = new IMReceivedEventHandler(im_MessageReceived);
-            im.MessageReceived += receivedHandler;
+            // Set server info
+            string ip = GetLocalIpAddress();
+            int port = 9000;
+
+            if (ip != "No IPv4 address in the System!")
+            {
+                server = new SimpleTcpServer($"{ip}:{port}");
+                Console.WriteLine($"Listening on {ip}:{port}");
+            }
+            else
+            {
+                Console.WriteLine("FAILED: No IP address available on this system.");
+                Environment.Exit(1);
+            }
+            
+            // Set events
+            server.Events.ClientConnected += ClientConnected;
+            server.Events.ClientDisconnected += ClientDisconnected;
+            server.Events.DataReceived += DataReceived;
 
             Wpf.Ui.Appearance.Theme.Apply(
                     Wpf.Ui.Appearance.ThemeType.Dark,                       // Theme type
@@ -52,14 +53,136 @@ namespace ZeroKey.ServerUI
                     true                                         // Whether to change accents automatically
             );
 
-            // Read configuration
-            var config = new IniFile("config.ini");
-            _user = config.Read("Username","ZeroKey");
-            _password = config.Read("Password", "ZeroKey");
-
             ResetPwBtn.IsEnabled = true;
             ClearBtn.IsEnabled = true;
         }
+
+        #region Server Events
+
+        void ClientConnected(object sender, SuperSimpleTcp.ConnectionEventArgs e)
+        {
+            Dispatcher.BeginInvoke(new Action(delegate
+            {
+                RootSnackbar.Appearance = ControlAppearance.Info;
+                RootSnackbar.Icon = SymbolRegular.Person24;
+                RootSnackbar.Show("Connected", $"New Connection with \"{e.IpPort}\".");
+            }));
+            AvailableUsers.Add(e.IpPort);
+        }
+
+        void ClientDisconnected(object sender, SuperSimpleTcp.ConnectionEventArgs e)
+        {
+            Dispatcher.BeginInvoke(new Action(delegate
+            {
+                RootSnackbar.Appearance = ControlAppearance.Info;
+                RootSnackbar.Icon = SymbolRegular.ArrowExit20;
+                RootSnackbar.Show("Connected", $"Client \"{e.IpPort}\" disconnected: {e.Reason}");
+            }));
+
+            try
+            {
+                int index = AvailableUsers.IndexOf(e.IpPort);
+                AvailableUsers.RemoveAt(index);
+            }
+            catch {;}
+        }
+
+        void DataReceived(object sender, SuperSimpleTcp.DataReceivedEventArgs e)
+        {
+            string message = Encoding.UTF8.GetString(e.Data.Array, 0, e.Data.Count);
+
+            switch (message)
+            {
+                case "gimme config":
+                {
+                    Debug.WriteLine("[{0}] Got request command from client... sending config...", DateTime.Now);
+
+                    // Send configuration to user
+                    if (!File.Exists("Application.config"))
+                        server.Send(e.IpPort, "null");
+                    else
+                    {
+                        server.Send(e.IpPort, File.ReadAllText("Application.config"));
+                        //if (File.Exists("medatixx.json")) im.SendMessage(e.From, File.ReadAllText("medatixx.json"));
+                    }
+                    break;
+                }
+
+                default:
+                {
+                    try
+                    {
+                        // Integer list:
+                        //  0 = null
+                        //  1 = Application.config
+                        //  2 = medatixx.json
+                        int IsConfig = 0;
+                        Debug.WriteLine("[{0}] Got message from client... try parsing...", DateTime.Now);
+
+                        // Deserializing Application.config
+                        try
+                        {
+                            var testConfig = JsonConvert.DeserializeObject<ConfigTemplate>(message);
+                            if (testConfig != null)
+                                IsConfig = 1;
+                        }
+                        catch { IsConfig = 0; }
+
+                        // Deserializing medatixx.json
+                        try
+                        {
+                            var medatixxTest = JsonConvert.DeserializeObject<List<MedatixxUser>>(message);
+                            if (medatixxTest != null)
+                                IsConfig = 2;
+                        }
+                        catch { IsConfig = 0; }
+
+                        switch (IsConfig)
+                        {
+                            case 0:
+                                // Random message, ignore it.
+                                break;
+
+                            case 1:
+                            {
+                                // Application.config
+                                Debug.WriteLine("[{0}] Got configuration from client... writing config...",
+                                    DateTime.Now);
+                                File.WriteAllText("Application.config", message);
+                                Debug.WriteLine("[{0}] New configuration saved. Contacting all clients now ...",
+                                    DateTime.Now);
+                                foreach (string user in AvailableUsers)
+                                {
+                                    server.Send(user, message);
+                                    Debug.WriteLine("[{0}] Send config to {1}", DateTime.Now, user);
+                                }
+
+                                break;
+                            }
+
+                            case 2:
+                            {
+                                // medatixx.json
+                                Debug.WriteLine("[{0}] Got medatixx configuration from client... writing config...", DateTime.Now);
+                                File.WriteAllText("medatixx.json", message);
+                                Debug.WriteLine("[{0}] New configuration saved. Contacting all clients now ...", DateTime.Now);
+                                foreach (string user in AvailableUsers)
+                                {
+                                    server.Send(user, message);
+                                    Debug.WriteLine("[{0}] Send config to {1}", DateTime.Now, user);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    catch {;}
+                    break;
+                }
+            }
+        }
+
+        #endregion
+
 
         private void ChangeTheme(object sender, RoutedEventArgs e)
         {
@@ -110,41 +233,9 @@ namespace ZeroKey.ServerUI
             // Start Windows Service (ZeroKey Server)
             try
             {
-                mainStarted = false;
-                var p = new Process();
-                p.StartInfo.FileName = "ZeroKey.Server.Main.exe";
-                mainStarted = p.Start();
-                try 
-                {
-                    procIdMain = p.Id;
-                }
-                catch(InvalidOperationException)
-                {
-                    mainStarted = false;
-                }
-                catch(Exception ex)
-                {
-                    mainStarted = false;
-                }
+                server.Start();
             }
             catch (Exception ex) { MessageBox.Show("Cannot start server: " + $"\n{ex.Message}"); }
-            if (!mainStarted)
-                MessageBox.Show("Cannot start server: Unknown error");
-                
-            // Log-out client if already connected
-            try
-            {
-                authDisconnect = true;
-                im.Disconnect();
-            }
-            catch (Exception ex) { Debug.WriteLine("Error logging out: " + ex.Message); }
-
-            TbIp.Text = GetLocalIpAddress();
-            TbUser.Text = _user;
-            TbPw.Text = _password;
-
-            im.Login("Server", "Test123", _ip.ToString());
-            // TODO: Autogenerate login information for server
 
             ResetPwBtn.IsEnabled = false;
             ClearUserBtn.IsEnabled = false;
@@ -156,8 +247,7 @@ namespace ZeroKey.ServerUI
             // Stop Windows Service (ZeroKey Server)
             try
             {
-                // Kill task
-                EndProcessPid(procIdMain);
+                server.Stop();
             }
             catch (Exception ex) { MessageBox.Show("Cannot stop server: " + $"\n{ex.Message}"); }
 
@@ -169,227 +259,10 @@ namespace ZeroKey.ServerUI
             ClearUserBtn.IsEnabled = true;
             ClearBtn.IsEnabled = true;
         }
-        
-        void im_LoginOK(object sender, EventArgs e)
-        {
-            Dispatcher.BeginInvoke(new Action(delegate
-            {
-                RootSnackbar.Appearance = ControlAppearance.Success;
-                RootSnackbar.Icon = SymbolRegular.CheckmarkStarburst24;
-                RootSnackbar.Show("Logged in", $"Client is now logged into the server.");
-            }));
-            Debug.WriteLine("[i] Set interval of timer for action 'IsAvailable()'...");
-            var timer = SetInterval(IsAvailable, 10000);
-        }
-
-        void IsAvailable()
-        {
-            foreach (string user in AvailableUsers)
-            {
-                im.IsAvailable(user);
-                Debug.WriteLine("[i] ImAvailable to {0}", user);
-            }
-        }
-
-        void im_MessageReceived(object sender, IMReceivedEventArgs e)
-        {
-            if (e.Message == "gimme config")
-            {
-                Debug.WriteLine("[{0}] Got request command from client... sending config...", DateTime.Now);
-                
-                // Add user to available list
-                AvailableUsers.Add(e.From);
-                
-                // Send configuration to user
-                if (!File.Exists("Application.config"))
-                    im.SendMessage(e.From, "null");
-                else
-                {
-                    im.SendMessage(e.From, File.ReadAllText("Application.config"));
-                    if (File.Exists("medatixx.json")) im.SendMessage(e.From, File.ReadAllText("medatixx.json"));
-                }
-            }
-            else
-            {
-                // Received configuration - parsing & saving ... 
-                try
-                {
-                    // Integer list:
-                    //  0 = null
-                    //  1 = Application.config
-                    //  2 = medatixx.json
-                    int IsConfig = 0;
-                    Debug.WriteLine("[{0}] Got message from client... try parsing...", DateTime.Now);
-                    
-                    // Deserializing Application.config
-                    try
-                    {
-                       var testConfig = JsonConvert.DeserializeObject<ConfigTemplate>(e.Message);
-                        if (testConfig != null)
-                            IsConfig = 1;
-                    }
-                    catch { IsConfig = 0; }
-                    
-                    // Deserializing medatixx.json
-                    try
-                    {
-                        var medatixxTest = JsonConvert.DeserializeObject<List<MedatixxUser>>(e.Message);
-                        if (medatixxTest != null)
-                            IsConfig = 2;
-                    }
-                    catch { IsConfig = 0; }
-                    
-                    switch (IsConfig)
-                    {
-                        case 0:
-                            // Random message, ignore it.
-                            break;
-                        
-                        case 1:
-                            // Application.config
-                            Debug.WriteLine("[{0}] Got configuration from client... writing config...", DateTime.Now);
-                            File.WriteAllText("Application.config", e.Message);
-                            Debug.WriteLine("[{0}] New configuration saved. Contacting all clients now ...", DateTime.Now);
-                            foreach (string user in AvailableUsers)
-                            {
-                                im.SendMessage(user, e.Message);
-                                Debug.WriteLine("[{0}] Send config to {1}", DateTime.Now, user);
-                            }
-                            break;
-                        
-                        case 2:
-                            // medatixx.json
-                            Debug.WriteLine("[{0}] Got medatixx configuration from client... writing config...", DateTime.Now);
-                            File.WriteAllText("medatixx.json", e.Message);
-                            Debug.WriteLine("[{0}] New configuration saved. Contacting all clients now ...", DateTime.Now);
-                            foreach (string user in AvailableUsers)
-                            {
-                                im.SendMessage(user, e.Message);
-                                Debug.WriteLine("[{0}] Send config to {1}", DateTime.Now, user);
-                            }
-                            break;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    // Ignore, as this is not a config.
-                    Debug.WriteLine("[{0}] Error on parsing message: " + ex.Message, DateTime.Now);
-                }
-            }
-        }
-
-        void im_RegisterOK(object sender, EventArgs e)
-        {
-            Dispatcher.BeginInvoke(new Action(delegate
-            {
-                RootSnackbar.Appearance = ControlAppearance.Success;
-                RootSnackbar.Icon = SymbolRegular.CheckmarkStarburst24;
-                RootSnackbar.Show("Registered", $"Client was successfully registered.");
-            }));
-            
-            // Kill server
-            EndProcessPid(procIdMain);
-        }
-
-        void im_LoginFailed(object sender, EventArgs e)
-        {
-            Dispatcher.BeginInvoke(new Action(delegate
-            {
-                RootSnackbar.Appearance = ControlAppearance.Danger;
-                RootSnackbar.Icon = SymbolRegular.ErrorCircle24;
-                RootSnackbar.Show("Login failed", $"Failed to login into server.");
-            }));
-        }
-
-        void im_RegisterFailed(object sender, EventArgs e)
-        {
-            Dispatcher.BeginInvoke(new Action(delegate
-            {
-                RootSnackbar.Appearance = ControlAppearance.Danger;
-                RootSnackbar.Icon = SymbolRegular.ErrorCircle24;
-                RootSnackbar.Show("Register failed", $"Failed to register to server.");
-            }));
-        }
-
-        void im_Disconnected(object sender, EventArgs e)
-        {
-            /*Dispatcher.BeginInvoke(new Action(delegate
-            {
-                RootSnackbar.Appearance = ControlAppearance.Danger;
-                RootSnackbar.Show("Disconnected", $"Client was disconnected from server.");
-            }));*/
-
-            if (!authDisconnect)
-            {
-                im.Login("Server", "Test123", _ip.ToString());
-                // TODO: Autogenerate login information for server
-                authDisconnect = false;
-            }
-            else
-            {
-                authDisconnect = true;
-            }
-        }
 
         private void ResetPWButton_Click(object sender, RoutedEventArgs e)
         {
-            var _userbkg = _user;
-            var _passwordbkg = _password;
-
-            // Start Windows Service (ZeroKey Server)
-            try
-            {
-                mainStarted = false;
-                var p = new Process();
-                p.StartInfo.FileName = "ZeroKey.Server.Main.exe";
-                mainStarted = p.Start();
-                try 
-                {
-                    procIdMain = p.Id;
-                }
-                catch(InvalidOperationException)
-                {
-                    mainStarted = false;
-                }
-                catch(Exception)
-                {
-                    mainStarted = false;
-                }
-            }
-            catch (Exception ex) { MessageBox.Show("Cannot start server: " + $"\n{ex.Message}"); }
-            if (!mainStarted)
-                MessageBox.Show("Cannot start server: Unknown error");
-
-            // Write new data to config
-            var config = new IniFile("config.ini");
-            _user = $"ZK{GenerateUsername(6)}";
-            _password = GeneratePassword(12);
-            config.Write("Username", _user, "ZeroKey");
-            config.Write("Password", _password, "ZeroKey");
-
-            // Register new user to server
-            try
-            {
-                im.Register(_user, _password, _ip.ToString());
-            }
-            catch (Exception)
-            {
-                Dispatcher.BeginInvoke(new Action(delegate
-                {
-                    RootSnackbar.Appearance = ControlAppearance.Danger;
-                    RootSnackbar.Icon = SymbolRegular.ErrorCircle24;
-                    RootSnackbar.Show("Cannot register new user", $"The server is not responding to the request. Is the server online?");
-                }));
-
-                config.Write("Username", _userbkg, "ZeroKey");
-                config.Write("Password", _passwordbkg, "ZeroKey");
-                _user = _userbkg;
-                _password = _passwordbkg;
-            }
-
-            TbIp.Text = GetLocalIpAddress();
-            TbUser.Text = _user;
-            TbPw.Text = _password;
+           
         }
 
         private void ClearConfig_Click(object sender, RoutedEventArgs e)

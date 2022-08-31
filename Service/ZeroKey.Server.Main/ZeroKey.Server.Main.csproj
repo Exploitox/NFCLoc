@@ -10,5 +10,9 @@
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
         <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="SuperSimpleTcp" Version="3.0.0" />
+    </ItemGroup>
     
 </Project>
