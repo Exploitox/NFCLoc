@@ -632,6 +632,7 @@ namespace ZeroKey.Service.Core
 
         private void DataReceived(object sender, SuperSimpleTcp.DataReceivedEventArgs e)
         {
+            if (e.Data.Array == null) return;
             string message = Encoding.UTF8.GetString(e.Data.Array, 0, e.Data.Count);
 
             Debug.WriteLine("Got response from server... sync file now...");
