@@ -12,8 +12,8 @@ using System.Net.Sockets;
 using System.Net;
 using Newtonsoft.Json;
 using System.Management;
+using SuperSimpleTcp;
 using ZeroKey.Libraries;
-using ZeroKey.Service.Core.ClientCommunication;
 
 namespace ZeroKey.Service.Core
 {
@@ -32,10 +32,10 @@ namespace ZeroKey.Service.Core
         private TcpListener _registrationListener;
         private Thread _registrationListenThread;
 
-        IMClient im = new IMClient();
+        SimpleTcpClient client;
         private int trys = 0;
-        private bool IM_Successful = false;
-        private int IM_IO = 0; // 0 = Read config; 1 = Write config
+        private bool IsConnected = false;
+        private bool GotConfig = false;
 
         private bool _runListenLoops = false;
         //private List<Client> Connections = new List<Client>();
@@ -63,12 +63,6 @@ namespace ZeroKey.Service.Core
                     }
                 }
                 catch { }
-
-            im.LoginOK += new EventHandler(im_LoginOK);
-            im.LoginFailed += new IMErrorEventHandler(im_LoginFailed);
-            im.Disconnected += new EventHandler(im_Disconnected);
-            var receivedHandler = new IMReceivedEventHandler(im_MessageReceived);
-            im.MessageReceived += receivedHandler;
         }
 
         private void InitLog()
@@ -288,7 +282,6 @@ namespace ZeroKey.Service.Core
         {
             InitLog();
             Log("Core starting");
-            //System.Threading.Thread.Sleep(10000);
             LoadConfig();
             _state = ServiceState.Starting;
             InitialiseNetwork();
@@ -625,103 +618,62 @@ namespace ZeroKey.Service.Core
                 SaveConfig();
         }
 
-        private void im_LoginOK(object sender, EventArgs e)
+        private void LoginOK(object sender, SuperSimpleTcp.ConnectionEventArgs e)
         {
-            Debug.WriteLine("Login successful.\nSending message ...");
-
-            if (IM_IO == 0)
-            {
-                im.SendMessage("Server", "gimme config");
-                Debug.WriteLine("Configuration request -> Server");
-            }
-            if (IM_IO == 1)
-            {
-                im.SendMessage("Server", JsonConvert.SerializeObject(_applicationConfiguration)); // Initialize sending
-                Debug.WriteLine("Local configuration -> Server");
-                Log("Configuration uploaded to server.");
-                im.Disconnect();
-            }
+            Debug.WriteLine("Login successful.");
+            IsConnected = true;
         }
 
-        private void im_LoginFailed(object sender, IMErrorEventArgs e)
-        {
-            Debug.WriteLine("Login failed.");
-        }
-
-        private void im_Disconnected(object sender, EventArgs e)
+        private void Disconnected(object sender, SuperSimpleTcp.ConnectionEventArgs e)
         {
             Debug.WriteLine("Disconnected.");
+            IsConnected = false;
         }
 
-        private void im_MessageReceived(object sender, IMReceivedEventArgs e)
+        private void DataReceived(object sender, SuperSimpleTcp.DataReceivedEventArgs e)
         {
-            if (e.From.ToLower() == "server")
-            { 
-                Debug.WriteLine("Got response from server... sync file now...");
+            string message = Encoding.UTF8.GetString(e.Data.Array, 0, e.Data.Count);
 
-                // Testing now which config this is
-                
-                // Integer list:
-                //  0 = null
-                //  1 = Application.config
-                //  2 = medatixx.json
-                int IsConfig = 0;
-                
-                // Serializing Application.config
-                try
-                {
-                    Config testConfig = JsonConvert.DeserializeObject<Config>(e.Message);
-                    if (testConfig != null)
-                        IsConfig = 1;
-                }
-                catch
-                {
-                    // Failed, it is not a Application.config file
-                    IsConfig = 0;
-                }
-                
-                // Serializing medatixx.json
-                try
-                {
-                    var medatixxTest = JsonConvert.DeserializeObject<List<MedatixxUser>>(e.Message);
-                    if (medatixxTest != null)
-                        IsConfig = 2;
-                }
-                catch
-                {
-                    // Failed, it is not a medatixx.json file
-                    IsConfig = 0;
-                }
+            Debug.WriteLine("Got response from server... sync file now...");
 
-                switch (IsConfig)
-                {
-                    case 0:
-                        // Random message, ignore it.
-                        break;
-                    
-                    case 1:
-                        // Application.config
-                        File.WriteAllText(AppPath + @"\Application.config", e.Message);
-                        
-                        string sc = File.ReadAllText(AppPath + @"\Application.config");
-                        _applicationConfiguration = JsonConvert.DeserializeObject<Config>(sc);
-                        Log("Configuration loaded from authentication server.");
-                        break;
-                    
-                    case 2:
-                        // medatixx.json
-                        File.WriteAllText(AppPath + @"\medatixx.json", e.Message);
-                        break;
-                }
-                
-                IM_Successful = true;
-                im.Disconnect();
+            // Testing now which config this is
+
+            // Integer list:
+            //  0 = null
+            //  1 = Application.config
+            //  2 = medatixx.json
+            int IsConfig = 0;
+
+            // Serializing Application.config
+            string charObj = message.Substring(0, 1);
+            string parseConfig = message.Remove(0, 1);
+
+            if (charObj == "1")
+                IsConfig = 1;
+            if (charObj == "2")
+                IsConfig = 2;
+
+            switch (IsConfig)
+            {
+                default:
+                    // Random message, ignore it.
+                    break;
+
+                case 1:
+                    // Application.config
+                    File.WriteAllText(AppPath + @"\Application.config", parseConfig);
+
+                    string sc = File.ReadAllText(AppPath + @"\Application.config");
+                    _applicationConfiguration = JsonConvert.DeserializeObject<Config>(sc);
+                    GotConfig = true;
+                    Log("Configuration loaded from authentication server.");
+                    break;
+
+                case 2:
+                    // medatixx.json
+                    File.WriteAllText(AppPath + @"\medatixx.json", parseConfig);
+                    break;
             }
-        }
-        
-        private void IsAvailable()
-        {
-            im.IsAvailable("Server");
         }
 
         private bool LoadConfig()
@@ -735,30 +687,27 @@ namespace ZeroKey.Service.Core
             {
                 var db = new IniFile(AppPath + @"\Database.ini");
                 string ip = db.Read("IP", "Login");
-                string user = db.Read("User", "Login");
-                string pass = db.Read("Password", "Login");
+                int port = 9000;
 
-                if ( !String.IsNullOrEmpty(ip) || !String.IsNullOrEmpty(user) || !String.IsNullOrEmpty(pass))
+                if (!String.IsNullOrEmpty(ip))
                 {
-                    IM_IO = 0;
-                    im.Login(user, pass, ip);
+                    client = new SimpleTcpClient($"{ip}:{port}");
+                    client.Events.Connected += LoginOK;
+                    client.Events.Disconnected += Disconnected;
+                    client.Events.DataReceived += DataReceived;
+                    client.Connect();
                     Debug.WriteLine("Login requested!");
-                    while (trys < 10)
-                    {
-                        if (IM_Successful)
-                        {
-                            db.Write("IsEnabled", "true", "Settings");
-                            db.Write("IsOnline", "true", "Settings");
-                            var timer = SetInterval(IsAvailable, 10000);
-                            return true;
-                        }
 
-                        Debug.WriteLine("Perform wait thread until response from server.");
-                        Thread.Sleep(1000);
-                        trys++;
+                    // Wait for response
+                    Thread.Sleep(8000);
+                    if (IsConnected)
+                    {
+                        RequestConfig();
+                        if (GotConfig)
+                            return true;
                     }
                 }
-                db.Write("IsOnline","false","Settings");
+                // db.Write("IsOnline","false","Settings");
             }
             catch
             {
@@ -798,22 +747,22 @@ namespace ZeroKey.Service.Core
 
         private bool SaveConfig()
         {
-            // Read local database config
+            // Try remote push
             try
             {
-                var db = new IniFile(AppPath + @"\Database.ini");
-                string ip = db.Read("IP", "Login");
-                string user = db.Read("User", "Login");
-                string pass = db.Read("Password", "Login");
-
-                if (!String.IsNullOrEmpty(ip) || !String.IsNullOrEmpty(user) || !String.IsNullOrEmpty(pass))
+                if (IsConnected)
                 {
-                    IM_IO = 1;
-                    im.Login(user, pass, ip);
-                    Debug.WriteLine("Login requested. (perf. login with IM_IO 1)");
-
-                    im.SendMessage("Server", JsonConvert.SerializeObject(_applicationConfiguration));
+                    client.Send(1 + JsonConvert.SerializeObject(_applicationConfiguration));
                     Debug.WriteLine("Local configuration -> server.");
+                }
+                else
+                {
+                    bool Connection = RequestLogin();
+                    if (Connection)
+                    {
+                        client.Send(1 + JsonConvert.SerializeObject(_applicationConfiguration));
+                        Debug.WriteLine("Local configuration -> server.");
+                    }
                 }
             }
             catch
@@ -824,6 +773,32 @@ namespace ZeroKey.Service.Core
             File.WriteAllText(AppPath + @"\Application.config", JsonConvert.SerializeObject(_applicationConfiguration));
             Log("Configuration saved to " + AppPath + @"\Application.config");
             return true;
+        }
+
+        private bool RequestLogin()
+        {
+            var db = new IniFile(AppPath + @"\Database.ini");
+            string ip = db.Read("IP", "Login");
+            int port = 9000;
+
+            if (!String.IsNullOrEmpty(ip))
+            {
+                client = new SimpleTcpClient($"{ip}:{port}");
+                client.Connect();
+                Debug.WriteLine("Login requested!");
+
+                // Wait for response
+                Thread.Sleep(8000);
+                if (IsConnected)
+                    return true;
+            }                
+            return false;
+        }
+
+        private void RequestConfig()
+        {
+            client.Send("gimme config");
+            Thread.Sleep(8000);
         }
 
         private void RemoveToken(string user, string token)

@@ -65,8 +65,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientCommunication\IMClient.cs" />
-    <Compile Include="ClientCommunication\IMEvents.cs" />
     <Compile Include="SCardContext.cs" />
     <Compile Include="SerialContext.cs" />
     <Compile Include="ServiceCore.cs" />

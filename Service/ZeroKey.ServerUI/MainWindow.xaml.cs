@@ -22,7 +22,7 @@ namespace ZeroKey.ServerUI
         private SimpleTcpServer server;
 
         public static List<string> AvailableUsers = new List<string>();
-        
+
         public MainWindow()
         {
             InitializeComponent();
@@ -41,7 +41,7 @@ namespace ZeroKey.ServerUI
                 Console.WriteLine("FAILED: No IP address available on this system.");
                 Environment.Exit(1);
             }
-            
+
             // Set events
             server.Events.ClientConnected += ClientConnected;
             server.Events.ClientDisconnected += ClientDisconnected;
@@ -84,7 +84,7 @@ namespace ZeroKey.ServerUI
                 int index = AvailableUsers.IndexOf(e.IpPort);
                 AvailableUsers.RemoveAt(index);
             }
-            catch {;}
+            catch {; }
         }
 
         void DataReceived(object sender, SuperSimpleTcp.DataReceivedEventArgs e)
@@ -94,90 +94,80 @@ namespace ZeroKey.ServerUI
             switch (message)
             {
                 case "gimme config":
-                {
-                    Debug.WriteLine("[{0}] Got request command from client... sending config...", DateTime.Now);
-
-                    // Send configuration to user
-                    if (!File.Exists("Application.config"))
-                        server.Send(e.IpPort, "null");
-                    else
                     {
-                        server.Send(e.IpPort, File.ReadAllText("Application.config"));
-                        //if (File.Exists("medatixx.json")) im.SendMessage(e.From, File.ReadAllText("medatixx.json"));
+                        Debug.WriteLine("[{0}] Got request command from client... sending config...", DateTime.Now);
+
+                        // Send configuration to user
+                        if (!File.Exists("Application.config"))
+                            server.Send(e.IpPort, "null");
+                        else
+                        {
+                            server.Send(e.IpPort, File.ReadAllText("Application.config"));
+                            //if (File.Exists("medatixx.json")) im.SendMessage(e.From, File.ReadAllText("medatixx.json"));
+                        }
+                        break;
                     }
-                    break;
-                }
 
                 default:
-                {
-                    try
                     {
-                        // Integer list:
-                        //  0 = null
-                        //  1 = Application.config
-                        //  2 = medatixx.json
-                        int IsConfig = 0;
-                        Debug.WriteLine("[{0}] Got message from client... try parsing...", DateTime.Now);
-
-                        // Deserializing Application.config
                         try
                         {
-                            var testConfig = JsonConvert.DeserializeObject<ConfigTemplate>(message);
-                            if (testConfig != null)
+                            // Integer list:
+                            //  0 = null
+                            //  1 = Application.config
+                            //  2 = medatixx.json
+                            int IsConfig = 0;
+                            Debug.WriteLine("[{0}] Got message from client... try parsing...", DateTime.Now);
+
+                            // Deserializing Application.config
+                            string charObj = message.Substring(0, 1);
+                            string parseConfig = message.Remove(0, 1);
+
+                            if (charObj == "1")
                                 IsConfig = 1;
-                        }
-                        catch { IsConfig = 0; }
-
-                        // Deserializing medatixx.json
-                        try
-                        {
-                            var medatixxTest = JsonConvert.DeserializeObject<List<MedatixxUser>>(message);
-                            if (medatixxTest != null)
+                            if (charObj == "2")
                                 IsConfig = 2;
-                        }
-                        catch { IsConfig = 0; }
 
-                        switch (IsConfig)
-                        {
-                            case 0:
-                                // Random message, ignore it.
-                                break;
-
-                            case 1:
+                            switch (IsConfig)
                             {
-                                // Application.config
-                                Debug.WriteLine("[{0}] Got configuration from client... writing config...",
-                                    DateTime.Now);
-                                File.WriteAllText("Application.config", message);
-                                Debug.WriteLine("[{0}] New configuration saved. Contacting all clients now ...",
-                                    DateTime.Now);
-                                foreach (string user in AvailableUsers)
-                                {
-                                    server.Send(user, message);
-                                    Debug.WriteLine("[{0}] Send config to {1}", DateTime.Now, user);
-                                }
+                                default:
+                                    // Random message, ignore it.
+                                    break;
 
-                                break;
-                            }
+                                case 1:
+                                    {
+                                        // Application.config
+                                        Debug.WriteLine("[{0}] Got configuration from client... writing config...", DateTime.Now);
+                                        File.WriteAllText("Application.config", message);
+                                        Debug.WriteLine("[{0}] New configuration saved. Contacting all clients now ...", DateTime.Now);
+                                        foreach (string user in AvailableUsers)
+                                        {
+                                            server.Send(user, parseConfig);
+                                            Debug.WriteLine("[{0}] Send config to {1}", DateTime.Now, user);
+                                        }
 
-                            case 2:
-                            {
-                                // medatixx.json
-                                Debug.WriteLine("[{0}] Got medatixx configuration from client... writing config...", DateTime.Now);
-                                File.WriteAllText("medatixx.json", message);
-                                Debug.WriteLine("[{0}] New configuration saved. Contacting all clients now ...", DateTime.Now);
-                                foreach (string user in AvailableUsers)
-                                {
-                                    server.Send(user, message);
-                                    Debug.WriteLine("[{0}] Send config to {1}", DateTime.Now, user);
-                                }
-                                break;
+                                        break;
+                                    }
+
+                                case 2:
+                                    {
+                                        // medatixx.json
+                                        Debug.WriteLine("[{0}] Got medatixx configuration from client... writing config...", DateTime.Now);
+                                        File.WriteAllText("medatixx.json", message);
+                                        Debug.WriteLine("[{0}] New configuration saved. Contacting all clients now ...", DateTime.Now);
+                                        foreach (string user in AvailableUsers)
+                                        {
+                                            server.Send(user, message);
+                                            Debug.WriteLine("[{0}] Send config to {1}", DateTime.Now, user);
+                                        }
+
+                                        break;
+                                    }
                             }
                         }
+                        catch {; }
+                        break;
                     }
-                    catch {;}
-                    break;
-                }
             }
         }
 
@@ -212,12 +202,12 @@ namespace ZeroKey.ServerUI
         {
             Clipboard.SetText(TbIp.Text);
         }
-        
+
         private void tbUserCopy_Click(object sender, RoutedEventArgs e)
         {
             Clipboard.SetText(TbUser.Text);
         }
-        
+
         private void tbPWCopy_Click(object sender, RoutedEventArgs e)
         {
             Clipboard.SetText(TbPw.Text);
@@ -241,7 +231,7 @@ namespace ZeroKey.ServerUI
             ClearUserBtn.IsEnabled = false;
             ClearBtn.IsEnabled = false;
         }
-        
+
         private void ToggleSwitchOff_Click(object sender, RoutedEventArgs e)
         {
             // Stop Windows Service (ZeroKey Server)
@@ -262,7 +252,7 @@ namespace ZeroKey.ServerUI
 
         private void ResetPWButton_Click(object sender, RoutedEventArgs e)
         {
-           
+
         }
 
         private void ClearConfig_Click(object sender, RoutedEventArgs e)
@@ -308,7 +298,7 @@ namespace ZeroKey.ServerUI
                 {
                     File.Delete("users.dat");
                     Dispatcher.BeginInvoke(new Action(delegate
-                    {                        
+                    {
                         RootSnackbar.Appearance = ControlAppearance.Success;
                         RootSnackbar.Icon = SymbolRegular.CheckmarkStarburst24;
                         RootSnackbar.Show("Successful", $"User list was successfully cleared.");
@@ -336,7 +326,7 @@ namespace ZeroKey.ServerUI
         }
 
         #region Modules
-        
+
         /// <summary>
         /// Usage: var timer = SetInterval(DoThis, 1000);
         /// UI Usage: BeginInvoke((Action)(() =>{ SetInterval(DoThis, 1000); }));
@@ -352,30 +342,6 @@ namespace ZeroKey.ServerUI
 
             return tmr;
         }
-        
-        private static bool ExistsNetworkPath(string path)
-        {
-            if (string.IsNullOrEmpty(path)) return false;
-            string? pathRoot = Path.GetPathRoot(path);
-            if (string.IsNullOrEmpty(pathRoot)) return false;
-            ProcessStartInfo pinfo = new ProcessStartInfo("powershell", "Get-SmbShare");
-            pinfo.CreateNoWindow = true;
-            pinfo.RedirectStandardOutput = true;
-            pinfo.UseShellExecute = false;
-            string output;
-            using (Process? p = Process.Start(pinfo))
-            {
-                output = p.StandardOutput.ReadToEnd();
-            }
-            foreach (string line in output.Split('\n'))
-            {
-                if (line.Contains(pathRoot) && line.Contains("OK"))
-                {
-                    return true; // shareIsProbablyConnected
-                }
-            }
-            return false;
-        }
 
         private static string GetLocalIpAddress()
         {
@@ -390,41 +356,6 @@ namespace ZeroKey.ServerUI
                 return "No IPv4 address in the System!";
             else
                 return localIp;
-        }
-
-        private static string GeneratePassword(int length)
-        {
-            const string valid = $"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!$?:;_-";
-            StringBuilder res = new StringBuilder();
-            Random rnd = new Random();
-            while (0 < length--)
-            {
-                res.Append(valid[rnd.Next(valid.Length)]);
-            }
-            return res.ToString();
-        }
-
-        private static string GenerateUsername(int length)
-        {
-            const string valid = $"ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-            StringBuilder res = new StringBuilder();
-            Random rnd = new Random();
-            while (0 < length--)
-            {
-                res.Append(valid[rnd.Next(valid.Length)]);
-            }
-            return res.ToString();
-        }
-
-        private static void EndProcessPid(int pid)
-        {
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = "taskkill",
-                Arguments = $"/pid {pid} /f /t",
-                CreateNoWindow = true,
-                UseShellExecute = false
-            }).WaitForExit();
         }
         #endregion
     }
