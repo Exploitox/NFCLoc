@@ -80,8 +80,8 @@
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.1</Version>
     </PackageReference>
-    <PackageReference Include="SuperSimpleTcp">
-      <Version>3.0.0</Version>
+    <PackageReference Include="WatsonTcp">
+      <Version>4.8.14.14</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

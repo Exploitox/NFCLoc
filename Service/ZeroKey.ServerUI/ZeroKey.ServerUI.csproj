@@ -20,9 +20,9 @@
 
 	<ItemGroup>
 	  <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-	  <PackageReference Include="SuperSimpleTcp" Version="3.0.0" />
 	  <PackageReference Include="System.ServiceProcess.ServiceController" Version="6.0.0" />
-	  <PackageReference Include="WPF-UI" Version="2.0.2" />
+	  <PackageReference Include="WatsonTcp" Version="4.8.14.14" />
+	  <PackageReference Include="WPF-UI" Version="2.0.3" />
 	</ItemGroup>
 
 	<ItemGroup>

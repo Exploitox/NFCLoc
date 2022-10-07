@@ -8,11 +8,12 @@ using System.Text;
 using System.Threading;
 using ZeroKey.Service.Common;
 using System.IO;
+using System.Linq.Expressions;
 using System.Net.Sockets;
 using System.Net;
 using Newtonsoft.Json;
 using System.Management;
-using SuperSimpleTcp;
+using WatsonTcp;
 using ZeroKey.Libraries;
 
 namespace ZeroKey.Service.Core
@@ -32,7 +33,7 @@ namespace ZeroKey.Service.Core
         private TcpListener _registrationListener;
         private Thread _registrationListenThread;
 
-        SimpleTcpClient client;
+        WatsonTcpClient client;
         private int trys = 0;
         private bool IsConnected = false;
         private bool GotConfig = false;
@@ -289,6 +290,7 @@ namespace ZeroKey.Service.Core
             _readerThread.Start();
             _state = ServiceState.Running;
             Log("Core started");
+            Debug.WriteLine("Service is now ready.");
         }
 
         private void InitialiseNetwork()
@@ -618,22 +620,23 @@ namespace ZeroKey.Service.Core
                 SaveConfig();
         }
 
-        private void LoginOK(object sender, SuperSimpleTcp.ConnectionEventArgs e)
+        private void ServerConnected(object sender, WatsonTcp.ConnectionEventArgs e)
         {
             Debug.WriteLine("Login successful.");
             IsConnected = true;
         }
 
-        private void Disconnected(object sender, SuperSimpleTcp.ConnectionEventArgs e)
+        private void ServerDisconnected(object sender, WatsonTcp.DisconnectionEventArgs e)
         {
             Debug.WriteLine("Disconnected.");
             IsConnected = false;
         }
 
-        private void DataReceived(object sender, SuperSimpleTcp.DataReceivedEventArgs e)
+        private void MessageReceived(object sender, WatsonTcp.MessageReceivedEventArgs e)
         {
-            if (e.Data.Array == null) return;
-            string message = Encoding.UTF8.GetString(e.Data.Array, 0, e.Data.Count);
+            if (e.Data == null) return;
+            
+            string message = Encoding.UTF8.GetString(e.Data);
 
             Debug.WriteLine("Got response from server... sync file now...");
 
@@ -692,10 +695,10 @@ namespace ZeroKey.Service.Core
 
                 if (!String.IsNullOrEmpty(ip))
                 {
-                    client = new SimpleTcpClient($"{ip}:{port}");
-                    client.Events.Connected += LoginOK;
-                    client.Events.Disconnected += Disconnected;
-                    client.Events.DataReceived += DataReceived;
+                    client = new WatsonTcpClient(ip, port);
+                    client.Events.ServerConnected += ServerConnected;
+                    client.Events.ServerDisconnected += ServerDisconnected;
+                    client.Events.MessageReceived += MessageReceived;
                     client.Connect();
                     Debug.WriteLine("Login requested!");
 
@@ -784,7 +787,7 @@ namespace ZeroKey.Service.Core
 
             if (!String.IsNullOrEmpty(ip))
             {
-                client = new SimpleTcpClient($"{ip}:{port}");
+                client = new WatsonTcpClient(ip, port);
                 client.Connect();
                 Debug.WriteLine("Login requested!");
 

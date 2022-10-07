@@ -7,7 +7,7 @@ using System.Windows;
 using System.Diagnostics;
 using System.IO;
 using Newtonsoft.Json;
-using SuperSimpleTcp;
+using WatsonTcp;
 using Wpf.Ui.Common;
 using Clipboard = System.Windows.Clipboard;
 
@@ -19,21 +19,18 @@ namespace ZeroKey.ServerUI
     public partial class MainWindow : Window
     {
         private static bool _dark = true;
-        private SimpleTcpServer server;
+        private WatsonTcpServer server;
 
-        public static List<string> AvailableUsers = new List<string>();
+        private string ip = GetLocalIpAddress();
+        private int port = 9000;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            // Set server info
-            string ip = GetLocalIpAddress();
-            int port = 9000;
-
             if (ip != "No IPv4 address in the System!")
             {
-                server = new SimpleTcpServer($"{ip}:{port}");
+                server = new WatsonTcpServer(ip,port);
                 Console.WriteLine($"Listening on {ip}:{port}");
             }
             else
@@ -45,7 +42,7 @@ namespace ZeroKey.ServerUI
             // Set events
             server.Events.ClientConnected += ClientConnected;
             server.Events.ClientDisconnected += ClientDisconnected;
-            server.Events.DataReceived += DataReceived;
+            server.Events.MessageReceived += MessageReceived;
 
             Wpf.Ui.Appearance.Theme.Apply(
                     Wpf.Ui.Appearance.ThemeType.Dark,                       // Theme type
@@ -59,7 +56,7 @@ namespace ZeroKey.ServerUI
 
         #region Server Events
 
-        void ClientConnected(object sender, SuperSimpleTcp.ConnectionEventArgs e)
+        void ClientConnected(object sender, WatsonTcp.ConnectionEventArgs e)
         {
             Dispatcher.BeginInvoke(new Action(delegate
             {
@@ -67,10 +64,9 @@ namespace ZeroKey.ServerUI
                 RootSnackbar.Icon = SymbolRegular.Person24;
                 RootSnackbar.Show("Connected", $"New Connection with \"{e.IpPort}\".");
             }));
-            AvailableUsers.Add(e.IpPort);
         }
 
-        void ClientDisconnected(object sender, SuperSimpleTcp.ConnectionEventArgs e)
+        void ClientDisconnected(object sender, WatsonTcp.DisconnectionEventArgs e)
         {
             Dispatcher.BeginInvoke(new Action(delegate
             {
@@ -78,18 +74,11 @@ namespace ZeroKey.ServerUI
                 RootSnackbar.Icon = SymbolRegular.ArrowExit20;
                 RootSnackbar.Show("Connected", $"Client \"{e.IpPort}\" disconnected: {e.Reason}");
             }));
-
-            try
-            {
-                int index = AvailableUsers.IndexOf(e.IpPort);
-                AvailableUsers.RemoveAt(index);
-            }
-            catch {; }
         }
 
-        void DataReceived(object sender, SuperSimpleTcp.DataReceivedEventArgs e)
+        void MessageReceived(object sender, WatsonTcp.MessageReceivedEventArgs e)
         {
-            string message = Encoding.UTF8.GetString(e.Data.Array, 0, e.Data.Count);
+            string message = Encoding.UTF8.GetString(e.Data);
 
             switch (message)
             {
@@ -98,13 +87,35 @@ namespace ZeroKey.ServerUI
                         Debug.WriteLine("[{0}] Got request command from client... sending config...", DateTime.Now);
 
                         // Send configuration to user
-                        if (!File.Exists("Application.config"))
-                            server.Send(e.IpPort, "null");
-                        else
+                        try
                         {
-                            server.Send(e.IpPort, File.ReadAllText("Application.config"));
-                            //if (File.Exists("medatixx.json")) im.SendMessage(e.From, File.ReadAllText("medatixx.json"));
+                            if (!File.Exists("Application.config"))
+                                server.Send(e.IpPort, "null");
+                            else
+                            {
+                                server.Send(e.IpPort, File.ReadAllText("Application.config"));
+                                //if (File.Exists("medatixx.json")) im.SendMessage(e.From, File.ReadAllText("medatixx.json"));
+                            }
                         }
+                        catch (TimeoutException)
+                        {
+                            Dispatcher.BeginInvoke(new Action(delegate
+                            {
+                                RootSnackbar.Appearance = ControlAppearance.Danger;
+                                RootSnackbar.Icon = SymbolRegular.Warning24;
+                                RootSnackbar.Show("Timeout", $"Failed to send config to client \"{e.IpPort}\".");
+                            }));
+                        }
+                        catch (Exception ex)
+                        {
+                            Dispatcher.BeginInvoke(new Action(delegate
+                            {
+                                RootSnackbar.Appearance = ControlAppearance.Danger;
+                                RootSnackbar.Icon = SymbolRegular.Warning24;
+                                RootSnackbar.Show("Error", $"Failed to send config to client \"{e.IpPort}\". {ex.Message}");
+                            }));
+                        }
+
                         break;
                     }
 
@@ -128,6 +139,8 @@ namespace ZeroKey.ServerUI
                             if (charObj == "2")
                                 IsConfig = 2;
 
+                            IEnumerable<string> clients = server.ListClients();
+
                             switch (IsConfig)
                             {
                                 default:
@@ -140,9 +153,9 @@ namespace ZeroKey.ServerUI
                                         Debug.WriteLine("[{0}] Got configuration from client... writing config...", DateTime.Now);
                                         File.WriteAllText("Application.config", message);
                                         Debug.WriteLine("[{0}] New configuration saved. Contacting all clients now ...", DateTime.Now);
-                                        foreach (string user in AvailableUsers)
+                                        foreach (string user in clients)
                                         {
-                                            server.Send(user, parseConfig);
+                                            server.Send(user, message);
                                             Debug.WriteLine("[{0}] Send config to {1}", DateTime.Now, user);
                                         }
 
@@ -155,7 +168,7 @@ namespace ZeroKey.ServerUI
                                         Debug.WriteLine("[{0}] Got medatixx configuration from client... writing config...", DateTime.Now);
                                         File.WriteAllText("medatixx.json", message);
                                         Debug.WriteLine("[{0}] New configuration saved. Contacting all clients now ...", DateTime.Now);
-                                        foreach (string user in AvailableUsers)
+                                        foreach (string user in clients)
                                         {
                                             server.Send(user, message);
                                             Debug.WriteLine("[{0}] Send config to {1}", DateTime.Now, user);
@@ -226,6 +239,8 @@ namespace ZeroKey.ServerUI
                 server.Start();
             }
             catch (Exception ex) { MessageBox.Show("Cannot start server: " + $"\n{ex.Message}"); }
+
+            TbIp.Text = $"{ip}:{port}";
 
             ResetPwBtn.IsEnabled = false;
             ClearUserBtn.IsEnabled = false;

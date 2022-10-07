@@ -33,9 +33,19 @@ namespace ZeroKey.Plugin.Lock
             try
             {
                 // Check if User is currently running medatixx Client
+                Process[] pname = Process.GetProcessesByName("Client.UI");
+                if (pname.Length != 0)
+                {
+                    Debug.WriteLine("Running medatixx Plugin (ignore lock) ...");
+                    string appDir = AppContext.BaseDirectory;
+                    ProcessAsUser.Launch($"{appDir}\\medatixx\\ZeroKey.Plugin.medatixx.exe -c {id} -s");
+                }
+                else
+                {
+                    ProcessAsUser.Launch(@"C:\WINDOWS\system32\rundll32.exe user32.dll,LockWorkStation");
+                    Process.Start(@"C:\WINDOWS\system32\rundll32.exe", "user32.dll,LockWorkStation");
+                }
 
-                string appDir = AppContext.BaseDirectory;
-                ProcessAsUser.Launch($"{appDir}\\medatixx\\ZeroKey.Plugin.medatixx.exe -c {id} -s");
                 // System.Threading.Thread.Sleep(8000);
                 // ProcessAsUser.Launch(@"C:\WINDOWS\system32\rundll32.exe user32.dll,LockWorkStation");
             }

@@ -76,6 +76,8 @@ Source: "..\..\bin\Release\Service\ZeroKeyServiceHost.exe.config"; DestDir: {#Se
 Source: "..\..\bin\Release\Service\Newtonsoft.Json.dll"; DestDir: {#ServiceAppPath}; Flags: ignoreversion
 Source: "..\..\bin\Release\Service\ZeroKeyServiceCommon.dll"; DestDir: {#ServiceAppPath}; Flags: ignoreversion
 Source: "..\..\bin\Release\Service\ZeroKeyServiceCore.dll"; DestDir: {#ServiceAppPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Service\WatsonTcp.dll"; DestDir: {#ServiceAppPath}; Flags: ignoreversion
+Source: "..\..\bin\Release\Service\Rijndael256.dll"; DestDir: {#ServiceAppPath}; Flags: ignoreversion
 Source: "..\..\bin\Release\Service\ZeroKeyServiceHost.exe"; DestDir: {#ServiceAppPath}; Flags: ignoreversion; \
   BeforeInstall: TaskKill('ZeroKeyServiceHost.exe')
 
