@@ -13,6 +13,17 @@
 #define RegistryKey = "{{8EB4E5F7-9DFB-4674-897C-2A584934CDBE}"
 #define ProviderNameKey = "NFCCredentialProvider"
 
+; This identifier is used for compiling script as Graphical Installer powered installer. Comment it out for regular compiling.
+#define GRAPHICAL_INSTALLER_PROJECT
+ 
+#ifdef GRAPHICAL_INSTALLER_PROJECT
+    ; File with setting for graphical interface
+    #include "Script.graphics.iss"
+#else
+    ; Default UI file
+    #define public GraphicalInstallerUI ""
+#endif
+
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
@@ -38,6 +49,8 @@ CloseApplications=force
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
+; Directive "WizardSmallImageBackColor" was modified for purposes of Graphical Installer.
+WizardSmallImageBackColor={#GraphicalInstallerUI}
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -147,4 +160,28 @@ var
 begin
     Exec('taskkill.exe', '/f /im ' + '"' + FileName + '"', '', SW_HIDE,
     ewWaitUntilTerminated, ResultCode);
+end;
+ 
+// Next function is used for proper working of Graphical Installer powered installer
+procedure InitializeWizard();
+begin
+    #ifdef GRAPHICAL_INSTALLER_PROJECT
+    InitGraphicalInstaller();
+    #endif
+end;
+ 
+// Next function is used for proper working of Graphical Installer powered installer
+procedure CurPageChanged(CurPageID: Integer);
+begin
+    #ifdef GRAPHICAL_INSTALLER_PROJECT
+    PageChangedGraphicalInstaller(CurPageID);
+    #endif
+end;
+ 
+// Next function is used for proper working of Graphical Installer powered installer
+procedure DeInitializeSetup();
+begin
+    #ifdef GRAPHICAL_INSTALLER_PROJECT
+    DeInitGraphicalInstaller();
+    #endif
 end;
