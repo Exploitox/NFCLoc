@@ -2,7 +2,6 @@
 using Microsoft.Toolkit.Uwp.Notifications;
 using CommandLine;
 using System.Runtime.InteropServices;
-// using Meziantou.Framework.Win32;
 using Newtonsoft.Json;
 
 namespace ZeroKey.Plugin.medatixx
@@ -271,6 +270,7 @@ namespace ZeroKey.Plugin.medatixx
             return objProcesses.Length;
         }
 
+        // TODO: Implement this function into production
         /// <summary>
         /// The GetForegroundWindow function returns a handle to the foreground window.
         /// </summary>

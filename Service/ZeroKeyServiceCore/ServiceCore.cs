@@ -646,24 +646,18 @@ namespace ZeroKey.Service.Core
             //  0 = null
             //  1 = Application.config
             //  2 = medatixx.json
-            int IsConfig = 0;
 
             // Serializing Application.config
             string charObj = message.Substring(0, 1);
             string parseConfig = message.Remove(0, 1);
 
-            if (charObj == "1")
-                IsConfig = 1;
-            if (charObj == "2")
-                IsConfig = 2;
-
-            switch (IsConfig)
+            switch (charObj)
             {
                 default:
                     // Random message, ignore it.
                     break;
 
-                case 1:
+                case "1":
                     // Application.config
                     File.WriteAllText(AppPath + @"\Application.config", parseConfig);
 
@@ -673,7 +667,7 @@ namespace ZeroKey.Service.Core
                     Log("Configuration loaded from authentication server.");
                     break;
 
-                case 2:
+                case "2":
                     // medatixx.json
                     File.WriteAllText(AppPath + @"\medatixx.json", parseConfig);
                     break;

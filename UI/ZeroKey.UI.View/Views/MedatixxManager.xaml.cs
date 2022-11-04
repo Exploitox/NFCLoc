@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Newtonsoft.Json;
+using WatsonTcp;
 using ZeroKey.UI.View.NFC;
 using Path = System.IO.Path;
 
@@ -63,26 +64,6 @@ namespace ZeroKey.UI.View.Views
 
         private void SetCurrentUserDatabase()
         {
-            /*
-            if (!File.Exists(_listFile))
-            {
-                try { Directory.CreateDirectory(_appDataPath); File.WriteAllText(_listFile, ""); }
-                catch { MessageBox.Show("Cannot create file " + _listFile); Environment.Exit(1); }
-            }
-
-            string listpath = File.ReadAllText(_listFile);
-            listBox.Items.Clear();
-
-            // Write every line into listBox
-            foreach (string line in listpath.Split('\n'))
-            {
-                if (line.Trim() != "")
-                {
-                    listBox.Items.Add(line);
-                }
-            }
-            */
-            
             listBox.Items.Clear();
             try
             {
@@ -128,18 +109,6 @@ namespace ZeroKey.UI.View.Views
             }
             catch {;}
 
-            // Register credentials in Windows Database
-            
-            /*
-            string appName = $"ZeroKey_{cID.Text}";
-
-            CredentialManager.WriteCredential(
-                applicationName: appName,
-                userName: username.Text,
-                secret: password.Text,
-                persistence: CredentialPersistence.LocalMachine);
-            */
-            
             users.Add(new User
             {
                 Username = username.Text,
@@ -160,23 +129,7 @@ namespace ZeroKey.UI.View.Views
                 MessageBox.Show((string)Application.Current.FindResource("no_card_selected"));
                 return;
             }
-            
-            /*
-            string tmpUsername = listBox.SelectedItem.ToString().Split('|')[0];
-            string username = tmpUsername.Remove(tmpUsername.Length - 1);
-            string cid = listBox.SelectedItem.ToString().Split('|')[1].Trim();
 
-            var tempFile = System.IO.Path.GetTempFileName();
-            var linesToKeep = File.ReadLines(_listFile).Where(l => l != $"{username} | {cid}");
-
-            // Remove credentials from Windows Database
-            CredentialManager.DeleteCredential(applicationName: $"ZeroKey_{cid}");
-
-            File.WriteAllLines(tempFile, linesToKeep);
-            File.Delete(_listFile);
-            File.Move(tempFile, _listFile);
-            */
-            
             using (var enumerator = users.GetEnumerator())
             {
                 int i = 0;
@@ -251,6 +204,16 @@ namespace ZeroKey.UI.View.Views
                 }
             }
             catch { MessageBox.Show((string)Application.Current.FindResource("cannot_start_service")); }
+
+            // Send config to server if available
+            WatsonTcpClient client = new WatsonTcpClient("127.0.0.1", 9000);
+            client.Events.ServerConnected += ServerConnected;
+            client.Events.ServerDisconnected += ServerDisconnected;
+            client.Events.MessageReceived += MessageReceived;
+            client.Callbacks.SyncRequestReceived = SyncRequestReceived;
+            client.Connect();
+    
+
         }
     }
 }
