@@ -207,13 +207,7 @@ namespace ZeroKey.UI.View.Views
 
             // Send config to server if available
             WatsonTcpClient client = new WatsonTcpClient("127.0.0.1", 9000);
-            client.Events.ServerConnected += ServerConnected;
-            client.Events.ServerDisconnected += ServerDisconnected;
-            client.Events.MessageReceived += MessageReceived;
-            client.Callbacks.SyncRequestReceived = SyncRequestReceived;
             client.Connect();
-    
-
         }
     }
 }
