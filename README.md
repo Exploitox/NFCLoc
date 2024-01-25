@@ -3,12 +3,12 @@
 <img align="right" src="https://github.com/Wolkenhof/ZeroKey/blob/master/UI/ZeroKey.UI.View/Icon.png" width="150">
 
 [![License](https://img.shields.io/badge/license-Apache%20License%202.0-purple)](/LICENSE)
-[![.NET](https://github.com/Wolkenhof/ZeroKey/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Exploitox/ZeroKey/actions/workflows/dotnet.yml)
+[![.NET](https://github.com/Wolkenhof/ZeroKey/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Wolkenhof/ZeroKey/actions/workflows/dotnet.yml)
 
 <p align="center">
-   <strong>Status: Maintained (preview)</strong>
+   <strong>Status: No longer maintained</strong>
    <br />
-   <strong>Version: </strong>2.0.0
+   <strong>Version: </strong>2.0.0 (preview)
    <br />
    <a href="https://github.com/Wolkenhof/ZeroKey/issues">Report Bug</a>
    ·
@@ -17,11 +17,14 @@
 </p>
 </br>
 
+## ‼️ This Project is no longer maintained
+
+
 ## 🔔 About ZeroKey
 ZeroKey provides NFC based login and logout functionality for the Microsoft Windows Operating System.  
 
 ## ℹ️ Prerequisites
-* Windows 7, 8, 8.1 or 10 64-bit Windows (It will not work on a 32-bit system).
+* ~Windows 7~, 8, 8.1 or 10 64-bit Windows (It will not work on a 32-bit system).
 * [.NET Framework 4.5, included with Windows 8.1 or higher](https://www.microsoft.com/en-au/download/details.aspx?id=40779)
 * [.NET Desktop Runtime 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
 * [Visual C++ Redistributable Packages for Visual Studio 2015](https://www.microsoft.com/en-au/download/details.aspx?id=48145) and install "vc_redist.x64.exe"
@@ -33,7 +36,7 @@ There are three separate parts to this, if any fails then you will need to check
 ### Building the binaries (If you have downloaded the source)
 
 1. Open ``ZeroKey.sln`` with Visual Studio 2022.
-2. Build the entire solution (Release or debug, but only x64). This creates a ``\bin\`` folder in the root Sesame directory.
+2. Build the entire solution (Release or debug, but only x64). This creates a ``\bin\`` folder in the root Project directory.
 3. For the rest of the instructions, I'll assume you built for Release. If you chose Debug instead, then replace "Release" in the following instructions with "Debug".
 4. Make sure your NFC reader is connected to the PC.
 
@@ -68,4 +71,4 @@ There are three separate parts to this, if any fails then you will need to check
 - mclear - [Original project "Sesame / NFC Fence"](https://github.com/mclear/Sesame)
 
 ---
-```Copyright (c) 2018 - 2022 valnoxy. By Jonas G. <jonas@exploitox.de>```
+```Copyright (c) 2022 Wolkenhof GmbH. Author: Jonas G.```
